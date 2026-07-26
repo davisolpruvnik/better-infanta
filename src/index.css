@@ -114,6 +114,47 @@
   --font-mono: var(--font-kapwa-mono);
 }
 
+.font-axis-thin {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-variation-settings: 'wdth' 100;
+}
+.font-axis-book {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-variation-settings: 'wdth' 100;
+}
+.font-axis-medium {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-variation-settings: 'wdth' 100;
+}
+.font-axis-semibold {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-variation-settings: 'wdth' 100;
+}
+.font-axis-bold {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 100;
+}
+.font-axis-chunky {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 100;
+}
+.font-nav {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-variation-settings: 'wdth' 75;
+}
+.font-axis-next-round {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 75;
+}
+
 /* Checklist styling */
 .task-list-item {
   @apply text-base text-gray-700 leading-relaxed relative flex items-start gap-3 font-sans rounded-md mb-5 transition-all duration-200 border border-transparent cursor-pointer items-center;
