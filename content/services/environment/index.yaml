@@ -2,10 +2,10 @@
 # This file contains all the pages/services available under the Environment category
 
 pages:
-  - name: 'Join clean-up drives and tree planting activities'
-    slug: 'join-clean-up-drives-and-tree-planting-activities'
-    description: 'Information about participating in community clean-up drives and tree planting activities.'
+  - name: 'Bayanihan Clean-Up Drives'
+    slug: 'bayanihan-drive'
+    description: 'Stay tuned at the official social media channels of the local government for updates on clean-up drives.'
     
-  - name: 'Report illegal logging, quarrying, or fishing'
-    slug: 'report-illegal-logging-quarrying-or-fishing'
-    description: 'How to report illegal environmental activities like logging, quarrying, or illegal fishing.'
+  - name: 'Garbage Collection Schedules'
+    slug: 'garbage-scheds'
+    description: 'Know when will the garbage be collected in your barangay.'
