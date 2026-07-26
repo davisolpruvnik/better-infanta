@@ -80,11 +80,13 @@ const Services: React.FC = () => {
         description={categoryData.description}
         keywords={`${categoryData.category}, government services, public services, local government`}
       />
-      <Section className="p-3 mb-12">
+      <Section className="p-3 mb-8">
         <Breadcrumbs className="mb-8" />
-        <Icon className="h-8 w-8 mb-4 text-primary-600 rounded-md" />
-        <Heading>{categoryData.category || category}</Heading>
-        <Text className="text-gray-600 mb-6">{categoryData.description}</Text>
+        <div className="flex flex-row items-center text-start mb-2 gap-4">
+          <Icon className="h-10 w-10 text-primary-600 rounded-md" />
+          <Heading>{categoryData.category || category}</Heading>
+        </div>
+        <Text className="text-gray-600 mb-8">{categoryData.description}</Text>
 
         {loading ? (
           <div className="flex justify-center items-center p-8">
