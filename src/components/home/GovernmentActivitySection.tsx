@@ -43,33 +43,33 @@ export default function GovernmentActivitySection({
 
   return (
     <Section id="#government">
-      <Heading level={2}>{title || t('title')}</Heading>
-      <Text className="text-gray-600 mb-6">
-        {description || t('governmentActivity.description')}
-      </Text>
+      <div className="mb-8 text-center items-center">
+        <Heading level={2}>{title || t('title')}</Heading>
+        <span className="text-gray-600 mb-6 font-axis-book tracking-wide">
+          {description || t('governmentActivity.description')}
+        </span>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {displayedCategories.map(category => (
-          <Card
-            key={category.slug}
-            hoverable
-            className="border-t-4 border-primary-500"
-          >
+          <Card key={category.slug} hoverable className="inset-shadow-sm">
             <Link
               to={`/government/${category.slug}`}
-              className="mt-auto text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center"
+              className="mt-auto text-primary-600 hover:text-primary-700 transition-colors inline-flex items-center bg-primary-50/25 hover:bg-primary-50/50 rounded-b-md h-full w-full justify-center py-2 border-0.5"
             >
-              <CardContent className="flex flex-col h-full p-6">
-                <div className="flex gap-2">
-                  <div className="bg-primary-100 text-primary-600 p-3 rounded-md mb-4 self-start">
+              <CardContent className="flex flex-col h-full p-6 text-center">
+                <div className="flex flex-col gap-2">
+                  <div className="bg-primary-100 text-primary-600 p-3 rounded-md mb-4 self-center items-center">
                     {getIcon(category.icon)}
                   </div>
 
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900 self-center">
+                  <h3 className="text-lg font-axis-semibold tracking-wide mb-4 text-gray-900 self-center">
                     {category.category}
                   </h3>
                 </div>
-                <Text className="text-gray-800">{category.description}</Text>
+                <Text className="text-gray-800 font-axis-thin">
+                  {category.description}
+                </Text>
               </CardContent>
             </Link>
           </Card>

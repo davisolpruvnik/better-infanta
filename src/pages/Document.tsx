@@ -151,7 +151,7 @@ export default function Document({
         <Section className="p-3 mb-12">
           <Breadcrumbs className="mb-8" items={breadcrumbs} />
           {nestedIndex.title && (
-            <Heading level={2}>{nestedIndex.title}</Heading>
+            <Heading level={3}>{nestedIndex.title}</Heading>
           )}
           {nestedIndex.description && (
             <Text className="text-gray-600 mb-4">

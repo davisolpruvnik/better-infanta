@@ -1,7 +1,7 @@
-import Hero from '../components/sections/Hero';
 import ServicesSection from '../components/home/ServicesSection';
 import GovernmentActivitySection from '../components/home/GovernmentActivitySection';
 import SEO from '../components/SEO';
+import LandingSite from '../components/home/Landing';
 
 const Home: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const Home: React.FC = () => {
         keywords="government, local government, services, public services, civic services"
       />
       <main className="flex-grow">
-        <Hero />
+        <LandingSite />
         <ServicesSection />
         <GovernmentActivitySection />
       </main>

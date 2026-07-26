@@ -6,12 +6,14 @@ import {
   Globe,
   Search,
   CheckCircle2,
+  Rocket,
 } from 'lucide-react';
 import { mainNavigation } from '../../data/navigation';
 import type { LanguageType } from '../../types/index';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../../i18n/languages';
+import Timekeeper from './Timekeeper-Weather';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,10 +48,12 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-4">
             <a
               href="https://bettergov.ph/join-us"
-              className="text-xs text-primary-600 hover:text-primary-700 font-semibold transition-colors"
+              className="text-xs text-red-800 hover:text-red-900 font-semibold transition-colors"
               target="_blank"
             >
-              🚀 Join Us
+              <div className="flex items-center space-x-1 gap-1">
+                <Rocket className="fill-red h-4 w-4" /> Join Us
+              </div>
             </a>
             <a
               href="https://bettergov.ph/about"
@@ -64,6 +68,14 @@ const Navbar: React.FC = () => {
               target="_blank"
             >
               Official Gov.ph
+            </a>
+
+            <a
+              href="https://infanta.gov.ph/"
+              className="text-xs text-gray-800 hover:text-primary-600 transition-colors"
+              target="_blank"
+            >
+              Municipal Website
             </a>
 
             <a
@@ -187,6 +199,9 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
+      <div className="lg:block border-t border-gray-200">
+        <Timekeeper />
+      </div>
 
       {/* Mobile menu */}
       <div className={`lg:hidden ${isOpen ? 'block' : 'hidden'}`}>
@@ -227,7 +242,7 @@ const Navbar: React.FC = () => {
             onClick={closeMenu}
             className="block px-4 py-2 text-base font-semibold text-primary-600 hover:bg-primary-50 hover:text-primary-700"
           >
-            🚀 Join Us
+            <Rocket className="fill-red" /> Join Us
           </Link>
           <Link
             to="/about"
