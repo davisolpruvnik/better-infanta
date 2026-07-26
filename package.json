@@ -26,6 +26,7 @@
     ]
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
     "@bettergov/kapwa": "^1.2.4",
     "@tailwindcss/typography": "^0.5.18",
     "@types/js-yaml": "^4.0.9",
