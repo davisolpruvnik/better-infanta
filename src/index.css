@@ -149,10 +149,27 @@
   font-weight: 500;
   font-variation-settings: 'wdth' 75;
 }
-.font-axis-next-round {
+
+/* For detailed services and government processes */
+.font-axis-sng-indlab-header {
   font-family: var(--font-sans);
-  font-weight: 700;
-  font-variation-settings: 'wdth' 75;
+  font-weight: 300;
+  font-variation-settings: 'wdth' 50;
+}
+.font-axis-sng-indlab-value {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 50;
+}
+.font-axis-titular-focus {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 50;
+}
+.font-axis-subtitular-focus {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-variation-settings: 'wdth' 50;
 }
 
 /* Checklist styling */

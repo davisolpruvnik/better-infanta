@@ -43,6 +43,7 @@ import environmentIndex from '../../content/services/environment/index.yaml?raw'
 import disasterPreparednessIndex from '../../content/services/disaster-preparedness/index.yaml?raw';
 import housingLandUseIndex from '../../content/services/housing-land-use/index.yaml?raw';
 import governmentDepartmentsIndex from '../../content/government/departments/index.yaml?raw';
+import tourismIndex from '../../content/services/tourism/index.yaml?raw';
 import governmentDepartmentsLegislativeIndex from '../../content/government/departments/legislative/index.yaml?raw';
 
 // Create a mapping of category slugs to their YAML content
@@ -57,6 +58,7 @@ const categoryIndexMap: { [key: string]: string } = {
   environment: environmentIndex,
   'disaster-preparedness': disasterPreparednessIndex,
   'housing-land-use': housingLandUseIndex,
+  tourism: tourismIndex,
   departments: governmentDepartmentsIndex,
   legislative: governmentDepartmentsLegislativeIndex,
 };
@@ -83,7 +85,7 @@ export async function loadCategoryIndex(
 ): Promise<CategoryIndex> {
   const yamlContent = categoryIndexMap[categorySlug];
   if (!yamlContent) {
-    return { layout: 'list', pages: [] };
+    return { layout: 'grid', pages: [] };
   }
   try {
     const indexData: CategoryIndexData = yaml.load(
@@ -92,7 +94,7 @@ export async function loadCategoryIndex(
     return {
       title: indexData.title,
       description: indexData.description,
-      layout: indexData.layout ?? 'list',
+      layout: indexData.layout ?? 'grid',
       pages: indexData.pages || [],
     };
   } catch (parseError) {
@@ -100,7 +102,7 @@ export async function loadCategoryIndex(
       `Failed to parse YAML content for category ${categorySlug}:`,
       parseError
     );
-    return { layout: 'list', pages: [] };
+    return { layout: 'grid', pages: [] };
   }
 }
 
