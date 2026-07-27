@@ -19,7 +19,7 @@ import { useState, useEffect } from 'react';
 const Services: React.FC = () => {
   const { category } = useParams();
   const [categoryIndex, setCategoryIndex] = useState<CategoryIndex>({
-    layout: 'list',
+    layout: 'grid',
     pages: [],
   });
   const [loading, setLoading] = useState(false);
@@ -108,48 +108,65 @@ const Services: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/services/${category}/${subcategory.slug}`}
+                    className="flex h-full" // Ensure the Link stretches to full cell height
                   >
                     <Card
                       hoverable
-                      className="h-full border-t-4 border-primary-500"
+                      className="flex flex-col h-full w-full py-2.5 rounded-b-lg text-primary-600 hover:text-primary-700 bg-primary-50/25 hover:bg-primary-50/50 border-1 shadow-none hover:shadow-sm -translate-y-0 hover:-translate-y-0.5 transition-all duration-200 ease-in-out"
                     >
-                      <CardContent>
-                        <h4 className="text-lg font-medium text-gray-900">
-                          {subcategory.name}
-                        </h4>
-                        {subcategory.description && (
-                          <p className="mt-2 text-sm text-gray-600">
-                            {subcategory.description}
-                          </p>
-                        )}
-                        <span className="inline-block px-2 py-1 mt-2 text-xs font-medium rounded-sm bg-gray-100 text-gray-800">
-                          {categoryData.category || category}
-                        </span>
+                      {/* CardContent is set to flex col to manage inner space distribution */}
+                      <CardContent className="flex flex-col flex-1 p-5 h-full">
+                        {/* 1. Header and description wrapper (fills remaining vertical space) */}
+                        <div className="flex-1">
+                          <h4 className="text-lg font-medium text-gray-900">
+                            {subcategory.name}
+                          </h4>
+                          {subcategory.description && (
+                            <p className="mt-2 text-sm text-gray-600">
+                              {subcategory.description}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* 2. Badge container (always pinned to the absolute bottom) */}
+                        <div className="mt-4 pt-1 flex items-center justify-start">
+                          <span className="inline-block px-2 py-1 text-xs font-medium rounded-sm bg-gray-100 text-gray-800">
+                            {categoryData.category || category}
+                          </span>
+                        </div>
                       </CardContent>
                     </Card>
                   </Link>
                 ))}
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4 flex flex-col h-full p-6 bg-white rounded-xl border border-gray-200 justify-between align-baseline">
                 {subcategories.map(subcategory => (
                   <Link
                     key={subcategory.slug}
                     to={`/services/${category}/${subcategory.slug}`}
+                    className="block"
                   >
-                    <Card hoverable className="mb-4">
-                      <CardContent>
-                        <h4 className="text-lg font-medium text-gray-900">
-                          {subcategory.name}
-                        </h4>
-                        {subcategory.description && (
-                          <p className="mt-2 text-sm text-gray-600">
-                            {subcategory.description}
-                          </p>
-                        )}
-                        <span className="inline-block px-2 py-1 mt-2 text-xs font-medium rounded-sm bg-gray-100 text-gray-800">
-                          {categoryData.category || category}
-                        </span>
+                    <Card hoverable className="flex flex-col h-full">
+                      <CardContent className="flex flex-col flex-1 p-5">
+                        {/* 1. Content Area (pushes badge down) */}
+                        <div className="flex-1">
+                          <h4 className="text-lg font-medium text-gray-900">
+                            {subcategory.name}
+                          </h4>
+                          {subcategory.description && (
+                            <p className="mt-2 text-sm text-gray-600">
+                              {subcategory.description}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* 2. Pinned Badge */}
+                        <div className="mt-4 pt-1 flex items-center justify-start">
+                          <span className="inline-block px-2 py-1 text-xs font-medium rounded-sm bg-gray-100 text-gray-800">
+                            {categoryData.category || category}
+                          </span>
+                        </div>
                       </CardContent>
                     </Card>
                   </Link>

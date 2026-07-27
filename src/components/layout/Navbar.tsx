@@ -126,14 +126,14 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden lg:flex items-center space-x-8 pr-24">
+          <div className="hidden lg:flex items-center space-x-8 pr-4">
             {mainNavigation.map(item => (
               <div key={item.label} className="relative group">
                 <a
                   href={item.href}
                   className="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors"
                 >
-                  {t(`navbar.${item.label.replace(' ', '').toLowerCase()}`)}
+                  {t(`${item.label}`)}
                   {item.children && (
                     <ChevronDown className="ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-colors" />
                   )}
