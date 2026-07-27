@@ -2,18 +2,34 @@
 # This file contains all the pages/services available under the Social Welfare category
 
 pages:
-  - name: 'Apply for senior citizen, solo parent, or PWD assistance'
-    slug: 'apply-for-senior-citizen-solo-parent-or-pwd-assistance'
-    description: 'Information about applying for assistance programs for senior citizens, solo parents, and persons with disabilities.'
-    
-  - name: 'Receive relief goods or cash aid during disasters'
-    slug: 'receive-relief-goods-or-cash-aid-during-disasters'
-    description: 'How to access relief goods and cash assistance during natural disasters and emergencies.'
-    
-  - name: 'Join livelihood or skills training programs'
-    slug: 'join-livelihood-or-skills-training-programs'
-    description: 'Participate in livelihood and skills training programs offered by your local government.'
-    
-  - name: 'Get family and community welfare support'
-    slug: 'get-family-and-community-welfare-support'
-    description: 'Access family and community welfare support services from your local government.'
+  - name: "Issuance of Solo Parent Identification Card"
+    slug: "solo-parent-id"
+    description: "Registration and processing of ID cards to secure statutory benefits and discounts for single parents."
+
+  - name: "Issuance of Persons with Disability (PWD) Identification Card"
+    slug: "pwd-id"
+    description: "Medical evaluation review and ID processing for local residents with recognized physical, sensory, or mental impairments."
+
+  - name: "Issuance of National Senior Citizen ID Card"
+    slug: "senior-citizen-id"
+    description: "Registration and processing of OSCA cards for residents aged 60 and above to avail of national discounts and medical benefits."
+
+  - name: "Issuance of Certificate of Indigency"
+    slug: "certificate-of-indigency"
+    description: "Certification validating low-income household status for medical assistance, court representation, or educational scholarships."
+
+  - name: "Provision of Aid to Individuals in Crisis Situations (AICS)"
+    slug: "aics-crisis-aid"
+    description: "Immediate emergency financial, medical, funeral, or food assistance for families facing sudden crises or natural disasters."
+
+  - name: "Timely and Delayed Birth Registration"
+    slug: "birth-registration"
+    description: "Processing and legal indexing of child births with the Local Civil Registrar, including standard timely reports and late registrations."
+
+  - name: "Issuance of Marriage License and Marriage Registration"
+    slug: "marriage-registration-license"
+    description: "Processing of public notices, legal documentation, and certificates required for legal marriage registration."
+
+  - name: "BREQS Civil Registry Document Extraction"
+    slug: "breqs-civil-registry"
+    description: "Local convenience system (Batch Request Entry System) to request PSA copies of birth, marriage, and death documents from the central archive."

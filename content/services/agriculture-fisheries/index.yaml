@@ -2,18 +2,14 @@
 # This file contains all the pages/services available under the Agriculture & Fisheries category
 
 pages:
-  - name: 'Ask for free seeds, seedlings, fertilizers, or fingerlings'
-    slug: 'ask-for-free-seeds-seedlings-fertilizers-or-fingerlings'
-    description: 'How to request free agricultural inputs like seeds, seedlings, fertilizers, and fingerlings from your local government.'
-    
-  - name: 'Get veterinary services for livestock'
-    slug: 'get-veterinary-services-for-livestock'
-    description: 'Access veterinary services for your livestock and farm animals from local government veterinarians.'
-    
-  - name: 'Attend farming or fishing training'
-    slug: 'attend-farming-or-fishing-training'
-    description: 'Join training programs for farming and fishing techniques offered by your local government.'
-    
-  - name: 'Borrow farm tools or equipment from the LGU'
-    slug: 'borrow-farm-tools-or-equipment-from-the-lgu'
-    description: 'How to borrow farm tools and equipment from your local government unit.'
+  - name: "Municipal Fishing Gear Registration"
+    slug: "municipal-fishing-gear-registration"
+    description: "Official registration and documentation of fishing gears used by municipal fisherfolk to ensure compliant local fishing operations."
+  
+  - name: "Municipal Boat Registration"
+    slug: "boat-registration"
+    description: "Registration and licensing of motorized and non-motorized fishing boats (Adat-Adat) operating within municipal waters."
+
+  - name: "Issuance of Certificate as Bonafide Farmer/Fisherfolk"
+    slug: "bonafide-farmer-fisherfolk-certificate"
+    description: "Certification provided to local residents verifying their status as active, registered farmers or fisherfolk for government aid eligibility."

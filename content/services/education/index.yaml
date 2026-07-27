@@ -2,14 +2,10 @@
 # This file contains all the pages/services available under the Education category
 
 pages:
-  - name: 'Enroll children in LGU daycare or preschool programs'
-    slug: 'enroll-children-in-lgu-daycare-or-preschool-programs'
-    description: 'Information about enrolling your children in local government daycare and preschool programs.'
-        
-  - name: 'Access educational support programs from the LGU'
-    slug: 'access-educational-support-programs-from-the-lgu'
-    description: 'Various educational support programs and resources provided by your local government unit.'
-    
-  - name: 'Learn about supplementary activities for schools in your area'
-    slug: 'learn-about-supplementary-activities-for-schools-in-your-area'
-    description: 'Information about supplementary educational activities and programs available for schools in your area.'
+  - name: "Scholarship and Youth Development Program"
+    slug: "scholarship-youth-development"
+    description: "Financial assistance, educational grants, and development programs for qualified resident students."
+
+  - name: "Issuance of Library Card and Conduct of Research"
+    slug: "library-card-and-research"
+    description: "Enrollment in the municipal library registry and facilitation of academic research requests."
