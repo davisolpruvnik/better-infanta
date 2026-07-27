@@ -2,18 +2,38 @@
 # This file contains all the pages/services available under the Business & Livelihood category
 
 pages:
-  - name: "Apply for barangay clearance and mayor's business permits"
-    slug: 'apply-for-barangay-clearance-and-mayors-business-permits'
-    description: "Step-by-step guide to applying for barangay clearance and mayor's business permits for your business."
-    
-  - name: 'Renew permits and pay local business taxes'
-    slug: 'renew-permits-and-pay-local-business-taxes'
-    description: 'Information about renewing business permits and paying local business taxes to your local government.'
-    
-  - name: 'Rent stalls in public markets'
-    slug: 'rent-stalls-in-public-markets'
-    description: 'How to rent stalls in local government public markets for your business.'
-    
-  - name: 'Join trade fairs, business expos, or tourism promotions'
-    slug: 'join-trade-fairs-business-expos-or-tourism-promotions'
-    description: 'Participate in local trade fairs, business expos, and tourism promotion activities.'
+  - name: "Application for Mayor's Permit and Business License"
+    slug: "business-permit-and-license"
+    description: "Processing of new applications and renewals for Mayor's Permits and Business Licenses to operate legally within the municipality."
+
+  - name: "Assessment and Payment of Business Tax"
+    slug: "business-tax-assessment-payment"
+    description: "Calculation and collection of annual or quarterly municipal taxes for registered business entities."
+
+  - name: "Issuance of Community Tax Certificate (CTC)"
+    slug: "community-tax-certificate"
+    description: "Issuance of Cedula (CTC) to individuals and corporate entities for identification and official transaction purposes."
+
+  - name: "Real Property Tax Payment"
+    slug: "real-property-tax-payment"
+    description: "Assessment and collection of Real Property Tax (RPT / Amilyar) for land, buildings, and machinery located in the municipality."
+
+  - name: "Permit for Special Legal Activities (Peddlers, Motorcade, Promotional Sales)"
+    slug: "special-activities-permit"
+    description: "Issuance of short-term permits for commercial activities such as motorcades, street peddling, group events, and promotional sales."
+
+  - name: "Motorized Tricycle Operator's Permit (MTOP)"
+    slug: "motorized-tricycle-operators-permit"
+    description: "Licensing and regulation of motorized tricycles-for-hire operating within municipal routes."
+
+  - name: "Application for Stall Occupancy (Infanta Commercial Center)"
+    slug: "market-stall-occupancy-application"
+    description: "Application and evaluation process for leasing commercial stalls inside the municipal market/commercial center."
+
+  - name: "Collection of Monthly Stall Rental"
+    slug: "market-stall-rental-collection"
+    description: "Processing of recurring monthly rental payments for registered occupants of municipal market stalls."
+
+  - name: "Withdrawal or Surrender of Market Stall"
+    slug: "market-stall-surrender"
+    description: "Official process for surrendering or transferring leased commercial spaces back to the Economic Enterprise Office."

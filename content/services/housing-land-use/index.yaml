@@ -2,14 +2,30 @@
 # This file contains all the pages/services available under the Housing & Land Use category
 
 pages:
-  - name: 'Apply for socialized housing or relocation projects'
-    slug: 'apply-for-socialized-housing-or-relocation-projects'
-    description: 'Information about applying for socialized housing and relocation projects from your local government.'
-    
-  - name: 'Request zoning, land use, or building permits'
-    slug: 'request-zoning-land-use-or-building-permits'
-    description: 'How to request zoning, land use, and building permits from your local government.'
-    
-  - name: 'Ask about available relocation sites in case of demolition'
-    slug: 'ask-about-available-relocation-sites-in-case-of-demolition'
-    description: 'Information about available relocation sites in case of demolition or displacement.'
+  - name: "Zoning Certification for Business Permit"
+    slug: "zoning-certification-business"
+    description: "Evaluation of commercial locations to ensure alignment with the Comprehensive Land Use Plan (CLUP)."
+
+  - name: "Zoning Certification for Construction and Land Activities"
+    slug: "zoning-certification-land"
+    description: "Zoning assessment prior to the construction of residential, commercial, or industrial structures."
+
+  - name: "Issuance of Locational Clearance"
+    slug: "locational-clearance"
+    description: "Evaluation and clearance certifying that a proposed project conforms to the zoning and land use regulations of the municipality."
+
+  - name: "Segregation of Land"
+    slug: "land-segregation"
+    description: "Processing files for subdividing, partitioning, or separating land ownership records under the Municipal Assessor."
+
+  - name: "Issuance of Certificate of With/Without Landholdings"
+    slug: "certificate-of-landholdings"
+    description: "Assessor documentation certifying whether an individual has registered land assets under their name within the municipality."
+
+  - name: "Issuance of Authenticated Copy of Tax Declaration"
+    slug: "tax-declaration-copy"
+    description: "Certified true copy of Real Property Tax Declarations for transfer of ownership, loans, or judicial purposes."
+
+  - name: "Property Reclassification and Reassessment"
+    slug: "property-reassessment-reclassification"
+    description: "Updating assessor logs and tax assessments based on changes in actual property use (e.g., agricultural to commercial conversion)."

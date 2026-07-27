@@ -9,3 +9,19 @@ pages:
   - name: 'Garbage Collection Schedules'
     slug: 'garbage-scheds'
     description: 'Know when will the garbage be collected in your barangay.'
+
+  - name: "Permit to Dispose Solid Waste in Sanitary Landfill"
+    slug: "solid-waste-disposal-permit"
+    description: "Issuance of disposal permits to private and public entities utilizing the municipal sanitary landfill."
+
+  - name: "Issuance of Endorsement to DENR for Tree Cutting"
+    slug: "tree-cutting-denr-endorsement"
+    description: "Processing and inspection of local tree-cutting clearance prior to DENR endorsement."
+
+  - name: "Certificate of Compliance on Municipal Ordinance No. 13, S. 2017"
+    slug: "ordinance-13-compliance-certificate"
+    description: "Evaluation and issuance of clearance confirming adherence to municipal environmental protection guidelines."
+
+  - name: "Inspection Clearance on Ecological Solid Waste Management (RA 9003)"
+    slug: "ecological-waste-inspection-clearance"
+    description: "On-site sanitary inspections verifying compliance with national ecological waste segregation laws."

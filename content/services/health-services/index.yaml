@@ -2,18 +2,18 @@
 # This file contains all the pages/services available under the Health Services category
 
 pages:
-  - name: 'Get free check-ups, basic medicines, and vaccines'
-    slug: 'get-free-check-ups-basic-medicines-and-vaccines'
-    description: 'Access free medical check-ups, basic medicines, and vaccination services provided by your local government.'
-    
-  - name: 'Access maternal care and child immunization'
-    slug: 'access-maternal-care-and-child-immunization'
-    description: 'Information about maternal health services and child immunization programs available in your area.'
-    
-  - name: 'Go to the local hospital for treatment or confinement'
-    slug: 'go-to-the-local-hospital-for-treatment-or-confinement'
-    description: 'Details about local hospital services, treatment options, and confinement procedures.'
-    
-  - name: 'Join health programs (nutrition, dengue control, TB treatment)'
-    slug: 'join-health-programs-nutrition-dengue-control-tb-treatment'
-    description: 'Participate in various health programs including nutrition support, dengue control, and TB treatment initiatives.'
+  - name: "Issuance of Medical and Medico-Legal Certificates"
+    slug: "medical-and-medico-legal-certificates"
+    description: "Consultation, diagnosis, and official signing of general medical, legal, physical, and clearance certificates by local health officers."
+
+  - name: "Health Permit for Specialty Occupations"
+    slug: "specialty-occupations-health-permit"
+    description: "Health screenings and permit issuances for specialized occupations requiring mandatory regular medical clearance."
+
+  - name: "Sanitary Permit and Health Card Issuance"
+    slug: "sanitary-permit-and-health-card"
+    description: "Processing of sanitary inspection clearances for business establishments and health cards for retail or food handlers."
+
+  - name: "Pre-Marriage Counseling Certificate"
+    slug: "pre-marriage-counseling-certificate"
+    description: "Mandatory pre-marriage counseling and family planning seminars conducted by health and social welfare officers."

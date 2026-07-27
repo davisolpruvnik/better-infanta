@@ -1,4 +1,6 @@
-# content/tourism-and-culture.yaml
+# Tourism Category Pages
+# This file contains all the pages/services available under the Tourism category
+
 pages:
   - name: "DOT Tourism Accreditation Assistance"
     slug: "dot-tourism-accreditation"
