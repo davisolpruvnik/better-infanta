@@ -40,12 +40,6 @@ categories:
     description: 'How to report damaged roads or drainage, where to request water supply, and how to access public facilities and markets.'
     icon: 'Wrench'
   
-  # Garbage and Waste Disposal Services
-  - category: 'Garbage and Waste Disposal'
-    slug: 'garbage-waste-disposal'
-    description: 'Garbage collection schedules, waste disposal guidelines, and how to properly dispose of different types of waste.'
-    icon: 'Trash2'
-  
   # Environment Services
   - category: 'Environment'
     slug: 'environment'

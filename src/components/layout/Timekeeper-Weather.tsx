@@ -291,7 +291,7 @@ export default function Timekeeper() {
           </div>
 
           {/* B. Localized Multi-Town Weather Carousel */}
-          <div className="flex items-center min-w-[140px] justify-end">
+          <div className="flex items-center min-w-[140px] justify-start">
             {loadingWeather ? (
               <Loader2 className="h-3 w-3 animate-spin text-burgundy-900/40" />
             ) : activeWeather && WeatherIcon ? (
