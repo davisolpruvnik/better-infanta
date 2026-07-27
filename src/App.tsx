@@ -8,6 +8,7 @@ import Services from './pages/Services';
 import Document from './pages/Document';
 import Government from './pages/Government';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Plantao from './components/layout/plantao';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Router>
         <NuqsAdapter>
           <div className="min-h-screen flex flex-col">
+            <Plantao />
             <Navbar />
             <ScrollToTop />
             <Routes>
