@@ -247,7 +247,7 @@ export default function Timekeeper() {
 
   return (
     <nav className="w-full bg-cream-200 border-b border-cream-300 text-[11px] font-axis-book uppercase tracking-wider text-burgundy-900/60 py-1.5 px-6 select-none transition-all duration-300">
-      <div className="max-w-6xl mx-auto flex justify-between items-center w-full">
+      <div className="max-w-4/5 mx-auto flex justify-between items-center w-full">
         {/* 🏰 LEFT SIDE: Pulse indicators, running system time, & offset metadata */}
         <div className="flex items-center gap-3">
           <div className="relative flex items-center justify-center w-2 h-2">
@@ -255,7 +255,7 @@ export default function Timekeeper() {
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary-500"></span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="font-axis-chunky text-primary-800 tracking-tight tabular-nums text-[12px]">
+            <span className="font-axis-chunky text-primary-800 proportional-nums text-[12px]">
               {timeStr || '00:00'}
             </span>
             <span className="opacity-80 text-[10px] text-primary-800">
@@ -281,7 +281,7 @@ export default function Timekeeper() {
                 <span className="font-bold text-burgundy-900/80">
                   {activeCurrency.code}
                 </span>
-                <span className="font-semibold text-primary-800 tracking-tight tabular-nums">
+                <span className="font-semibold text-primary-800 proportional-nums">
                   ₱{activeCurrency.rateInPhp.toFixed(2)}
                 </span>
               </div>
@@ -315,7 +315,7 @@ export default function Timekeeper() {
                   <WeatherIcon
                     className={`h-4 w-4 stroke-[1.85] ${weatherDetails?.iconClass}`}
                   />
-                  <span className="font-semibold text-primary-800 text-[12px] tabular-nums">
+                  <span className="font-semibold text-primary-800 text-[12px] proportional-nums">
                     {activeWeather.temp}°C
                   </span>
                 </div>
