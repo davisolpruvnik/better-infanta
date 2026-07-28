@@ -54,11 +54,9 @@ const Navbar: React.FC = () => {
                 className="h-12 w-12 mr-3"
               /> */}
               <div>
-                <div className="text-black font-bold">
-                  {import.meta.env.VITE_GOVERNMENT_NAME}
-                </div>
+                <div className="text-black font-bold">Better Infanta</div>
                 <div className="text-xs text-gray-800">
-                  {t('site_description')}
+                  A community-run platform for Infanta, Quezon
                 </div>
               </div>
             </Link>

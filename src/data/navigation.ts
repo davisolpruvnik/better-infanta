@@ -79,5 +79,9 @@ export const footerNavigation = {
     { label: 'Twitter', href: 'https://twitter.com/govph' },
     { label: 'Instagram', href: 'https://instagram.com/govph' },
     { label: 'YouTube', href: 'https://youtube.com/govph' },
+    {
+      label: 'GitHub',
+      href: 'https://github.com/davisolpruvnik/betterinfanta',
+    },
   ],
 };

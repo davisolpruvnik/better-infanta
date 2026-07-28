@@ -9,6 +9,7 @@ import {
 import { footerNavigation } from '../../data/navigation';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiGithub } from 'react-icons/fi';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation('common');
@@ -23,6 +24,8 @@ const Footer: React.FC = () => {
         return <Instagram className="h-5 w-5" />;
       case 'YouTube':
         return <Youtube className="h-5 w-5" />;
+      case 'GitHub':
+        return <FiGithub className="h-5 w-5" />;
       default:
         return null;
     }
@@ -42,8 +45,10 @@ const Footer: React.FC = () => {
               /> */}
 
               <div>
-                <div className="font-bold">{t('site_name')}</div>
-                <div className="text-xs text-gray-400">BetterGov.ph Portal</div>
+                <div className="font-bold">Infanta, Quezon Portal</div>
+                <div className="text-xs text-gray-400">
+                  A BetterGov.ph Portal
+                </div>
               </div>
             </div>
             <p className="text-gray-400 text-sm mb-4">

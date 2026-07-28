@@ -24,6 +24,8 @@ import {
   type CategoryIndex,
 } from '../data/yamlLoader';
 import SEO from '../components/SEO';
+import { IoIosCheckmarkCircle } from 'react-icons/io';
+import { Tooltip } from '@base-ui/react';
 
 interface DocumentProps {
   theme?: string;
@@ -36,10 +38,13 @@ interface ParsedServiceDoc {
   title: string;
   description: string;
   fees?: string;
+  feeDetails?: string;
   time?: string;
   office?: string;
   requirements: string[];
+  whocanavail: string[]; // 💡 Added to align with the fallback objects
   steps: string[];
+  postscripts?: string; // 💡 Declared as an optional string (not an array)
   rawMarkdownContent: string;
 }
 
@@ -55,7 +60,9 @@ function parseServiceDocument(
       title: titleFromLoader,
       description: descriptionFromLoader,
       requirements: [],
+      whocanavail: [],
       steps: [],
+      postscripts: undefined, // 💡 Fixed: Changed from [] to undefined to match optional string
       rawMarkdownContent: rawMarkdown,
     };
   }
@@ -68,7 +75,9 @@ function parseServiceDocument(
         title: titleFromLoader,
         description: descriptionFromLoader,
         requirements: [],
+        whocanavail: [],
         steps: [],
+        postscripts: undefined, // 💡 Fixed: Changed from [] to undefined to match optional string
         rawMarkdownContent: rawMarkdown,
       };
     }
@@ -129,12 +138,19 @@ function parseServiceDocument(
       title: (data['title'] as string) || titleFromLoader,
       description: (data['description'] as string) || descriptionFromLoader,
       fees: data['fees'] as string,
+      feeDetails: data['fee_details'] as string, // 💡 Parse fee_details safely
       time: (data['time'] || data['processingTime']) as string,
       office: data['office'] as string,
       requirements: Array.isArray(data['requirements'])
         ? (data['requirements'] as string[])
         : [],
+      whocanavail: Array.isArray(data['whocanavail'])
+        ? (data['whocanavail'] as string[])
+        : [], // 💡 Added parsing for whocanavail
       steps: Array.isArray(data['steps']) ? (data['steps'] as string[]) : [],
+      postscripts: Array.isArray(data['postscripts'])
+        ? (data['postscripts'] as string[]).join('\n')
+        : (data['postscripts'] as string) || undefined,
       rawMarkdownContent: remainingMarkdown,
     };
   } catch (err) {
@@ -147,7 +163,9 @@ function parseServiceDocument(
       title: titleFromLoader,
       description: descriptionFromLoader,
       requirements: [],
+      whocanavail: [],
       steps: [],
+      postscripts: undefined, // 💡 Fixed: Changed from [] to undefined to match optional string
       rawMarkdownContent: rawMarkdown,
     };
   }
@@ -365,13 +383,38 @@ export default function Document({
               {/* Row 1: Fees & Expected Time side-by-side */}
               <div className="flex items-center gap-8">
                 {/* Estimated Fees */}
-                <div className="flex flex-col text-end">
-                  <span className="text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
-                    Estimated Fees
+                <div className="relative flex flex-col text-end">
+                  <span className="block uppercase text-[16px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
+                    Estimated Cost
                   </span>
-                  <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 proportional-nums">
-                    {doc.fees || 'Free of charge'}
-                  </span>
+
+                  {doc.feeDetails ? (
+                    <Tooltip.Provider>
+                      <Tooltip.Root>
+                        <Tooltip.Trigger
+                          render={
+                            <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 border-b border-dotted border-burgundy-900/60 text-end cursor-pointer">
+                              {doc.fees || 'Free / No Fees'}
+                            </span>
+                          }
+                        />
+                        <Tooltip.Portal>
+                          <Tooltip.Positioner side="bottom" sideOffset={6}>
+                            <Tooltip.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-gray-600 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[starting-style]:translate-y-1.5 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:translate-y-1.5">
+                              <span className="block text-[9px] font-axis-bold text-gray-700 uppercase tracking-wider mb-1 select-none">
+                                Calculation Basis
+                              </span>
+                              {doc.feeDetails}
+                            </Tooltip.Popup>
+                          </Tooltip.Positioner>
+                        </Tooltip.Portal>
+                      </Tooltip.Root>
+                    </Tooltip.Provider>
+                  ) : (
+                    <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1">
+                      {doc.fees || 'Free / No Fees'}
+                    </span>
+                  )}
                 </div>
 
                 {/* Vertical Separator Line */}
@@ -422,7 +465,7 @@ export default function Document({
                       {doc.steps.map((step, i) => (
                         <div key={i} className="relative">
                           {/* Circle Stepper Number Badge */}
-                          <span className="absolute -left-[37px] top-0.5 flex h-6.5 w-6.5 items-center justify-center rounded-full bg-primary-600 font-axis-chunky text-[11px] text-white border-2 border-white ring-2 ring-primary-50 shadow-sm">
+                          <span className="absolute -left-[36.5px] top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full bg-primary-700 font-axis-chunky text-[10px] text-white border-1 border-white ring-1 ring-primary-50 shadow-sm">
                             {i + 1}
                           </span>
                           <div className="text-sm leading-relaxed text-gray-700 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200">
@@ -453,17 +496,33 @@ export default function Document({
               <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
                 <CardContent className="p-6 space-y-5">
                   <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2">
+                    Who can avail
+                  </h3>
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {doc.whocanavail.map((req, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg"
+                      >
+                        <IoIosCheckmarkCircle className="text-emerald-500 shrink-0 mt-1" />
+                        <span>{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
+                <CardContent className="p-6 space-y-5">
+                  <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2">
                     Required Documents
                   </h3>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {doc.requirements.map((req, i) => (
                       <li
                         key={i}
-                        className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg"
+                        className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg align-top"
                       >
-                        <span className="text-emerald-500 font-bold shrink-0">
-                          ✓
-                        </span>
+                        <IoIosCheckmarkCircle className="text-emerald-500 shrink-0 mt-0.5" />
                         <span>{req}</span>
                       </li>
                     ))}
