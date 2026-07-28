@@ -4,7 +4,7 @@ A modern, multilingual, and accessible website template designed specifically fo
 
 ## ✨ Features
 
-- **🌐 Multilingual Support**: English, Filipino, Cebuano, and other Philippine languages
+- **🌐 Multilingual Support**: English, Tagalog, and Tayabas Tagalog (Infanta dialect)
 - **📱 Responsive Design**: Mobile-first approach with modern UI/UX
 - **♿ Accessibility**: WCAG 2.1 compliant design
 - **📝 Content Management**: YAML-based content system for easy updates
@@ -67,7 +67,7 @@ A modern, multilingual, and accessible website template designed specifically fo
    ```
 
 7. **Open your browser**
-   Navigate to `http://localhost:5173`
+   Navigate to `http://localhost:5173` or a `localhost` that appears in the terminal.
 
 ## 📚 Documentation
 
@@ -122,7 +122,7 @@ A modern, multilingual, and accessible website template designed specifically fo
 
 ### **Built for Philippine LGUs**
 
-- **Multilingual**: English, Filipino, Cebuano, and other local languages
+- **Multilingual**: English, Tagalog, and Tayabas Tagalog (Infanta dialect)
 - **Local Context**: Designed for Philippine government structure
 - **Cultural Sensitivity**: Respects local customs and practices
 - **Accessibility**: WCAG 2.1 compliant for all citizens
