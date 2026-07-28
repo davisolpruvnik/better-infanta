@@ -213,6 +213,11 @@
 .font-axis-subtitular-focus {
   font-family: var(--font-sans);
   font-weight: 400;
+  font-variation-settings: 'wdth' 60;
+}
+.font-axis-navbar-focus {
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-variation-settings: 'wdth' 50;
 }
 

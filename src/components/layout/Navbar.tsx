@@ -68,7 +68,7 @@ const Navbar: React.FC = () => {
               <div key={item.label} className="relative group">
                 <a
                   href={item.href}
-                  className="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                  className="flex items-center text-gray-700 font-axis-navbar-focus hover:text-primary-600 uppercase tracking-wider transition-colors"
                 >
                   {t(`${item.label}`)}
                   {item.children && (
@@ -101,13 +101,13 @@ const Navbar: React.FC = () => {
           <div className="hidden lg:flex items-center space-x-6">
             <Link
               to="/about"
-              className="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors"
+              className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider"
             >
               About
             </Link>
             <Link
               to="/search"
-              className="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors"
+              className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider"
             >
               <Search className="h-4 w-4 mr-1" />
               Search

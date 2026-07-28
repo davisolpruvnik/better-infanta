@@ -1,6 +1,5 @@
 import Section from '../ui/Section';
 import * as LucideIcons from 'lucide-react';
-import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Card, CardContent } from '@bettergov/kapwa/card';
@@ -41,9 +40,11 @@ export default function ServicesSection({
 
   return (
     <Section>
-      <div className="mb-8 text-center items-center">
-        <Heading level={2}>{title || t('services.title')}</Heading>
-        <span className="text-gray-600 mb-6 font-axis-book tracking-wide">
+      <div className="mb-8 text-center items-center font-axis-sng-indlab-value">
+        <h1 className="text-4xl mb-2 uppercase tracking-wider">
+          {title || t('services.title')}
+        </h1>
+        <span className="text-gray-600 mb-6 font-axis-medium">
           {description || t('services.description')}
         </span>
       </div>
@@ -61,7 +62,7 @@ export default function ServicesSection({
                     {getIcon(category.icon)}
                   </div>
 
-                  <h3 className="text-lg font-axis-semibold tracking-wide mb-4 text-gray-900 self-center">
+                  <h3 className="text-xl font-axis-navbar-focus uppercase tracking-wide mb-4 text-gray-900 self-center">
                     {category.category}
                   </h3>
                 </div>
