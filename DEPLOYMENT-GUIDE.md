@@ -42,7 +42,7 @@ In your Vercel project dashboard:
 
 ```env
 VITE_GOVERNMENT_NAME=Municipality of Infanta, Quezon
-VITE_GOVERNMENT_TYPE=City
+VITE_GOVERNMENT_TYPE=Municipality
 VITE_REGION=Region IV-A
 VITE_PROVINCE=Quezon
 VITE_WEBSITE_URL=https://your-project.vercel.app

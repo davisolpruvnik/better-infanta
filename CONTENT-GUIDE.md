@@ -296,7 +296,7 @@ When officials change, **only update the JSON file** — no need to touch the ma
 
 ```json
 {
-  "MAYOR": "New Mayor Name",
+  "MAYOR": "Lord Arnel 'L.A.' Ruanto",
   "YEAR_ELECTED": "2025"
 }
 ```
