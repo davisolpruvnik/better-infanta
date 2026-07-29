@@ -34,14 +34,14 @@ export default function LandingSite() {
             </div>
 
             {/* Unchanged Grid Layout for the 3 Service Items */}
-            <div className="grid grid-cols-1 md:grid-cols-5 items-stretch gap-4 text-center flex-grow w-full">
+            <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-5 items-stretch gap-4 text-center flex-grow w-full font-axis-sng-indlabel-value">
               {/* Services Card */}
               <Link
                 to="/services"
                 className="flex flex-col items-center justify-center p-6 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300"
               >
                 <Landmark className="fill-white" />
-                <h3 className="text-md font-axis-bold mt-4 text-white tracking-wide">
+                <h3 className="text-md font-axis-bold mt-4 text-white tracking-wider font-axis-titular-focus uppercase">
                   Services
                 </h3>
                 <p className="text-xs text-gray-300/90 tracking-wide leading-relaxed">
@@ -55,7 +55,7 @@ export default function LandingSite() {
                 className="flex flex-col items-center justify-center p-2 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300"
               >
                 <LucideSquareActivity />
-                <h3 className="text-md font-axis-bold mt-4 text-white tracking-wide">
+                <h3 className="text-md font-axis-bold mt-4 text-white tracking-wider font-axis-titular-focus uppercase">
                   Finances
                 </h3>
                 <p className="text-xs text-gray-300/90 tracking-wide leading-relaxed">
@@ -69,7 +69,7 @@ export default function LandingSite() {
                 className="flex flex-col items-center justify-center p-6 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300"
               >
                 <FileText />
-                <h3 className="text-md font-axis-bold mt-4 text-white tracking-wide">
+                <h3 className="text-md font-axis-bold mt-4 text-white tracking-wider font-axis-titular-focus uppercase">
                   Transparency
                 </h3>
                 <p className="text-xs text-gray-300/90 tracking-wide leading-relaxed">

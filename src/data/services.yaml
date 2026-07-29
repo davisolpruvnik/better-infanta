@@ -7,60 +7,60 @@ categories:
   # Health Services
   - category: 'Health Services'
     slug: 'health-services'
-    description: 'Check hospitals within the area, know about government programs and avail free health services.'
-    icon: 'Heart'
+    description: 'Check health facilities, know government programs, and avail free health services.'
+    icon: 'RiHeartPulseFill'
 
   # Education Services
   - category: 'Education'
     slug: 'education'
-    description: 'Where to enroll kids in daycare or preschool, how to apply for scholarships, and knowing educational programs by the local government.'
-    icon: 'GraduationCap'
+    description: 'Enroll kids, apply scholarships, educational programs.'
+    icon: 'FaBookOpen'
 
   # Business & Livelihood Services
   - category: 'Business and Livelihood'
     slug: 'business'
-    description: 'For necessary permits, licenses, and clearances; where to pay taxes or renew permits, and livelihood or trade opportunities that are offered.'
-    icon: 'Building2'
+    description: 'Permits, taxes, renewals, trade opportunities.'
+    icon: 'RiBuilding2Fill'
 
   # Social Welfare Services
   - category: 'Social Welfare'
     slug: 'social-welfare'
-    description: 'What assistance is available for seniors, PWDs, solo parents, and indigent families, plus details on relief goods, and livelihood aid.'
-    icon: 'Users'
+    description: 'Assistance for seniors, PWDs, solo parents, indigents.'
+    icon: 'RiShieldUserFill'
   
   # Agriculture & Fisheries Services
   - category: 'Agriculture & Fisheries'
     slug: 'agriculture-fisheries'
-    description: 'What farm or fishing support is available, including seeds, fertilizers, veterinary care, and where to join training or borrow equipment.'
-    icon: 'Wheat'
+    description: 'Seeds, fertilizers, veterinary care, training opportunities.'
+    icon: 'MdAgriculture'
   
   # Infrastructure & Public Works Services
   - category: 'Infrastructure, Public Works, and Safety'
     slug: 'infrastructure-public-works'
-    description: 'How to report damaged roads or drainage, where to request water supply, and how to access public facilities and markets.'
-    icon: 'Wrench'
+    description: 'Report roads, request water, electricity concerns, access facilities.'
+    icon: 'FaBridgeWater'
   
   # Environment Services
   - category: 'Environment'
     slug: 'environment'
-    description: 'Clean-up or tree planting activities, environmental protection rules, environment-related ordinances and laws, and conservation programs.'
-    icon: 'TreePine'
+    description: 'Clean-ups, tree planting activities, and environment-related ordinances and laws.'
+    icon: 'PiTreePalmFill'
   
   # Disaster Preparedness Services
   - category: 'Disaster Preparedness'
     slug: 'disaster-preparedness'
-    description: 'Disaster preparedness plans, emergency response information, and evacuation procedures.'
-    icon: 'Shield'
+    description: 'Disaster preparedness plans, emergency response, evacuation.'
+    icon: 'FaHelmetSafety'
   
   # Housing & Land Use Services
   - category: 'Housing & Land Use'
     slug: 'housing-land-use'
-    description: 'Application for housing projects, what zoning and building permits are needed, and where relocation sites are available.'
-    icon: 'Home'
+    description: 'Housing projects, zoning, building permits, relocation.'
+    icon: 'FaHouseUser'
 
   # Housing & Land Use Services
   - category: 'Tourism'
     slug: 'tourism'
-    description: 'Attractions and wonders of the area, accommodations available, and showcase of an Infantahin culture and tradition.'
-    icon: 'Map'
+    description: 'Attractions, accommodations, culture.'
+    icon: 'TiCamera'
   

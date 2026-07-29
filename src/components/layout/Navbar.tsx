@@ -68,11 +68,11 @@ const Navbar: React.FC = () => {
               <div key={item.label} className="relative group">
                 <a
                   href={item.href}
-                  className="flex items-center text-gray-700 font-axis-navbar-focus hover:text-primary-600 uppercase tracking-wider transition-colors"
+                  className="group flex items-center text-gray-700 font-axis-navbar-focus hover:text-primary-600 uppercase tracking-wider transition-colors"
                 >
                   {t(`${item.label}`)}
                   {item.children && (
-                    <ChevronDown className="ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-colors" />
+                    <ChevronDown className="ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-all duration-200 group-hover:rotate-180" />
                   )}
                 </a>
                 {item.children && (
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
                         <Link
                           key={child.label}
                           to={child.href}
-                          className="text-left block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600"
+                          className="text-left block px-4 py-2 text-md tracking-wide text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-axis-subtitular-focus"
                           role="menuitem"
                         >
                           {child.label}

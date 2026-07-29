@@ -1,11 +1,9 @@
 import Section from '../ui/Section';
-import * as LucideIcons from 'lucide-react';
-import { Text } from '../ui/Text';
+import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Card, CardContent } from '@bettergov/kapwa/card';
 import { Link } from 'react-router-dom';
-
 import { serviceCategories } from '../../data/yamlLoader';
+import { RiArrowRightDoubleLine } from 'react-icons/ri';
 
 interface Subcategory {
   name: string;
@@ -30,10 +28,59 @@ export default function ServicesSection({
   const { t } = useTranslation();
 
   const getIcon = (category: string) => {
-    const IconComponent = LucideIcons[
-      category as keyof typeof LucideIcons
-    ] as React.ComponentType<{ className?: string }>;
-    return IconComponent ? <IconComponent className="h-6 w-6" /> : null;
+    const name = category.trim();
+
+    // 1. Map React Icons prefixes to their corresponding Iconify set identifiers
+    const PREFIX_MAP: Record<string, string> = {
+      Ri: 'ri', // Remix Icons -> ri
+      Lu: 'lucide', // Lucide -> lucide
+      Fi: 'feather', // Feather -> feather
+      Fa: 'fa6-solid', // Font Awesome 6 Solid -> fa6-solid
+      Md: 'mdi', // Material Design -> mdi
+      Bs: 'bi', // Bootstrap Icons -> bi
+      Bi: 'bx', // BoxIcons -> bx
+      Tb: 'tabler', // Tabler -> tabler
+      Hi: 'heroicons', // Heroicons v1 -> heroicons
+      Hi2: 'heroicons', // Heroicons v2 -> heroicons
+      Ai: 'ant-design', // Ant Design -> ant-design
+      Io: 'ion', // Ionicons -> ion
+      Go: 'octicon', // Octicons -> octicon
+      Si: 'simple-icons', // Simple Icons -> simple-icons
+      Ti: 'typcn',
+      Pi: 'ph',
+    };
+
+    // 2. Extract prefix (Group 1) and the rest of the PascalCase name (Group 2)
+    // Matches e.g. "Ri" + "HeartPulseFill" or "Hi2" + "HandThumbUp"
+    const match = name.match(/^([A-Z][a-z]?[0-9]?)([A-Z].*)$/);
+
+    let iconifyPrefix = 'ri'; // Default fallback prefix if no match
+    let cleanName = name;
+
+    if (match) {
+      const reactIconsPrefix = match[1];
+      cleanName = match[2];
+
+      if (PREFIX_MAP[reactIconsPrefix]) {
+        iconifyPrefix = PREFIX_MAP[reactIconsPrefix];
+      }
+    }
+
+    // 3. Convert PascalCase cleanName to kebab-case (e.g. "HeartPulseFill" -> "heart-pulse-fill")
+    const kebabCase = cleanName
+      .replace(/([A-Z])/g, '-$1') // Prepend hyphens to capital letters
+      .replace(/([0-9]+)/g, '-$1') // Prepend hyphens to numeric digits
+      .toLowerCase()
+      .replace(/^-/, '') // Strip any trailing leading hyphen
+      .replace(/-+/g, '-'); // Collapse double-hyphens
+
+    // 4. Render the Icon dynamically with its correct dataset and kebab-cased name
+    return (
+      <Icon
+        icon={`${iconifyPrefix}:${kebabCase}`}
+        className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105"
+      />
+    );
   };
 
   const displayedCategories = serviceCategories.categories as Category[];
@@ -49,29 +96,42 @@ export default function ServicesSection({
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {displayedCategories.map(category => (
-          <Card key={category.slug} hoverable className="inset-shadow-sm">
-            <Link
-              to={`/services/${category.slug}`}
-              className="mt-auto text-primary-600 hover:text-primary-700 transition-colors inline-flex items-center bg-primary-50/25 hover:bg-primary-50/50 rounded-b-md h-full w-full justify-center py-2 border-0.5"
-            >
-              <CardContent className="flex flex-col h-full p-6 text-center">
-                <div className="flex flex-col gap-2">
-                  <div className="bg-primary-100 text-primary-600 p-3 rounded-md mb-4 self-center items-center">
-                    {getIcon(category.icon)}
-                  </div>
+          <Link
+            key={category.slug}
+            to={`/services/${category.slug}`}
+            className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 shadow-xs hover:shadow-xs -translate-y-0 hover:-translate-y-0.2 transition-all duration-300 ease-in-and-out"
+          >
+            {/* 🌊 Sliding Wipe Background Layer */}
+            <div
+              className="absolute inset-0 bg-primary-700 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
+              aria-hidden="true"
+            />
 
-                  <h3 className="text-xl font-axis-navbar-focus uppercase tracking-wide mb-4 text-gray-900 self-center">
-                    {category.category}
-                  </h3>
+            {/* 📝 Left Content Column (z-10 to stay above the sliding background) */}
+            <div className="relative z-10 flex-1 p-5 flex flex-col justify-start items-start text-start gap-4">
+              {/* Header: Icon inline with the Title */}
+              <div className="flex items-center gap-3 w-full">
+                <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 rounded-lg shrink-0 transition-colors duration-300">
+                  {getIcon(category.icon)}
                 </div>
-                <Text className="text-gray-800 font-axis-thin">
-                  {category.description}
-                </Text>
-              </CardContent>
-            </Link>
-          </Card>
+                <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
+                  {category.category}
+                </h3>
+              </div>
+
+              {/* Subtitle / Description */}
+              <p className="text-sm text-gray-600 group-hover:text-primary-100/95 font-axis-thin transition-colors duration-300 leading-relaxed">
+                {category.description}
+              </p>
+            </div>
+
+            {/* ➡️ Right Accent Strip (Visual Height-spanning bar with indicator) */}
+            <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-800 transition-colors duration-300 shrink-0">
+              <RiArrowRightDoubleLine className="h-5 w-5 text-primary-600 group-hover:text-white transition-all duration-300" />
+            </div>
+          </Link>
         ))}
       </div>
     </Section>
