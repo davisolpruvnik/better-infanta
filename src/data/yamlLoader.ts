@@ -5,7 +5,7 @@ export interface Subcategory {
   name: string;
   slug: string;
   description?: string;
-  icon?: string;
+  icon: string;
 }
 
 export interface Category {
