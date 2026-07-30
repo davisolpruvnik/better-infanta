@@ -1,9 +1,9 @@
 import Section from '../ui/Section';
-import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Link } from 'react-router-dom';
 import { serviceCategories } from '../../data/yamlLoader';
-import { RiArrowRightDoubleLine } from 'react-icons/ri';
+import { lazy, Suspense } from 'react';
+import { resolveIconName } from '@/lib/icon-resolver';
 
 interface Subcategory {
   name: string;
@@ -18,6 +18,10 @@ interface Category {
   icon: string;
 }
 
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(module => ({ default: module.Icon }))
+);
+
 export default function ServicesSection({
   title,
   description,
@@ -27,59 +31,20 @@ export default function ServicesSection({
 }) {
   const { t } = useTranslation();
 
-  const getIcon = (category: string) => {
-    const name = category.trim();
-
-    // 1. Map React Icons prefixes to their corresponding Iconify set identifiers
-    const PREFIX_MAP: Record<string, string> = {
-      Ri: 'ri', // Remix Icons -> ri
-      Lu: 'lucide', // Lucide -> lucide
-      Fi: 'feather', // Feather -> feather
-      Fa: 'fa6-solid', // Font Awesome 6 Solid -> fa6-solid
-      Md: 'mdi', // Material Design -> mdi
-      Bs: 'bi', // Bootstrap Icons -> bi
-      Bi: 'bx', // BoxIcons -> bx
-      Tb: 'tabler', // Tabler -> tabler
-      Hi: 'heroicons', // Heroicons v1 -> heroicons
-      Hi2: 'heroicons', // Heroicons v2 -> heroicons
-      Ai: 'ant-design', // Ant Design -> ant-design
-      Io: 'ion', // Ionicons -> ion
-      Go: 'octicon', // Octicons -> octicon
-      Si: 'simple-icons', // Simple Icons -> simple-icons
-      Ti: 'typcn',
-      Pi: 'ph',
-    };
-
-    // 2. Extract prefix (Group 1) and the rest of the PascalCase name (Group 2)
-    // Matches e.g. "Ri" + "HeartPulseFill" or "Hi2" + "HandThumbUp"
-    const match = name.match(/^([A-Z][a-z]?[0-9]?)([A-Z].*)$/);
-
-    let iconifyPrefix = 'ri'; // Default fallback prefix if no match
-    let cleanName = name;
-
-    if (match) {
-      const reactIconsPrefix = match[1];
-      cleanName = match[2];
-
-      if (PREFIX_MAP[reactIconsPrefix]) {
-        iconifyPrefix = PREFIX_MAP[reactIconsPrefix];
-      }
-    }
-
-    // 3. Convert PascalCase cleanName to kebab-case (e.g. "HeartPulseFill" -> "heart-pulse-fill")
-    const kebabCase = cleanName
-      .replace(/([A-Z])/g, '-$1') // Prepend hyphens to capital letters
-      .replace(/([0-9]+)/g, '-$1') // Prepend hyphens to numeric digits
-      .toLowerCase()
-      .replace(/^-/, '') // Strip any trailing leading hyphen
-      .replace(/-+/g, '-'); // Collapse double-hyphens
-
-    // 4. Render the Icon dynamically with its correct dataset and kebab-cased name
+  const getIcon = (categoryName?: string, className = 'h-6 w-6') => {
     return (
-      <Icon
-        icon={`${iconifyPrefix}:${kebabCase}`}
-        className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105"
-      />
+      <Suspense
+        fallback={
+          <div
+            className={`${className} rounded bg-primary-200/40 animate-pulse shrink-0`}
+          />
+        }
+      >
+        <LazyIconify
+          icon={resolveIconName(categoryName)}
+          className={`${className} shrink-0 transition-transform duration-300 group-hover:scale-105`}
+        />
+      </Suspense>
     );
   };
 
@@ -114,7 +79,7 @@ export default function ServicesSection({
               {/* Header: Icon inline with the Title */}
               <div className="flex items-center gap-3 w-full">
                 <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 rounded-lg shrink-0 transition-colors duration-300">
-                  {getIcon(category.icon)}
+                  {getIcon(category.icon, 'h-5 w-5')}
                 </div>
                 <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
                   {category.category}
@@ -129,7 +94,10 @@ export default function ServicesSection({
 
             {/* ➡️ Right Accent Strip (Visual Height-spanning bar with indicator) */}
             <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-800 transition-colors duration-300 shrink-0">
-              <RiArrowRightDoubleLine className="h-5 w-5 text-primary-600 group-hover:text-white transition-all duration-300" />
+              {getIcon(
+                'ri:arrow-right-double-line',
+                'h-5 w-5 text-primary-600 group-hover:text-white transition-all duration-300'
+              )}
             </div>
           </Link>
         ))}

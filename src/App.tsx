@@ -9,6 +9,7 @@ import Document from './pages/Document';
 import Government from './pages/Government';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Plantao from './components/layout/plantao';
+import TownStats from './components/home/StatGeneral';
 
 function App() {
   return (
@@ -36,6 +37,12 @@ function App() {
               <Route path="/:lang/:documentSlug" element={<Document />} />
               <Route path="/:documentSlug" element={<Document />} />
             </Routes>
+            <TownStats />
+            <div className="pt-12 text-center items-center font-axis-navbar-focus uppercase text-gray-600 tracking-wide">
+              This website is part of the initiative for open government by{' '}
+              <span className="text-primary-700">Bettergov.ph</span> and is not
+              affiliated to the local government of Infanta.
+            </div>
             <Footer />
           </div>
         </NuqsAdapter>

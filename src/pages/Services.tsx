@@ -12,53 +12,15 @@ import Breadcrumbs from '../components/ui/Breadcrumbs';
 import ServicesSection from '../components/home/ServicesSection';
 import SEO from '../components/SEO';
 import { Banner } from '@bettergov/kapwa/banner';
-import { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import { resolveIconName } from '@/lib/icon-resolver';
 
-// Safe dynamic lookup helper to convert PascalCase React Icons to kebab-case Iconify identifiers
-const getIcon = (iconName: string) => {
-  const name = (iconName || 'RiHomeLine').trim();
+// 💡 1. Import your modular shared icon resolver
 
-  const PREFIX_MAP: Record<string, string> = {
-    Ri: 'ri', // Remix Icons -> ri
-    Lu: 'lucide', // Lucide -> lucide
-    Fi: 'feather', // Feather -> feather
-    Fa: 'fa6-solid', // Font Awesome 6 Solid -> fa6-solid
-    Md: 'mdi', // Material Design -> mdi
-    Bs: 'bi', // Bootstrap Icons -> bi
-    Bi: 'bx', // BoxIcons -> bx
-    Tb: 'tabler', // Tabler -> tabler
-    Hi: 'heroicons', // Heroicons v1 -> heroicons
-    Hi2: 'heroicons', // Heroicons v2 -> heroicons
-    Ai: 'ant-design', // Ant Design -> ant-design
-    Io: 'ion', // Ionicons -> ion
-    Go: 'octicon', // Octicons -> octicon
-    Si: 'simple-icons', // Simple Icons -> simple-icons
-    Gi: 'game-icons',
-  };
-
-  const match = name.match(/^([A-Z][a-z]?[0-9]?)([A-Z].*)$/);
-
-  let iconifyPrefix = 'ri';
-  let cleanName = name;
-
-  if (match) {
-    const reactIconsPrefix = match[1];
-    cleanName = match[2];
-    if (PREFIX_MAP[reactIconsPrefix]) {
-      iconifyPrefix = PREFIX_MAP[reactIconsPrefix];
-    }
-  }
-
-  const kebabCase = cleanName
-    .replace(/([A-Z])/g, '-$1')
-    .replace(/([0-9]+)/g, '-$1')
-    .toLowerCase()
-    .replace(/^-/, '')
-    .replace(/-+/g, '-');
-
-  return `${iconifyPrefix}:${kebabCase}`;
-};
+// 💡 2. Lazy load the Iconify component as LazyIconify to avoid namespace collisions
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(module => ({ default: module.Icon }))
+);
 
 const Services: React.FC = () => {
   const { category } = useParams();
@@ -68,6 +30,24 @@ const Services: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const subcategories: Subcategory[] = categoryIndex.pages;
+
+  // 💡 3. Dynamic Lazy Icon Helper (Supports custom Tailwind sizes and transitions)
+  const getIcon = (categoryName?: string, className = 'h-6 w-6') => {
+    return (
+      <Suspense
+        fallback={
+          <div
+            className={`${className} rounded bg-primary-200/40 animate-pulse shrink-0`}
+          />
+        }
+      >
+        <LazyIconify
+          icon={resolveIconName(categoryName)}
+          className={`${className} shrink-0 transition-transform duration-300 group-hover:scale-105`}
+        />
+      </Suspense>
+    );
+  };
 
   const getCategory = () => {
     return serviceCategories.categories.find(c => c.slug === category);
@@ -126,10 +106,8 @@ const Services: React.FC = () => {
 
         {/* Category Header Area */}
         <div className="flex flex-row items-center text-start gap-4">
-          <Icon
-            icon={getIcon(categoryData.icon)}
-            className="h-10 w-10 text-primary-600 rounded-md"
-          />
+          {/* 💡 FIXED: Renders larger h-10 category icon dynamically with no <Icon> wrapper */}
+          {getIcon(categoryData.icon, 'h-10 w-10 text-primary-600')}
           <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 tracking-wide leading-relaxed">
             {categoryData.category || category}
           </h1>
@@ -168,21 +146,22 @@ const Services: React.FC = () => {
                       aria-hidden="true"
                     />
 
-                    {/* Left Content Column */}
+                    {/* Left/Main Content Column */}
                     <div className="relative z-10 flex-1 p-5 flex flex-col justify-start items-start text-start gap-4">
                       {/* Header: Dynamic Icon inline with Title */}
                       <div className="flex items-center gap-3 w-full">
                         <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 flex items-center justify-center rounded-lg shrink-0 transition-colors duration-300">
-                          {/* 💡 FIXED: Render inside <Icon /> instead of rendering raw string output */}
-                          <Icon
-                            icon={getIcon(subcategory.icon)}
-                            className="h-5 w-5"
-                          />
+                          {/* 💡 FIXED: Uses getIcon directly with standard h-5/w-5 sizes */}
+                          {getIcon(
+                            subcategory.icon ||
+                              categoryData?.icon ||
+                              'RiFileTextLine',
+                            'h-5 w-5'
+                          )}
                         </div>
-                        {/* 💡 SYNCHRONIZED FONTS: Updated to use font-axis-navbar-focus matching your category titles */}
-                        <h4 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
+                        <h3 className="text-md font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
                           {subcategory.name}
-                        </h4>
+                        </h3>
                       </div>
 
                       {/* Description */}
@@ -193,19 +172,20 @@ const Services: React.FC = () => {
                       )}
 
                       {/* Pinned Category Badge (Bottom-anchored, color-inverting) */}
-                      <div className="mt-auto pt-1 flex items-center justify-start">
-                        <span className="inline-block px-2 py-1 text-[10px] font-medium rounded-sm bg-gray-100 text-gray-800 group-hover:bg-white/10 group-hover:text-white transition-colors duration-300">
-                          {categoryData.category || category}
+                      <div className="mt-auto pt-4 flex items-center justify-start">
+                        <span className="inline-block px-2.5 py-1 text-[9px] font-axis-bold uppercase tracking-wider rounded bg-gray-100 group-hover:bg-white/20 text-gray-800 group-hover:text-white transition-all duration-300">
+                          {categoryData?.category || category}
                         </span>
                       </div>
                     </div>
 
-                    {/* Right Accent Strip containing interactive indicator */}
-                    <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
-                      <Icon
-                        icon="ri:chevron-right-line"
-                        className="h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"
-                      />
+                    {/* Right Accent Strip Indicator */}
+                    <div className="relative z-10 flex items-center justify-center w-11 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
+                      {/* 💡 FIXED: Uses getIcon directly to render the right arrow indicators cleanly */}
+                      {getIcon(
+                        'ri:chevron-right-line',
+                        'h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300'
+                      )}
                     </div>
                   </Link>
                 ))}
@@ -230,13 +210,14 @@ const Services: React.FC = () => {
                       {/* Header */}
                       <div className="flex items-center gap-3 w-full">
                         <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 flex items-center justify-center rounded-lg shrink-0 transition-colors duration-300">
-                          {/* 💡 FIXED: Render inside <Icon /> component */}
-                          <Icon
-                            icon={getIcon(subcategory.icon)}
-                            className="h-5 w-5"
-                          />
+                          {/* 💡 FIXED: Uses getIcon directly */}
+                          {getIcon(
+                            subcategory.icon ||
+                              categoryData?.icon ||
+                              'RiFileTextLine',
+                            'h-5 w-5'
+                          )}
                         </div>
-                        {/* 💡 SYNCHRONIZED FONTS: Updated to use font-axis-navbar-focus */}
                         <h4 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 leading-snug">
                           {subcategory.name}
                         </h4>
@@ -252,17 +233,18 @@ const Services: React.FC = () => {
                       {/* Pinned Category Badge */}
                       <div className="mt-auto pt-1 flex items-center justify-start">
                         <span className="inline-block px-2 py-1 text-[10px] font-medium rounded-sm bg-gray-100 text-gray-800 group-hover:bg-white/10 group-hover:text-white transition-colors duration-300">
-                          {categoryData.category || category}
+                          {categoryData?.category || category}
                         </span>
                       </div>
                     </div>
 
                     {/* Right Accent Strip */}
                     <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
-                      <Icon
-                        icon="ri:chevron-right-line"
-                        className="h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"
-                      />
+                      {/* 💡 FIXED: Uses getIcon directly */}
+                      {getIcon(
+                        'ri:chevron-right-line',
+                        'h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300'
+                      )}
                     </div>
                   </Link>
                 ))}
