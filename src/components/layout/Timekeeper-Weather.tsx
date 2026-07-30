@@ -1,17 +1,10 @@
 // app/components/timekeeper.tsx
-import { useState, useEffect } from 'react';
-import {
-  Loader2,
-  Sun,
-  CloudSun,
-  Cloud,
-  CloudFog,
-  CloudDrizzle,
-  CloudRain,
-  Snowflake,
-  CloudLightning,
-  type LucideIcon,
-} from 'lucide-react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+
+// 💡 LAZY ENABLED: Split the Iconify renderer into a separate on-demand chunk
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(module => ({ default: module.Icon }))
+);
 
 // --- PRIVATE HELPERS & CONFIGS (No "export" keywords here to satisfy Fast Refresh) ---
 
@@ -23,14 +16,14 @@ interface LocationConfig {
 
 const WEATHER_LOCATIONS: LocationConfig[] = [
   { name: 'Infanta', lat: 14.7452, lon: 121.6492 },
-  { name: 'General Nakar', lat: 14.7667, lon: 121.6333 },
-  { name: 'Real', lat: 14.6622, lon: 121.6033 },
+  { name: 'Umiray (Gen. Nakar)', lat: 15.199, lon: 121.4222 },
+  { name: 'Llavac (Real)', lat: 14.519, lon: 121.5352 },
   { name: 'Polillo', lat: 14.7247, lon: 121.9389 },
-  { name: 'Panukulan', lat: 14.9333, lon: 121.8167 },
+  { name: 'Jomalig', lat: 14.6959, lon: 122.3307 },
 ];
 
 interface WeatherMapEntry {
-  icon: LucideIcon;
+  icon: string;
   label: string;
   iconClass: string;
 }
@@ -38,56 +31,56 @@ interface WeatherMapEntry {
 function getWeatherConfig(code: number): WeatherMapEntry {
   if (code === 0) {
     return {
-      icon: Sun,
+      icon: 'lucide:sun',
       label: 'Clear Sky',
       iconClass: 'text-amber-500 fill-amber-300/60',
     };
   }
   if (code >= 1 && code <= 3) {
     return {
-      icon: CloudSun,
+      icon: 'lucide:cloud-sun',
       label: 'Partly Cloudy',
       iconClass: 'text-amber-600 fill-amber-200/40',
     };
   }
   if (code === 45 || code === 48) {
     return {
-      icon: CloudFog,
+      icon: 'lucide:cloud-fog',
       label: 'Foggy',
       iconClass: 'text-slate-400 fill-slate-100',
     };
   }
   if (code >= 51 && code <= 57) {
     return {
-      icon: CloudDrizzle,
+      icon: 'lucide:cloud-drizzle',
       label: 'Drizzle',
       iconClass: 'text-blue-400 fill-blue-50/50',
     };
   }
   if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) {
     return {
-      icon: CloudRain,
+      icon: 'lucide:cloud-rain',
       label: 'Rainy',
       iconClass: 'text-sky-500 fill-sky-200/60',
     };
   }
   if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) {
     return {
-      icon: Snowflake,
+      icon: 'lucide:snowflake',
       label: 'Snowy',
       iconClass: 'text-sky-300 fill-sky-50',
     };
   }
   if (code >= 95 && code <= 99) {
     return {
-      icon: CloudLightning,
+      icon: 'lucide:cloud-lightning',
       label: 'Thunderstorms',
       iconClass: 'text-amber-500 fill-amber-100/50',
     };
   }
 
   return {
-    icon: Cloud,
+    icon: 'lucide:cloud',
     label: 'Cloudy',
     iconClass: 'text-slate-400 fill-slate-200/60',
   };
@@ -241,35 +234,46 @@ export default function Timekeeper() {
   const weatherDetails = activeWeather
     ? getWeatherConfig(activeWeather.weatherCode)
     : null;
-  const WeatherIcon = weatherDetails ? weatherDetails.icon : null;
+  const weatherIconName = weatherDetails ? weatherDetails.icon : null;
 
   const activeCurrency = currencyRates[activeCurrencyIndex];
 
   return (
-    <nav className="w-full bg-cream-200 border-b border-cream-300 text-[11px] font-axis-book uppercase tracking-wider text-burgundy-900/60 py-1.5 px-6 select-none transition-all duration-300">
-      <div className="max-w-4/5 mx-auto flex justify-between items-center w-full">
+    <nav className="w-full bg-cream-200 border-b border-cream-300 text-[10px] sm:text-[11px] font-axis-book uppercase tracking-wider text-burgundy-900/60 py-1.5 px-3 sm:px-6 select-none transition-all duration-300">
+      {/* 💡 FIXED: w-full on mobile to use maximum screen width, restricts to max-6xl on desktops */}
+      <div className="w-full max-w-6xl mx-auto flex justify-between items-center gap-2">
         {/* 🏰 LEFT SIDE: Pulse indicators, running system time, & offset metadata */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="relative flex items-center justify-center w-2 h-2">
             <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-primary-400 opacity-70"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary-500"></span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-axis-chunky text-primary-800 proportional-nums text-[12px]">
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <span className="font-axis-chunky text-primary-800 proportional-nums text-[11px] sm:text-[12px]">
               {timeStr || '00:00'}
             </span>
-            <span className="opacity-80 text-[10px] text-primary-800">
+            {/* 💡 SPACE SAVER: Hidden on mobile screens, shown on tablet/desktop */}
+            <span className="hidden sm:inline-block opacity-80 text-[10px] text-primary-800">
               ({gmtOffsetStr})
             </span>
           </div>
         </div>
 
         {/* ☁️ & 💵 RIGHT SIDE: Live Weather + Exchange Rates Tickers */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 justify-end flex-1 min-w-0">
           {/* A. Currency Exchange Ticker (USD, EUR, GBP, JPY, BRL in PHP) */}
-          <div className="flex items-center min-w-[100px] justify-end border-r border-burgundy-300/30 pr-3">
+          <div className="flex items-center min-w-[75px] sm:min-w-[100px] justify-end border-r border-burgundy-300/30 pr-2 sm:pr-3 shrink-0">
             {loadingRates ? (
-              <Loader2 className="h-3 w-3 animate-spin text-burgundy-900/40" />
+              <Suspense
+                fallback={
+                  <div className="h-3 w-3 rounded-full bg-burgundy-900/10 animate-pulse shrink-0" />
+                }
+              >
+                <LazyIconify
+                  icon="lucide:loader-2"
+                  className="h-3 w-3 animate-spin text-burgundy-900/40"
+                />
+              </Suspense>
             ) : activeCurrency ? (
               <div
                 className={`flex items-center gap-1 transition-all duration-300 ease-in-out transform ${
@@ -278,10 +282,10 @@ export default function Timekeeper() {
                     : 'opacity-100 translate-y-0 scale-100'
                 }`}
               >
-                <span className="font-bold text-burgundy-900/80">
+                <span className="font-bold text-burgundy-900/80 text-[9px] sm:text-[10px]">
                   {activeCurrency.code}
                 </span>
-                <span className="font-semibold text-primary-800 proportional-nums">
+                <span className="font-semibold text-primary-800 proportional-nums text-[10px] sm:text-[11px]">
                   ₱{activeCurrency.rateInPhp.toFixed(2)}
                 </span>
               </div>
@@ -291,18 +295,28 @@ export default function Timekeeper() {
           </div>
 
           {/* B. Localized Multi-Town Weather Carousel */}
-          <div className="flex items-center min-w-[140px] justify-start">
+          <div className="flex items-center min-w-[110px] sm:min-w-[140px] justify-start shrink-0">
             {loadingWeather ? (
-              <Loader2 className="h-3 w-3 animate-spin text-burgundy-900/40" />
-            ) : activeWeather && WeatherIcon ? (
+              <Suspense
+                fallback={
+                  <div className="h-3 w-3 rounded-full bg-burgundy-900/10 animate-pulse shrink-0" />
+                }
+              >
+                <LazyIconify
+                  icon="lucide:loader-2"
+                  className="h-3 w-3 animate-spin text-burgundy-900/40"
+                />
+              </Suspense>
+            ) : activeWeather && weatherIconName ? (
               <div
-                className={`flex items-center gap-2 transition-all duration-300 ease-in-out transform ${
+                className={`flex items-center gap-1.5 sm:gap-2 transition-all duration-300 ease-in-out transform ${
                   isWeatherFading
                     ? 'opacity-0 -translate-y-1 scale-95'
                     : 'opacity-100 translate-y-0 scale-100'
                 }`}
               >
-                <span className="font-axis-book text-burgundy-900/85">
+                {/* 💡 SPACE SAVER: Truncates long town names on extremely small mobile screens */}
+                <span className="font-axis-book text-burgundy-900/85 text-[10px] sm:text-[11px] truncate max-w-[65px] sm:max-w-none">
                   {activeWeather.name}
                 </span>
 
@@ -312,10 +326,18 @@ export default function Timekeeper() {
                   className="flex items-center gap-1"
                   title={weatherDetails?.label}
                 >
-                  <WeatherIcon
-                    className={`h-4 w-4 stroke-[1.85] ${weatherDetails?.iconClass}`}
-                  />
-                  <span className="font-semibold text-primary-800 text-[12px] proportional-nums">
+                  {/* 💡 LAZY ENABLED WEATHER ICON */}
+                  <Suspense
+                    fallback={
+                      <div className="h-3.5 w-3.5 rounded bg-primary-200/40 animate-pulse shrink-0" />
+                    }
+                  >
+                    <LazyIconify
+                      icon={weatherIconName}
+                      className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${weatherDetails?.iconClass}`}
+                    />
+                  </Suspense>
+                  <span className="font-semibold text-primary-800 text-[11px] sm:text-[12px] proportional-nums">
                     {activeWeather.temp}°C
                   </span>
                 </div>

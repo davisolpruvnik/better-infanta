@@ -183,7 +183,7 @@ const Services: React.FC = () => {
                     <div className="relative z-10 flex items-center justify-center w-11 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
                       {/* 💡 FIXED: Uses getIcon directly to render the right arrow indicators cleanly */}
                       {getIcon(
-                        'ri:chevron-right-line',
+                        'ri:arrow-right-double-line',
                         'h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300'
                       )}
                     </div>
@@ -242,7 +242,7 @@ const Services: React.FC = () => {
                     <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
                       {/* 💡 FIXED: Uses getIcon directly */}
                       {getIcon(
-                        'ri:chevron-right-line',
+                        'ri:arrow-right-double-line',
                         'h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300'
                       )}
                     </div>

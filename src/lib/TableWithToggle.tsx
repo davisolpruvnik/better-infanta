@@ -8,9 +8,15 @@ import {
   useState,
   useMemo,
   useEffect,
+  lazy,
+  Suspense,
 } from 'react';
-import { Table, List } from 'lucide-react';
 import { type TypographyTheme } from './typographyThemes';
+
+// 💡 Lazy-load the Iconify renderer asynchronously (0 KB initial JS tax)
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(m => ({ default: m.Icon }))
+);
 
 // Helper functions to extract text from React children
 const extractTextFromChildren = (children: ReactNode): string[] => {
@@ -50,12 +56,10 @@ const extractRowsFromChildren = (
         key?: string;
       };
 
-      // Check if this is a table row (tr element) by key or className
       if (
         nodeProps.key?.includes('tr') ||
         nodeProps.props?.className?.includes('tr')
       ) {
-        // Extract text from all direct children (td/th elements)
         const cellTexts = extractTextFromChildren(nodeProps.props?.children);
 
         if (cellTexts.length > 0) {
@@ -93,10 +97,7 @@ export const TableWithToggle = ({
       setIsMobile(window.innerWidth < 640); // sm breakpoint
     };
 
-    // Check on mount
     checkScreenSize();
-
-    // Listen for resize events
     window.addEventListener('resize', checkScreenSize);
 
     return () => window.removeEventListener('resize', checkScreenSize);
@@ -118,7 +119,6 @@ export const TableWithToggle = ({
     const rows: Array<Record<string, string>> = [];
     const headers: string[] = [];
 
-    // Parse the table structure from children
     const processTableElement = (element: ReactNode): void => {
       if (
         typeof element === 'object' &&
@@ -130,7 +130,6 @@ export const TableWithToggle = ({
           key?: string;
         };
 
-        // Check by key first (for thead/tbody elements)
         if (elementProps.key?.includes('thead')) {
           const headerCells = extractTextFromChildren(
             elementProps.props?.children
@@ -170,7 +169,6 @@ export const TableWithToggle = ({
             rows.push(row);
           }
         } else {
-          // Recursively process children
           if (elementProps.props?.children) {
             if (Array.isArray(elementProps.props.children)) {
               elementProps.props.children.forEach(child => {
@@ -190,7 +188,6 @@ export const TableWithToggle = ({
       processTableElement(children);
     }
 
-    // Map row data to headers
     const mappedRows = rows.map(row => {
       const mappedRow: Record<string, string> = {};
       headers.forEach((header, index) => {
@@ -208,24 +205,38 @@ export const TableWithToggle = ({
       <div className="flex justify-end mb-4 gap-2 px-4 sm:px-0">
         <button
           onClick={() => setViewMode('table')}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 cursor-pointer ${
             viewMode === 'table'
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          <Table size={16} />
+          {/* Lazy-loaded Table Icon */}
+          <Suspense
+            fallback={
+              <div className="h-4 w-4 rounded bg-primary-200/20 animate-pulse shrink-0" />
+            }
+          >
+            <LazyIconify icon="lucide:table" className="h-4 w-4" />
+          </Suspense>
           Table
         </button>
         <button
           onClick={() => setViewMode('list')}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 cursor-pointer ${
             viewMode === 'list'
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          <List size={16} />
+          {/* Lazy-loaded List Icon */}
+          <Suspense
+            fallback={
+              <div className="h-4 w-4 rounded bg-primary-200/20 animate-pulse shrink-0" />
+            }
+          >
+            <LazyIconify icon="lucide:list" className="h-4 w-4" />
+          </Suspense>
           List
         </button>
       </div>
@@ -250,7 +261,7 @@ export const TableWithToggle = ({
             tableData.rows.map((row, index) => (
               <div
                 key={index}
-                className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm mx-2 sm:mx-0"
+                className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm mx-2 sm:mx-0 text-start"
               >
                 <div className="grid gap-3">
                   {tableData.headers.map((header, headerIndex) => (
@@ -270,7 +281,7 @@ export const TableWithToggle = ({
               </div>
             ))
           ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mx-2 sm:mx-0">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mx-2 sm:mx-0 text-start">
               <div className="text-yellow-800 text-sm">
                 <strong>Debug Info:</strong>
                 <br />

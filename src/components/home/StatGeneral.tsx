@@ -8,8 +8,8 @@ const INFANTA_STATS = {
   area: '342.76 km²',
   population: '77,676',
   coordinates: {
-    lat: 14.7452,
-    lon: 121.6492,
+    lat: 14.7462,
+    lon: 121.6489,
   },
 };
 
@@ -54,9 +54,22 @@ export default function TownStats() {
     L.marker([INFANTA_STATS.coordinates.lat, INFANTA_STATS.coordinates.lon], {
       icon: customMarkerIcon,
     })
-      .addTo(mapRef.current)
+      .addTo(mapRef.current) // or mapRef.current depending on your hook binding
       .bindPopup(
-        `<b class="font-axis-bold text-gray-900">Infanta Municipal Hall</b>`
+        `
+        <div class="flex flex-col justify-start select-none text-center">
+          <span class="block text-[16px] font-axis-navbar-focus uppercase tracking-wider text-gray-900 leading-tight">
+            Infanta Municipal Hall
+          </span>
+          <span class="block text-[12px] font-axis-subtitular-focus text-gray-500 uppercase tracking-wide leading-normal">
+            Seat of local government
+          </span>
+        </div>
+        `,
+        {
+          minWidth: 120,
+          maxWidth: 180,
+        }
       )
       .openPopup();
 
@@ -69,12 +82,12 @@ export default function TownStats() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 bg-cream-50/20 my-8">
+    <div className="container mx-auto px-4 bg-cream-50/20 pt-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* 📊 LEFT COLUMN: Municipal Metrics Grid (cols-2) */}
         <div className="flex flex-col justify-start h-full space-y-6">
-          <div className="text-start mb-8">
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-axis-titular-focus uppercase text-gray-900 tracking-wide mt-3">
+          <div className="text-center md:text-start mb-8">
+            <h2 className="text-4xl md:text-4xl lg:text-5xl font-axis-titular-focus uppercase text-gray-900 tracking-wider">
               General Statistics
             </h2>
           </div>
@@ -82,10 +95,10 @@ export default function TownStats() {
           <div className="grid grid-cols-2 gap-6 pt-2">
             {/* Stat 1: Barangays */}
             <div className="flex flex-col text-start border-l-2 border-primary-500 pl-4">
-              <span className="block uppercase text-[12px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
+              <span className="block uppercase text-[14px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
                 Barangays
               </span>
-              <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-none tabular-nums">
+              <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-none proportional-nums tracking-wide">
                 {INFANTA_STATS.barangays}
               </span>
               <span className="text-[12px] text-gray-400 font-axis-thin mt-1">
@@ -95,10 +108,10 @@ export default function TownStats() {
 
             {/* Stat 2: Area Size */}
             <div className="flex flex-col text-start border-l-2 border-primary-500 pl-4">
-              <span className="block uppercase text-[12px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
+              <span className="block uppercase text-[14px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
                 Land Area
               </span>
-              <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-none tabular-nums">
+              <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-none proportional-nums tracking-wide">
                 {INFANTA_STATS.area}
               </span>
               <span className="text-[12px] text-gray-400 font-axis-thin mt-1">
@@ -108,14 +121,14 @@ export default function TownStats() {
 
             {/* Stat 3: Population (Spans full width for grid-cols-2 balance) */}
             <div className="col-span-2 flex flex-col text-start border-l-2 border-primary-500 pl-4 mt-2">
-              <span className="block uppercase text-[12px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
+              <span className="block uppercase text-[14px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
                 Population Size
               </span>
-              <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-none tabular-nums">
+              <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-none proportional-nums tracking-wide">
                 {INFANTA_STATS.population}
               </span>
               <span className="text-[12px] text-gray-400 font-axis-thin mt-1">
-                Based on Official 2020 National Census data
+                Based on Official 2024 National Census data
               </span>
             </div>
           </div>

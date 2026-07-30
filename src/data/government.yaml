@@ -2,7 +2,7 @@
 # This file contains all the local government activity data for the local government portal
 # Non-technical users can easily edit this file to add, remove, or modify local government activity
 title: Government Agencies
-description:
+description: 
 categories:
   - category: 'Departments'
     slug: 'departments'

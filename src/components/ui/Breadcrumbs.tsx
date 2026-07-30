@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronRight, Home } from 'lucide-react';
+
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(m => ({ default: m.Icon }))
+);
 
 interface BreadcrumbItem {
   label: string;
@@ -49,8 +52,31 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
     >
       {breadcrumbItems.map((item, index) => (
         <React.Fragment key={index}>
-          {index === 0 && <Home className="h-4 w-4" />}
-          {index > 0 && <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />}
+          {/* 💡 Lucide Home -> LazyIconify lucide:home */}
+          {index === 0 && (
+            <Suspense
+              fallback={
+                <div className="h-4 w-4 rounded bg-gray-100 animate-pulse shrink-0" />
+              }
+            >
+              <LazyIconify icon="lucide:home" className="h-4 w-4" />
+            </Suspense>
+          )}
+
+          {/* 💡 Lucide ChevronRight -> LazyIconify lucide:chevron-right */}
+          {index > 0 && (
+            <Suspense
+              fallback={
+                <div className="h-4 w-4 mx-1 rounded bg-gray-100 animate-pulse shrink-0" />
+              }
+            >
+              <LazyIconify
+                icon="lucide:chevron-right"
+                className="h-4 w-4 mx-1 text-gray-400"
+              />
+            </Suspense>
+          )}
+
           {item.href ? (
             <Link
               to={item.href}

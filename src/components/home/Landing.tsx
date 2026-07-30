@@ -1,9 +1,12 @@
-import { FileText, Landmark, LucideSquareActivity } from 'lucide-react';
-// import { useTranslation } from 'react-i18next';
+// src/components/home/LandingSite.tsx (or your exact path)
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(m => ({ default: m.Icon }))
+);
+
 export default function LandingSite() {
-  // const { t } = useTranslation();
   return (
     <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12 md:py-24">
       <div className="container mx-auto px-4 flex flex-col gap-10">
@@ -38,9 +41,19 @@ export default function LandingSite() {
               {/* Services Card */}
               <Link
                 to="/services"
-                className="flex flex-col items-center justify-center p-6 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300"
+                className="flex flex-col items-center justify-center p-6 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300 group"
               >
-                <Landmark className="fill-white" />
+                {/* 💡 LAZY ENABLED: Landmark -> lucide:landmark */}
+                <Suspense
+                  fallback={
+                    <div className="h-6 w-6 rounded bg-white/10 animate-pulse shrink-0" />
+                  }
+                >
+                  <LazyIconify
+                    icon="lucide:landmark"
+                    className="h-6 w-6 text-white group-hover:scale-105 transition-transform duration-200"
+                  />
+                </Suspense>
                 <h3 className="text-md font-axis-bold mt-4 text-white tracking-wider font-axis-titular-focus uppercase">
                   Services
                 </h3>
@@ -52,9 +65,19 @@ export default function LandingSite() {
               {/* Finances Card */}
               <Link
                 to="/finances"
-                className="flex flex-col items-center justify-center p-2 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300"
+                className="flex flex-col items-center justify-center p-2 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300 group"
               >
-                <LucideSquareActivity />
+                {/* 💡 LAZY ENABLED: LucideSquareActivity -> lucide:square-activity */}
+                <Suspense
+                  fallback={
+                    <div className="h-6 w-6 rounded bg-white/10 animate-pulse shrink-0" />
+                  }
+                >
+                  <LazyIconify
+                    icon="lucide:square-activity"
+                    className="h-6 w-6 text-white group-hover:scale-105 transition-transform duration-200"
+                  />
+                </Suspense>
                 <h3 className="text-md font-axis-bold mt-4 text-white tracking-wider font-axis-titular-focus uppercase">
                   Finances
                 </h3>
@@ -66,9 +89,19 @@ export default function LandingSite() {
               {/* Transparency Card */}
               <Link
                 to="/transparency"
-                className="flex flex-col items-center justify-center p-6 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300"
+                className="flex flex-col items-center justify-center p-6 bg-accent-50/5 hover:bg-accent-50/15 border border-accent-50/5 hover:border-accent-50/20 rounded-xl transition duration-300 group"
               >
-                <FileText />
+                {/* 💡 LAZY ENABLED: FileText -> lucide:file-text */}
+                <Suspense
+                  fallback={
+                    <div className="h-6 w-6 rounded bg-white/10 animate-pulse shrink-0" />
+                  }
+                >
+                  <LazyIconify
+                    icon="lucide:file-text"
+                    className="h-6 w-6 text-white group-hover:scale-105 transition-transform duration-200"
+                  />
+                </Suspense>
                 <h3 className="text-md font-axis-bold mt-4 text-white tracking-wider font-axis-titular-focus uppercase">
                   Transparency
                 </h3>

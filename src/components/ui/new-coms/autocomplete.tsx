@@ -2,11 +2,15 @@
 'use client';
 
 import { Autocomplete as AutocompletePrimitive } from '@base-ui/react/autocomplete';
-import { ChevronsUpDownIcon, XIcon } from 'lucide-react';
 import type React from 'react';
 import { cn } from '../../../lib/utils';
 import { Input } from './input';
 import { ScrollArea } from './scroll-area';
+import { lazy, Suspense } from 'react';
+
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(m => ({ default: m.Icon }))
+);
 
 export const Autocomplete: typeof AutocompletePrimitive.Root =
   AutocompletePrimitive.Root;
@@ -67,7 +71,16 @@ export function AutocompleteInput({
           {...triggerProps}
         >
           <AutocompletePrimitive.Icon data-slot="autocomplete-icon">
-            <ChevronsUpDownIcon />
+            <Suspense
+              fallback={
+                <div className="h-4 w-4 rounded bg-primary-100/20 animate-pulse" />
+              }
+            >
+              <LazyIconify
+                icon="lucide:chevrons-up-down"
+                className="h-4 w-4 shrink-0"
+              />
+            </Suspense>
           </AutocompletePrimitive.Icon>
         </AutocompleteTrigger>
       )}
@@ -79,7 +92,14 @@ export function AutocompleteInput({
           )}
           {...clearProps}
         >
-          <XIcon />
+          {/* ✅ UPDATED HERE: */}
+          <Suspense
+            fallback={
+              <div className="h-4 w-4 rounded bg-primary-100/20 animate-pulse" />
+            }
+          >
+            <LazyIconify icon="lucide:x" className="h-4 w-4 shrink-0" />
+          </Suspense>
         </AutocompleteClear>
       )}
     </AutocompletePrimitive.InputGroup>
@@ -258,7 +278,14 @@ export function AutocompleteClear({
       data-slot="autocomplete-clear"
       {...props}
     >
-      <XIcon />
+      {/* ✅ UPDATED HERE: */}
+      <Suspense
+        fallback={
+          <div className="h-4 w-4 rounded bg-primary-100/20 animate-pulse" />
+        }
+      >
+        <LazyIconify icon="lucide:x" className="h-4 w-4 shrink-0" />
+      </Suspense>
     </AutocompletePrimitive.Clear>
   );
 }

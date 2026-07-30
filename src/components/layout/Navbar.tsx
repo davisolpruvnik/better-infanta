@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
-import {
-  X,
-  Menu,
-  ChevronDown,
-  Globe,
-  Search,
-  CheckCircle2,
-  Rocket,
-} from 'lucide-react';
+// src/components/home/Navbar.tsx
+import React, { useState, lazy, Suspense } from 'react';
 import { mainNavigation } from '../../data/navigation';
 import type { LanguageType } from '../../types/index';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../../i18n/languages';
 import Timekeeper from './Timekeeper-Weather';
+
+// 💡 1. Lazy load the Iconify component (0% bundle tax on initial page load)
+const LazyIconify = lazy(() =>
+  import('@iconify/react').then(m => ({ default: m.Icon }))
+);
+
+// 💡 2. Local, ultra-fast icon renderer with a pulsing skeleton fallback
+const renderIcon = (iconName: string, className = 'h-4 w-4') => (
+  <Suspense
+    fallback={
+      <div
+        className={`${className} bg-gray-200/40 rounded animate-pulse shrink-0`}
+      />
+    }
+  >
+    <LazyIconify icon={iconName} className={`${className} shrink-0`} />
+  </Suspense>
+);
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,12 +57,11 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <CheckCircle2 className="h-12 w-12 mr-3" />
-              {/* <img
-                src="/ph-logo.webp"
-                alt="Philippines Coat of Arms"
-                className="h-12 w-12 mr-3"
-              /> */}
+              {/* 💡 FIXED: Unified dynamic checkmark logo */}
+              {renderIcon(
+                'lucide:check-circle-2',
+                'h-12 w-12 mr-3 text-primary-600'
+              )}
               <div>
                 <div className="text-black font-bold">Better Infanta</div>
                 <div className="text-xs text-gray-800">
@@ -71,9 +80,12 @@ const Navbar: React.FC = () => {
                   className="group flex items-center text-gray-700 font-axis-navbar-focus hover:text-primary-600 uppercase tracking-wider transition-colors"
                 >
                   {t(`${item.label}`)}
-                  {item.children && (
-                    <ChevronDown className="ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-all duration-200 group-hover:rotate-180" />
-                  )}
+                  {item.children &&
+                    /* 💡 FIXED: Chevron Down animation icon */
+                    renderIcon(
+                      'lucide:chevron-down',
+                      'ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-all duration-200 group-hover:rotate-180'
+                    )}
                 </a>
                 {item.children && (
                   <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -107,17 +119,12 @@ const Navbar: React.FC = () => {
             </Link>
             <Link
               to="/search"
-              className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider"
+              className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider gap-1"
             >
-              <Search className="h-4 w-4 mr-1" />
+              {/* 💡 FIXED: Search icon */}
+              {renderIcon('lucide:search', 'h-4 w-4')}
               Search
             </Link>
-            {/* <Link
-              to="/sitemap"
-              className="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors"
-            >
-              Sitemap
-            </Link> */}
           </div>
 
           {/* Mobile menu button */}
@@ -127,11 +134,10 @@ const Navbar: React.FC = () => {
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
             >
               <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <X className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="block h-6 w-6" aria-hidden="true" />
-              )}
+              {/* 💡 FIXED: Hamburger Menu Toggle icon */}
+              {isOpen
+                ? renderIcon('lucide:x', 'block h-6 w-6')
+                : renderIcon('lucide:menu', 'block h-6 w-6')}
             </button>
           </div>
         </div>
@@ -150,13 +156,12 @@ const Navbar: React.FC = () => {
                 className="w-full flex justify-between items-center px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-500"
               >
                 {t(`navbar.${item.label.toLowerCase()}`)}
-                {item.children && (
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform ${
-                      activeMenu === item.label ? 'transform rotate-180' : ''
-                    }`}
-                  />
-                )}
+                {item.children &&
+                  /* 💡 FIXED: Mobile Chevron Down animation */
+                  renderIcon(
+                    'lucide:chevron-down',
+                    `h-5 w-5 transition-transform ${activeMenu === item.label ? 'transform rotate-180' : ''}`
+                  )}
               </button>
               {item.children && activeMenu === item.label && (
                 <div className="pl-6 py-2 space-y-1 bg-gray-50">
@@ -177,9 +182,14 @@ const Navbar: React.FC = () => {
           <Link
             to="/join-us"
             onClick={closeMenu}
-            className="block px-4 py-2 text-base font-semibold text-primary-600 hover:bg-primary-50 hover:text-primary-700"
+            className="flex items-center gap-2 px-4 py-2 text-base font-semibold text-primary-600 hover:bg-primary-50 hover:text-primary-700"
           >
-            <Rocket className="fill-red" /> Join Us
+            {/* 💡 FIXED: Rocket icon */}
+            {renderIcon(
+              'lucide:rocket',
+              'h-5 w-5 text-red-500 fill-red-500/20'
+            )}
+            Join Us
           </Link>
           <Link
             to="/about"
@@ -195,16 +205,10 @@ const Navbar: React.FC = () => {
           >
             Search
           </Link>
-          <Link
-            to="/sitemap"
-            onClick={closeMenu}
-            className="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-500"
-          >
-            Sitemap
-          </Link>
           <div className="px-4 py-3 border-t border-gray-200">
             <div className="flex items-center">
-              <Globe className="h-5 w-5 text-gray-800 mr-2" />
+              {/* 💡 FIXED: Globe icon */}
+              {renderIcon('lucide:globe', 'h-5 w-5 text-gray-800 mr-2')}
               <select
                 value={i18n.language}
                 onChange={e => changeLanguage(e.target.value as LanguageType)}
