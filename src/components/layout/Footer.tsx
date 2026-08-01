@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
                   <li key={link.label}>
                     <Link
                       to={link.href}
-                      className="text-gray-500 hover:text-white text-sm transition-colors font-axis-subtitular-focus uppercase tracking-wider leading-snug"
+                      className="text-gray-500 hover:text-white text-sm transition-colors font-axis-footer-focus uppercase tracking-wider leading-snug"
                     >
                       {link.label}
                     </Link>

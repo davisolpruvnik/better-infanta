@@ -6,7 +6,6 @@
 @import '@bettergov/kapwa/styles';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/inter';
 @import 'leaflet/dist/leaflet.css';
 
 @custom-variant dark (&:is(.dark *));
@@ -189,37 +188,49 @@
   font-weight: 800;
   font-variation-settings: 'wdth' 100;
 }
-.font-nav {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-variation-settings: 'wdth' 75;
-}
 
 /* For detailed services and government processes */
 .font-axis-sng-indlab-header {
   font-family: var(--font-sans);
   font-weight: 300;
-  font-variation-settings: 'wdth' 50;
+  font-variation-settings:
+    'wdth' 50,
+    'opsz' 12; /* 💡 Combined into a single comma-separated list */
 }
 .font-axis-sng-indlab-value {
   font-family: var(--font-sans);
-  font-weight: 800;
-  font-variation-settings: 'wdth' 50;
+  font-weight: 700;
+  font-variation-settings:
+    'wdth' 50,
+    'opsz' 36; /* 💡 Combined into a single comma-separated list */
 }
 .font-axis-titular-focus {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-variation-settings: 'wdth' 50;
+  font-variation-settings:
+    'wdth' 50,
+    'opsz' 36; /* 💡 Combined into a single comma-separated list */
 }
 .font-axis-subtitular-focus {
   font-family: var(--font-sans);
   font-weight: 400;
-  font-variation-settings: 'wdth' 60;
+  font-variation-settings:
+    'wdth' 60,
+    'opsz' 18; /* 💡 Combined into a single comma-separated list */
 }
 .font-axis-navbar-focus {
   font-family: var(--font-sans);
   font-weight: 600;
-  font-variation-settings: 'wdth' 50;
+  font-variation-settings:
+    'wdth' 60,
+    'opsz' 54; /* 💡 Combined into a single comma-separated list */
+}
+.font-axis-footer-focus {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-variation-settings:
+    'wdth' 60,
+    'opsz' 18; /* 💡 Combined into a single comma-separated list */
 }
 
 /* Checklist styling */

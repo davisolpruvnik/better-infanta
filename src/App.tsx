@@ -9,7 +9,6 @@ import Document from './pages/Document';
 import Government from './pages/Government';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Plantao from './components/layout/plantao';
-import TownStats from './components/home/StatGeneral';
 import Disclaimer from './components/layout/disclaimer';
 
 function App() {
@@ -38,7 +37,6 @@ function App() {
               <Route path="/:lang/:documentSlug" element={<Document />} />
               <Route path="/:documentSlug" element={<Document />} />
             </Routes>
-            <TownStats />
             <Disclaimer />
             <Footer />
           </div>
