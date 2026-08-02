@@ -138,7 +138,7 @@ const Services: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/services/${category}/${subcategory.slug}`}
-                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md -translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
+                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
                   >
                     {/* 🌊 Sliding Wipe Background Layer */}
                     <div
@@ -197,7 +197,7 @@ const Services: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/services/${category}/${subcategory.slug}`}
-                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md -translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
+                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
                   >
                     {/* 🌊 Sliding Wipe Background Layer */}
                     <div

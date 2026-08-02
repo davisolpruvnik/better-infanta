@@ -48,8 +48,8 @@ interface ParsedServiceDoc {
   feeDetails?: string;
   time?: string;
   office?: string;
-  officeAddress?: string; // 💡 Added here
-  officeHours?: string; // 💡 Added here
+  officeAddress?: string;
+  officeHours?: string;
   requirements: string[];
   requirementsConditional: string[];
   requirementsOptional: string[];
@@ -160,8 +160,8 @@ function parseServiceDocument(
       feeDetails: data['fee_details'] as string,
       time: (data['time'] || data['processingTime']) as string,
       office: data['office'] as string,
-      officeAddress: (data['office_address'] as string) || undefined, // 💡 Parse address
-      officeHours: (data['office_hours'] as string) || undefined, // 💡 Parse hours
+      officeAddress: (data['office_address'] as string) || undefined,
+      officeHours: (data['office_hours'] as string) || undefined,
       requirements: Array.isArray(data['requirements'])
         ? (data['requirements'] as string[])
         : [],
@@ -365,7 +365,7 @@ export default function Document({
           title={documentSlug}
           keywords={`${documentSlug}, government services, local government`}
         />
-        <Section className="p-3">
+        <Section className="p-3 mb-12">
           <Breadcrumbs className="mb-8" items={breadcrumbs} />
           {nestedIndex.title && (
             <Heading level={3}>{nestedIndex.title}</Heading>
@@ -440,7 +440,7 @@ export default function Document({
         description={doc.description}
         keywords={`${documentSlug}, government services, public services, local government`}
       />
-      <Section className="p-3">
+      <Section className="p-3 mb-12">
         <Breadcrumbs className="mb-8" items={breadcrumbs} />
 
         {/* 🏷️ Page Header area (Responsive Layout) */}
@@ -464,7 +464,7 @@ export default function Document({
           {doc.isStructured && (
             <div className="flex flex-col items-center lg:items-end text-center lg:text-end gap-4 shrink-0 w-full lg:w-auto border-t lg:border-t-0 border-gray-100 pt-4 lg:pt-0">
               {/* Row 1: Fees & Expected Time side-by-side */}
-              <div className="flex items-center justify-center lg:justify-end gap-6 w-full lg:w-auto">
+              <div className="flex items-center justify-center lg:justify-end gap-8 w-full lg:w-auto">
                 {/* Estimated Fees */}
                 <div className="relative flex flex-col items-center lg:items-end text-center lg:text-end">
                   <span className="block uppercase text-[16px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
@@ -508,7 +508,7 @@ export default function Document({
 
                 {/* Expected Time */}
                 <div className="flex flex-col items-center lg:items-end text-center lg:text-end">
-                  <span className="xs:text-[12px] text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
+                  <span className="text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
                     Expected Time
                   </span>
                   <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 proportional-nums">
@@ -520,18 +520,11 @@ export default function Document({
               {/* Row 2: Where to Apply (Only displayed if doc.office exists) */}
               {doc.office && (
                 <div className="flex flex-col items-center lg:items-end w-full">
-                  <span className="xs:text-[12px] text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
+                  <span className="text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
                     Where to Apply
                   </span>
-                  <span className="text-2xl lg:text-3xl font-axis-sng-indlab-value text-burgundy-950 my-1 leading-snug">
+                  <span className="text-xl lg:text-2xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-snug">
                     {doc.office}
-                  </span>
-                  <span>
-                    {doc.officeAddress && (
-                      <span className="text-sm font-axis-navbar-focus  uppercase tracking-wider leading-tight text-gray-600 mt-2">
-                        {doc.officeAddress}
-                      </span>
-                    )}
                   </span>
                 </div>
               )}
@@ -557,51 +550,120 @@ export default function Document({
                         Step-by-Step Procedure
                       </h3>
                     </div>
+
+                    {/* Vertical Timeline Connection Line */}
                     <div className="relative border-l border-primary-200 ml-4 pl-6 space-y-8">
-                      {doc.steps.map((step, i) => {
-                        // 💡 ACCORDION PARSING: If step contains a pipe "|" split into Summary + Details
-                        const isAccordion = step.includes('|');
-                        const [summaryText, ...detailParts] = step.split('|');
-                        const detailText = detailParts.join('|').trim();
+                      {(() => {
+                        // Dynamic nesting state-machine
+                        const counters: number[] = [];
 
-                        return (
-                          <div key={i} className="relative">
-                            {/* 💡 FIXED BADGE: Pinned to top-[14px] */}
-                            <span className="absolute -left-[36.5px] top-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-primary-700 font-axis-chunky text-[10px] text-white border-1 border-white ring-1 ring-primary-50 shadow-sm z-10">
-                              {i + 1}
-                            </span>
+                        return doc.steps.map((step, i) => {
+                          const trimmed = step.trim();
 
-                            {isAccordion ? (
-                              /* 💡 NATIVE ACCORDION STEP (Accessible, dynamic rich-text parsing via ReactMarkdown) */
-                              <details className="group text-sm leading-relaxed text-gray-700 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 cursor-pointer">
-                                <summary className="flex items-center justify-between gap-3 font-semibold select-none list-none outline-none">
-                                  <span className="flex-1 pr-4">
-                                    {summaryText.trim()}
-                                  </span>
-                                  {getIcon(
-                                    'ri:chevron-down-line',
-                                    'h-4 w-4 text-primary-600 transition-transform duration-200 group-open:rotate-180'
+                          // Count consecutive '>' prefixes to measure indentation level
+                          const levelMatch = trimmed.match(/^>+/);
+                          const level = levelMatch ? levelMatch[0].length : 0;
+
+                          // Strip all leading '>' markers to isolate the clean step content
+                          const cleanStep = trimmed.replace(/^>+/, '').trim();
+
+                          // Accordion split logic inside active step text
+                          const isAccordion = cleanStep.includes('|');
+                          const [summaryText, ...detailParts] =
+                            cleanStep.split('|');
+                          const detailText = detailParts.join('|').trim();
+
+                          // Maintain the hierarchical counter stack
+                          if (counters.length <= level) {
+                            while (counters.length <= level) {
+                              counters.push(0);
+                            }
+                          } else {
+                            counters.splice(level + 1); // Reset child nodes
+                          }
+
+                          counters[level]++; // Increment current level
+
+                          // Generate badge label (alternating numbers and letters, e.g. 1 -> 1.A -> 1.A.1)
+                          const displayBadge = counters
+                            .map((val, idx) => {
+                              if (idx === 0) return `${val}`;
+                              if (idx === 1)
+                                return String.fromCharCode(65 + (val - 1)); // 'A', 'B', 'C'
+                              return `${val}`;
+                            })
+                            .join('.');
+
+                          // Vite-safe mobile indentation spacing (prevents content from squeezing off screens)
+                          const getIndentClass = (lvl: number) => {
+                            if (lvl === 1) return 'pl-6 sm:pl-8 mt-4 ml-0';
+                            if (lvl === 2)
+                              return 'pl-6 sm:pl-8 mt-4 ml-3 sm:ml-4';
+                            if (lvl >= 3)
+                              return 'pl-6 sm:pl-8 mt-4 ml-6 sm:ml-8';
+                            return '';
+                          };
+
+                          const isSubStep = level > 0;
+
+                          return (
+                            <div
+                              key={i}
+                              className={`relative transition-all duration-300 ${getIndentClass(level)}`}
+                            >
+                              {/* 💡 FIXED BADGE: Solid timeline circles for main steps; NO absolute left badges for sub-steps (clung inline!) */}
+                              {!isSubStep && (
+                                <span className="absolute -left-[36.5px] top-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-primary-700 border-white ring-1 ring-primary-50 text-white font-axis-chunky text-[10px] shadow-sm z-10">
+                                  {displayBadge}
+                                </span>
+                              )}
+
+                              {isAccordion ? (
+                                /* 💡 NATIVE ACCORDION STEP (Accessible, dynamic rich-text parsing via ReactMarkdown) */
+                                <details className="group text-sm font-axis-navbar-focus tracking-wider leading-relaxed text-gray-700 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 cursor-pointer">
+                                  <summary className="flex items-center justify-between gap-3 select-none list-none outline-none">
+                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                      {/* 💡 CLINGED NESTED BADGE: Sits inside the card header for sub-steps */}
+                                      {isSubStep && (
+                                        <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
+                                          {displayBadge}
+                                        </span>
+                                      )}
+                                      <span className="truncate pr-4 uppercase">
+                                        {summaryText.trim()}
+                                      </span>
+                                    </div>
+                                    {getIcon(
+                                      'ri:chevron',
+                                      'h-4 w-4 text-primary-600 transition-transform duration-200 group-open:rotate-180'
+                                    )}
+                                  </summary>
+                                  {/* Detail text is dynamically parsed through ReactMarkdown */}
+                                  <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin tracking-normal leading-relaxed markdown-content">
+                                    <ReactMarkdown
+                                      remarkPlugins={[remarkGfm]}
+                                      components={markdownComponents}
+                                    >
+                                      {detailText}
+                                    </ReactMarkdown>
+                                  </div>
+                                </details>
+                              ) : (
+                                /* STANDARD STATIC STEP */
+                                <div className="text-sm font-axis-navbar-focus uppercase tracking-wider text-gray-800 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 flex items-center gap-2.5">
+                                  {/* 💡 CLINGED NESTED BADGE: Sits inside the card content for sub-steps */}
+                                  {isSubStep && (
+                                    <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
+                                      {displayBadge}
+                                    </span>
                                   )}
-                                </summary>
-                                {/* 💡 UPGRADED: Detail text is now dynamically parsed through ReactMarkdown */}
-                                <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin leading-relaxed markdown-content">
-                                  <ReactMarkdown
-                                    remarkPlugins={[remarkGfm]}
-                                    components={markdownComponents}
-                                  >
-                                    {detailText}
-                                  </ReactMarkdown>
+                                  <span className="flex-1">{cleanStep}</span>
                                 </div>
-                              </details>
-                            ) : (
-                              /* STANDARD STATIC STEP */
-                              <div className="text-sm leading-relaxed text-gray-700 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200">
-                                {step}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                              )}
+                            </div>
+                          );
+                        });
+                      })()}
                     </div>
                   </CardContent>
                 </Card>
@@ -625,11 +687,11 @@ export default function Document({
               {/* Who can avail Card */}
               {doc.whocanavail.length > 0 && (
                 <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
-                  <CardContent className="p-6 space-y-5">
-                    <h3 className="text-md font-axis-navbar-focus justify-center uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                  <CardContent className="p-6 space-y-6">
+                    <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
                       {getIcon(
                         'lucide:user-check',
-                        'h-5 w-5 text-burgundy-900/60 shrink-0'
+                        'h-4 w-4 text-burgundy-900/60 shrink-0'
                       )}
                       <span>Who can avail</span>
                     </h3>
@@ -654,10 +716,10 @@ export default function Document({
               {/* Required Documents Card (With Structured Toggles) */}
               <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
                 <CardContent className="p-6 space-y-5">
-                  <h3 className="text-md font-axis-navbar-focus justify-center uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                  <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
                     {getIcon(
                       'ri:clipboard-line',
-                      'h-5 w-5 text-burgundy-900/60 shrink-0'
+                      'h-4 w-4 text-burgundy-900/60 shrink-0'
                     )}
                     <span>Required Documents</span>
                   </h3>
@@ -672,16 +734,16 @@ export default function Document({
                           val as 'mandatory' | 'conditional' | 'optional'
                         )
                       }
-                      className="w-full grid grid-cols-1 sm:flex sm:flex-row sm:justify-center items-center"
+                      className="w-full grid grid-cols-2 gap-3 sm:flex sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6 items-center"
                     >
                       {/* Mandatory Toggle */}
                       {doc.requirements.length > 0 && (
-                        <label className="flex items-center gap-3 p-2.5 sm:p-2 rounded-lg hover:bg-gray-50 active:bg-gray-100 sm:hover:bg-transparent cursor-pointer text-xs sm:text-sm font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors border border-gray-100 sm:border-none">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1">
                           <Radio.Root
                             value="mandatory"
-                            className="flex size-5 sm:size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
+                            className="flex size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
                           >
-                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-2 sm:before:size-1.5 before:rounded-full before:bg-current" />
+                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
                           </Radio.Root>
                           <span className="font-medium">Mandatory</span>
                         </label>
@@ -689,12 +751,12 @@ export default function Document({
 
                       {/* Conditional Toggle */}
                       {doc.requirementsConditional.length > 0 && (
-                        <label className="flex items-center gap-3 p-2.5 sm:p-2 rounded-lg hover:bg-gray-50 active:bg-gray-100 sm:hover:bg-transparent cursor-pointer text-xs sm:text-sm font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors border border-gray-100 sm:border-none">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1">
                           <Radio.Root
                             value="conditional"
-                            className="flex size-5 sm:size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
+                            className="flex size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
                           >
-                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-2 sm:before:size-1.5 before:rounded-full before:bg-current" />
+                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
                           </Radio.Root>
                           <span className="font-medium">Conditional</span>
                         </label>
@@ -702,12 +764,12 @@ export default function Document({
 
                       {/* Optional Toggle */}
                       {doc.requirementsOptional.length > 0 && (
-                        <label className="flex items-center gap-3 p-2.5 sm:p-2 rounded-lg hover:bg-gray-50 active:bg-gray-100 sm:hover:bg-transparent cursor-pointer text-xs sm:text-sm font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors border border-gray-100 sm:border-none">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1">
                           <Radio.Root
                             value="optional"
-                            className="flex size-5 sm:size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
+                            className="flex size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
                           >
-                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-2 sm:before:size-1.5 before:rounded-full before:bg-current" />
+                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
                           </Radio.Root>
                           <span className="font-medium">Optional</span>
                         </label>
@@ -738,6 +800,55 @@ export default function Document({
                   )}
                 </CardContent>
               </Card>
+
+              {/* 💡 DEDICATED OFFICE DIRECTORY CARD */}
+              {doc.office && (
+                <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
+                  <CardContent className="p-6 space-y-4">
+                    <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                      {getIcon(
+                        'ri:map-pin-line',
+                        'h-4 w-4 text-burgundy-900/60 shrink-0'
+                      )}
+                      <span>Office Directory</span>
+                    </h3>
+
+                    {/* Office Name/Division */}
+                    <div>
+                      <span className="block text-[10px] uppercase font-axis-book text-gray-500 tracking-wider">
+                        Office / Agency Division
+                      </span>
+                      <span className="text-sm font-semibold text-gray-800 leading-snug block mt-0.5">
+                        {doc.office}
+                      </span>
+                    </div>
+
+                    {/* Dynamic Office Address */}
+                    {doc.officeAddress && (
+                      <div>
+                        <span className="block text-[10px] uppercase font-axis-book text-gray-500 tracking-wider">
+                          Office Location / Address
+                        </span>
+                        <span className="text-xs font-medium text-gray-600 leading-relaxed block mt-0.5">
+                          {doc.officeAddress}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Dynamic Office Operating Hours */}
+                    {doc.officeHours && (
+                      <div>
+                        <span className="block text-[10px] uppercase font-axis-book text-gray-500 tracking-wider">
+                          Operating Hours
+                        </span>
+                        <span className="text-xs font-medium text-gray-600 leading-relaxed block mt-0.5">
+                          {doc.officeHours}
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         ) : (

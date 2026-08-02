@@ -5,6 +5,8 @@ fees: 'Varies'
 fee_details: 'Fees depend on the amount of capitalization, nature of buiness, and/or gross income.'
 time: '1 day 30 mins'
 office: 'Business Permits & Licensing Office (BPLO)'
+office_address: 'Local Finance Building, Infanta Municipal Hall, Brgy. Poblacion 38, Infanta, Quezon'
+office_hours: 'Mon to Fri, 8AM-5PM (No Noon Break)'
 whocanavail:
   - 'Local business owners or representatices'
   - 'Sole Proprietorships, Partnerships, & Corporations or representatives'
@@ -31,9 +33,12 @@ requirements_optional:
   - Two (2) Valid IDs Birth certificate/NBI Clearance/Certificate of Employment/Affiliation from the main company or distributor (for non-resident owners)
 
 steps:
-  - 'Submit all requirements at the BPLO reception window.'
-  - 'BPLO officers evaluate your documentation and verify tax maps.'
-  - 'Wait for spatial inspections by the Engineering & Health team.'
-  - "Settle BPLO fees at the Treasurer's cashier desk."
-  - "Claim your laminated Mayor's Business Permit and official plate."
+  - 'Step 1: Submission | Submit your completed application slip and initial clearances at BPLO Window 1.'
+  - '> Option A: Online | Fill out the form.'
+  - '>> Notice | Make sure to scan your documents in PDF format.'
+  - '>>> Tip | You can use your phone camera as a scanner.'
+  - 'Step 2: Processing'
+  - "Step 3: Releasing | Claim your laminated Mayor's Business Permit and official plate at BPLO Window 3."
+postscripts:
+  - "Always keep your Mayor's Permit laminated and displayed prominently at your business location."
 ---
