@@ -1,6 +1,9 @@
-# 🏛️ Local Government Website Starter Kit
+# BetterInfanta.org
 
-A modern, multilingual, and accessible website template designed specifically for local government units (LGUs) in the Philippines. Built with React, TypeScript, and Tailwind CSS.
+An accessible, open-source website template for Infanta, Quezon and Infantahins.
+
+Built with React, TypeScript, and Tailwind CSS.
+_Ganda nay-an, hane?_
 
 ## ✨ Features
 
