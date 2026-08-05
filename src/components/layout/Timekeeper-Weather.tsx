@@ -239,7 +239,7 @@ export default function Timekeeper() {
   const activeCurrency = currencyRates[activeCurrencyIndex];
 
   return (
-    <nav className="w-full bg-cream-200 border-b border-cream-300 text-[10px] sm:text-[11px] font-axis-book uppercase tracking-wider text-burgundy-900/60 py-1.5 px-3 sm:px-6 select-none transition-all duration-300">
+    <nav className="w-full bg-cream-200 border-b border-cream-300 text-[10px] sm:text-[11px] font-axis-medium uppercase tracking-wide text-burgundy-900/60 py-1.5 px-3 sm:px-6 select-none transition-all duration-300">
       {/* 💡 FIXED: w-full on mobile to use maximum screen width, restricts to max-6xl on desktops */}
       <div className="w-full max-w-6xl mx-auto flex justify-between items-center gap-2">
         {/* 🏰 LEFT SIDE: Pulse indicators, running system time, & offset metadata */}
@@ -249,7 +249,7 @@ export default function Timekeeper() {
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary-500"></span>
           </div>
           <div className="flex items-center gap-1 sm:gap-1.5">
-            <span className="font-axis-chunky text-primary-800 proportional-nums text-[11px] sm:text-[12px]">
+            <span className="font-axis-chunky text-primary-800 proportional-nums text-[10px] sm:text-[12px]">
               {timeStr || '00:00'}
             </span>
             {/* 💡 SPACE SAVER: Hidden on mobile screens, shown on tablet/desktop */}
@@ -260,9 +260,9 @@ export default function Timekeeper() {
         </div>
 
         {/* ☁️ & 💵 RIGHT SIDE: Live Weather + Exchange Rates Tickers */}
-        <div className="flex items-center gap-2 sm:gap-3 justify-end flex-1 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3 justify-end flex-1 min-w-0 tracking-wider">
           {/* A. Currency Exchange Ticker (USD, EUR, GBP, JPY, BRL in PHP) */}
-          <div className="flex items-center min-w-[75px] sm:min-w-[100px] justify-end border-r border-burgundy-300/30 pr-2 sm:pr-3 shrink-0">
+          <div className="flex items-center min-w-18.75 sm:min-w-25 justify-end border-r border-burgundy-300/30 pr-2 sm:pr-3 shrink-0">
             {loadingRates ? (
               <Suspense
                 fallback={
@@ -282,10 +282,10 @@ export default function Timekeeper() {
                     : 'opacity-100 translate-y-0 scale-100'
                 }`}
               >
-                <span className="font-bold text-burgundy-900/80 text-[9px] sm:text-[10px]">
+                <span className="font-axis-subtitular-focus text-burgundy-900/80 text-[10px] sm:text-[12px]">
                   {activeCurrency.code}
                 </span>
-                <span className="font-semibold text-primary-800 proportional-nums text-[10px] sm:text-[11px]">
+                <span className="font-axis-sng-indlab-value text-primary-800 proportional-nums text-[10px] sm:text-[12px]">
                   ₱{activeCurrency.rateInPhp.toFixed(2)}
                 </span>
               </div>
@@ -316,7 +316,7 @@ export default function Timekeeper() {
                 }`}
               >
                 {/* 💡 SPACE SAVER: Truncates long town names on extremely small mobile screens */}
-                <span className="font-axis-book text-burgundy-900/85 text-[10px] sm:text-[11px] truncate max-w-[65px] sm:max-w-none">
+                <span className="font-axis-subtitular-focus text-burgundy-900/85 text-[10px] sm:text-[12px] truncate max-w-[65px] sm:max-w-none">
                   {activeWeather.name}
                 </span>
 
@@ -337,7 +337,7 @@ export default function Timekeeper() {
                       className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${weatherDetails?.iconClass}`}
                     />
                   </Suspense>
-                  <span className="font-semibold text-primary-800 text-[11px] sm:text-[12px] proportional-nums">
+                  <span className="font-axis-sng-indlab-value text-primary-800 text-[11px] sm:text-[12px] proportional-nums">
                     {activeWeather.temp}°C
                   </span>
                 </div>

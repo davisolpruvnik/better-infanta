@@ -2,6 +2,10 @@
 # This file contains all the pages/services available under the Social Welfare category
 
 pages:
+  - name: "Mayor's Clearance/Certification Issuance"
+    slug: "mayors-clearance-issuance"
+    description: "Issuance certifying the absence of pending cases against a legitimate Infantahin resident."
+
   - name: "Issuance of Solo Parent Identification Card"
     slug: "solo-parent-id"
     description: "Registration and processing of ID cards to secure statutory benefits and discounts for single parents."

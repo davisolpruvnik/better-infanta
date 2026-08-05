@@ -1,3 +1,4 @@
+// src/components/ui/Breadcrumbs.tsx
 import React, { Suspense, lazy } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -31,7 +32,13 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
       // Convert segment to readable label
       const label = segment
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map(word => {
+          // 💡 Fix: Capitalize abbreviations nicely for any dynamic fallbacks
+          const lower = word.toLowerCase();
+          if (lower === 'sf') return 'SF';
+          if (lower === 'id') return 'ID';
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
         .join(' ');
 
       breadcrumbs.push({
@@ -52,7 +59,6 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
     >
       {breadcrumbItems.map((item, index) => (
         <React.Fragment key={index}>
-          {/* 💡 Lucide Home -> LazyIconify lucide:home */}
           {index === 0 && (
             <Suspense
               fallback={
@@ -63,7 +69,6 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
             </Suspense>
           )}
 
-          {/* 💡 Lucide ChevronRight -> LazyIconify lucide:chevron-right */}
           {index > 0 && (
             <Suspense
               fallback={
@@ -80,13 +85,13 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
           {item.href ? (
             <Link
               to={item.href}
-              className="hover:text-primary-600 transition-colors duration-200"
+              className="hover:text-primary-600 transition-colors duration-200 text-gray-600"
             >
-              {item.label.charAt(0).toUpperCase() + item.label.slice(1)}
+              {item.label}
             </Link>
           ) : (
             <span className="text-gray-900 font-medium" aria-current="page">
-              {item.label.charAt(0).toUpperCase() + item.label.slice(1)}
+              {item.label}
             </span>
           )}
         </React.Fragment>

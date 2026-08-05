@@ -9,3 +9,7 @@ pages:
   - name: "Issuance of Library Card and Conduct of Research"
     slug: "library-card-and-research"
     description: "Enrollment in the municipal library registry and facilitation of academic research requests."
+
+  - name: "Scholarship and Student Financial Assistance Application"
+    slug: "scholarship-sf-assistance-application"
+    description: "Educational assistance for students interested."

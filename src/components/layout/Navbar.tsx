@@ -153,9 +153,9 @@ const Navbar: React.FC = () => {
             <div key={item.label}>
               <button
                 onClick={() => toggleSubmenu(item.label)}
-                className="w-full flex justify-between items-center px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-500"
+                className="w-full flex justify-between items-center px-4 py-2 text-sm text-gray-700 font-axis-navbar-focus hover:bg-gray-50 hover:text-primary-600 uppercase tracking-wider transition-colors"
               >
-                {t(`navbar.${item.label.toLowerCase()}`)}
+                {t(`${item.label.toUpperCase()}`)}
                 {item.children &&
                   /* 💡 FIXED: Mobile Chevron Down animation */
                   renderIcon(
@@ -170,7 +170,7 @@ const Navbar: React.FC = () => {
                       key={child.label}
                       to={child.href}
                       onClick={closeMenu}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-500"
+                      className="block px-4 py-2 text-sm tracking-wide text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-axis-subtitular-focus transition-colors"
                     >
                       {child.label}
                     </Link>
@@ -182,7 +182,7 @@ const Navbar: React.FC = () => {
           <Link
             to="/join-us"
             onClick={closeMenu}
-            className="flex items-center gap-2 px-4 py-2 text-base font-semibold text-primary-600 hover:bg-primary-50 hover:text-primary-700"
+            className="flex items-center gap-2 px-4 py-2 text-sm text-primary-600 hover:bg-primary-50 hover:text-primary-700 font-axis-navbar-focus uppercase tracking-wider transition-colors"
           >
             {/* 💡 FIXED: Rocket icon */}
             {renderIcon(
@@ -194,14 +194,14 @@ const Navbar: React.FC = () => {
           <Link
             to="/about"
             onClick={closeMenu}
-            className="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-500"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600 font-axis-navbar-focus uppercase tracking-wider transition-colors"
           >
             About
           </Link>
           <Link
             to="/search"
             onClick={closeMenu}
-            className="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-500"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600 font-axis-navbar-focus uppercase tracking-wider transition-colors"
           >
             Search
           </Link>
@@ -212,7 +212,7 @@ const Navbar: React.FC = () => {
               <select
                 value={i18n.language}
                 onChange={e => changeLanguage(e.target.value as LanguageType)}
-                className="text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-700 hover:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+                className="text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-700 hover:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600 font-axis-navbar-focus"
               >
                 {Object.entries(LANGUAGES).map(([code, lang]) => (
                   <option key={code} value={code}>

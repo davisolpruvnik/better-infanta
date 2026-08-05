@@ -232,6 +232,10 @@
     'wdth' 60,
     'opsz' 18; /* 💡 Combined into a single comma-separated list */
 }
+.font-axis-number-focus {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
 
 /* Checklist styling */
 .task-list-item {

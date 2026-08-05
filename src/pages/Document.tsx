@@ -24,7 +24,8 @@ import {
   type CategoryIndex,
 } from '../data/yamlLoader';
 import SEO from '../components/SEO';
-import { Radio, RadioGroup, Tooltip } from '@base-ui/react';
+// 💡 Swapped out Tooltip for Popover to support tapping on touch devices
+import { Radio, RadioGroup, Popover } from '@base-ui/react';
 
 // 💡 1. Import your modular shared icon resolver
 import { resolveIconName } from '@/lib/icon-resolver';
@@ -39,6 +40,32 @@ interface DocumentProps {
   categoryType?: 'service' | 'government';
 }
 
+// Helper to format requirements keys dynamically into tab titles
+function formatRequirementLabel(key: string): string {
+  if (key === 'requirements') return 'General';
+  const cleanKey = key.replace(/^requirements_?/, '');
+  if (!cleanKey) return 'General';
+  return cleanKey
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+// 💡 Helper to cleanly format a raw slug if all YAML/Markdown metadata is missing
+function formatSlugToTitle(slug: string): string {
+  if (!slug) return '';
+  if (slug.includes(' ')) return slug; // Already formatted
+  return slug
+    .split('-')
+    .map(word => {
+      const lower = word.toLowerCase();
+      if (lower === 'sf') return 'SF';
+      if (lower === 'id') return 'ID';
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}
+
 // Structured data map interface for custom layout parsing
 interface ParsedServiceDoc {
   isStructured: boolean;
@@ -50,9 +77,7 @@ interface ParsedServiceDoc {
   office?: string;
   officeAddress?: string;
   officeHours?: string;
-  requirements: string[];
-  requirementsConditional: string[];
-  requirementsOptional: string[];
+  requirementsGroups: { key: string; label: string; items: string[] }[];
   whocanavail: string[];
   steps: string[];
   postscripts?: string;
@@ -65,6 +90,17 @@ function parseServiceDocument(
   descriptionFromLoader: string,
   rawMarkdown: string
 ): ParsedServiceDoc {
+  // 💡 Check for markdown H1 header as a high-quality fallback for raw markdown files
+  let fallbackTitle = titleFromLoader;
+  if (rawMarkdown) {
+    const h1Match = rawMarkdown.match(/^#\s+(.+)$/m);
+    if (h1Match) {
+      fallbackTitle = h1Match[1].trim();
+    } else {
+      fallbackTitle = formatSlugToTitle(titleFromLoader);
+    }
+  }
+
   if (
     !rawMarkdown ||
     typeof rawMarkdown !== 'string' ||
@@ -72,11 +108,9 @@ function parseServiceDocument(
   ) {
     return {
       isStructured: false,
-      title: titleFromLoader,
+      title: fallbackTitle,
       description: descriptionFromLoader,
-      requirements: [],
-      requirementsConditional: [],
-      requirementsOptional: [],
+      requirementsGroups: [],
       whocanavail: [],
       steps: [],
       postscripts: undefined,
@@ -89,11 +123,9 @@ function parseServiceDocument(
     if (parts.length < 3) {
       return {
         isStructured: false,
-        title: titleFromLoader,
+        title: fallbackTitle,
         description: descriptionFromLoader,
-        requirements: [],
-        requirementsConditional: [],
-        requirementsOptional: [],
+        requirementsGroups: [],
         whocanavail: [],
         steps: [],
         postscripts: undefined,
@@ -143,18 +175,43 @@ function parseServiceDocument(
       }
     }
 
-    // Bracket-notation is used here for secure index-signature reading
+    // Dynamic processing of requirements fields
+    const requirementsGroups: {
+      key: string;
+      label: string;
+      items: string[];
+    }[] = [];
+    for (const key of Object.keys(data)) {
+      if (key.startsWith('requirements')) {
+        const items = Array.isArray(data[key]) ? (data[key] as string[]) : [];
+        if (items.length > 0) {
+          requirementsGroups.push({
+            key,
+            label: formatRequirementLabel(key),
+            items,
+          });
+        }
+      }
+    }
+
+    // Sort to prioritize general requirements first, followed by custom groups alphabetically
+    requirementsGroups.sort((a, b) => {
+      if (a.key === 'requirements') return -1;
+      if (b.key === 'requirements') return 1;
+      return a.label.localeCompare(b.label);
+    });
+
     const isStructured = !!(
       data['fees'] ||
       data['time'] ||
       data['office'] ||
-      data['requirements'] ||
+      requirementsGroups.length > 0 ||
       data['steps']
     );
 
     return {
       isStructured,
-      title: (data['title'] as string) || titleFromLoader,
+      title: (data['title'] as string) || fallbackTitle,
       description: (data['description'] as string) || descriptionFromLoader,
       fees: data['fees'] as string,
       feeDetails: data['fee_details'] as string,
@@ -162,15 +219,7 @@ function parseServiceDocument(
       office: data['office'] as string,
       officeAddress: (data['office_address'] as string) || undefined,
       officeHours: (data['office_hours'] as string) || undefined,
-      requirements: Array.isArray(data['requirements'])
-        ? (data['requirements'] as string[])
-        : [],
-      requirementsConditional: Array.isArray(data['requirements_conditional'])
-        ? (data['requirements_conditional'] as string[])
-        : [],
-      requirementsOptional: Array.isArray(data['requirements_optional'])
-        ? (data['requirements_optional'] as string[])
-        : [],
+      requirementsGroups,
       whocanavail: Array.isArray(data['whocanavail'])
         ? (data['whocanavail'] as string[])
         : [],
@@ -187,11 +236,9 @@ function parseServiceDocument(
     );
     return {
       isStructured: false,
-      title: titleFromLoader,
+      title: fallbackTitle,
       description: descriptionFromLoader,
-      requirements: [],
-      requirementsConditional: [],
-      requirementsOptional: [],
+      requirementsGroups: [],
       whocanavail: [],
       steps: [],
       postscripts: undefined,
@@ -211,10 +258,8 @@ export default function Document({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 💡 Requirements Toggle State (Filters checklist based on selection)
-  const [reqType, setReqType] = useState<
-    'mandatory' | 'conditional' | 'optional'
-  >('mandatory');
+  // 💡 Dynamic active requirements group state
+  const [activeReqKey, setActiveReqKey] = useState<string>('');
 
   const markdownComponents = createMarkdownComponents(
     getTypographyTheme(initialTheme)
@@ -273,8 +318,8 @@ export default function Document({
               href: `${sectionHref}/${category}`,
             },
             {
-              label: documentSlug,
-              href: `${sectionHref}/${category}/${documentSlug}`,
+              label: index.title ?? formatSlugToTitle(documentSlug),
+              href: undefined, // 💡 Last item (current page) should not be clickable
             },
           ]);
           return;
@@ -287,6 +332,13 @@ export default function Document({
         );
         setMarkdownContent(content);
 
+        // Parse frontmatter (or check for `# Title` headings) immediately to capture the clean title
+        const parsedDoc = parseServiceDocument(
+          content.title || documentSlug || '',
+          content.description || '',
+          content.content
+        );
+
         setBreadcrumbs([
           { label: 'Home', href: '/' },
           { label: sectionLabel, href: sectionHref },
@@ -295,8 +347,11 @@ export default function Document({
             href: `${sectionHref}/${category}`,
           },
           {
-            label: content.title ?? documentSlug,
-            href: `${sectionHref}/${category}/${documentSlug}`,
+            label:
+              parsedDoc.title ||
+              content.title ||
+              formatSlugToTitle(documentSlug),
+            href: undefined, // 💡 Last item (current page) should not be clickable
           },
         ]);
       } catch (err) {
@@ -311,7 +366,7 @@ export default function Document({
     loadContent();
   }, [documentSlug, category, categoryType]);
 
-  // Set default requirements selector if mandatory list is empty but conditional has items
+  // Set default requirement tab on load
   useEffect(() => {
     if (markdownContent) {
       const doc = parseServiceDocument(
@@ -319,18 +374,8 @@ export default function Document({
         markdownContent.description || '',
         markdownContent.content
       );
-      if (
-        doc.requirements.length === 0 &&
-        doc.requirementsConditional.length > 0
-      ) {
-        setReqType('conditional');
-      } else if (
-        doc.requirements.length === 0 &&
-        doc.requirementsOptional.length > 0
-      ) {
-        setReqType('optional');
-      } else {
-        setReqType('mandatory');
+      if (doc.requirementsGroups.length > 0) {
+        setActiveReqKey(doc.requirementsGroups[0].key);
       }
     }
   }, [markdownContent, documentSlug]);
@@ -345,8 +390,11 @@ export default function Document({
 
   if (error) {
     return (
-      <Section className="p-3 mb-12">
-        <Breadcrumbs className="mb-8" items={breadcrumbs} />
+      <Section className="p-3 mb-12 justify-center">
+        {/* 💡 Centered breadcrumbs in error view */}
+        <div className="flex justify-center mb-8">
+          <Breadcrumbs items={breadcrumbs} />
+        </div>
         <Banner
           type="error"
           title="Document Not Found"
@@ -365,8 +413,11 @@ export default function Document({
           title={documentSlug}
           keywords={`${documentSlug}, government services, local government`}
         />
-        <Section className="p-3 mb-12">
-          <Breadcrumbs className="mb-8" items={breadcrumbs} />
+        <Section className="p-3 mb-12 justify-center">
+          {/* 💡 Centered breadcrumbs in nested directory view */}
+          <div className="flex justify-center mb-8">
+            <Breadcrumbs items={breadcrumbs} />
+          </div>
           {nestedIndex.title && (
             <Heading level={3}>{nestedIndex.title}</Heading>
           )}
@@ -426,12 +477,11 @@ export default function Document({
     markdownContent.content
   );
 
-  // Helper to determine active requirements list to render
-  const getActiveRequirements = () => {
-    if (reqType === 'conditional') return doc.requirementsConditional;
-    if (reqType === 'optional') return doc.requirementsOptional;
-    return doc.requirements;
-  };
+  // Find active requirements array
+  const activeGroup =
+    doc.requirementsGroups.find(g => g.key === activeReqKey) ||
+    doc.requirementsGroups[0];
+  const activeRequirements = activeGroup ? activeGroup.items : [];
 
   return (
     <>
@@ -441,14 +491,17 @@ export default function Document({
         keywords={`${documentSlug}, government services, public services, local government`}
       />
       <Section className="p-3 mb-12">
-        <Breadcrumbs className="mb-8" items={breadcrumbs} />
+        {/* 💡 Centered breadcrumbs in primary document layout */}
+        <div className="flex justify-center mb-8">
+          <Breadcrumbs items={breadcrumbs} />
+        </div>
 
         {/* 🏷️ Page Header area (Responsive Layout) */}
         <div className="mb-8 justify-between items-start gap-6 flex flex-col lg:flex-row border-b border-gray-100 pb-6">
-          {/* LEFT COLUMN: Official Guide Tag, Title & Description (Centers on mobile, left-aligns on desktop) */}
+          {/* LEFT COLUMN: Official Guide Tag, Title & Description */}
           <div className="flex-1 min-w-0 text-center lg:text-start">
-            <span className="text-[10px] font-axis-bold text-primary-600 uppercase tracking-widest bg-primary-50 px-2.5 py-1 rounded">
-              Official Guide
+            <span className="text-[12px] font-axis-navbar-focus text-primary-600 uppercase tracking-widest bg-primary-50 px-2.5 py-1 rounded">
+              Citizen Charter Guide
             </span>
             <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 mt-3 tracking-wide leading-snug">
               {doc.title}
@@ -460,7 +513,7 @@ export default function Document({
             )}
           </div>
 
-          {/* RIGHT COLUMN: Quick Scan Info Hub (Centers on mobile, right-aligns on desktop) */}
+          {/* RIGHT COLUMN: Quick Scan Info Hub */}
           {doc.isStructured && (
             <div className="flex flex-col items-center lg:items-end text-center lg:text-end gap-4 shrink-0 w-full lg:w-auto border-t lg:border-t-0 border-gray-100 pt-4 lg:pt-0">
               {/* Row 1: Fees & Expected Time side-by-side */}
@@ -471,33 +524,32 @@ export default function Document({
                     Estimated Cost
                   </span>
 
-                  {doc.feeDetails ? (
-                    <Tooltip.Provider>
-                      <Tooltip.Root>
-                        <Tooltip.Trigger
-                          render={
-                            <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 border-b border-dotted border-burgundy-900/60 text-end cursor-pointer">
-                              {doc.fees || 'Free / No Fees'}
-                            </span>
-                          }
-                        />
-                        <Tooltip.Portal>
-                          <Tooltip.Positioner side="bottom" sideOffset={6}>
-                            <Tooltip.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-gray-600 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[starting-style]:translate-y-1.5 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:translate-y-1.5">
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950">
+                      {doc.fees || 'Free / No Fees'}
+                    </span>
+                    {/* 💡 Replaced Tooltip with Popover & openOnHover to enable BOTH hovering on desktops and tapping/clicking on mobile screens */}
+                    {doc.feeDetails && (
+                      <Popover.Root>
+                        <Popover.Trigger
+                          openOnHover
+                          className="inline-flex items-center justify-center p-1 rounded-full text-burgundy-900/60 hover:text-burgundy-950 hover:bg-burgundy-50/50 transition-colors focus:outline-none cursor-pointer"
+                        >
+                          {getIcon('lucide:help-circle', 'h-4 w-4')}
+                        </Popover.Trigger>
+                        <Popover.Portal>
+                          <Popover.Positioner side="bottom" sideOffset={6}>
+                            <Popover.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-gray-600 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[starting-style]:translate-y-1.5 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:translate-y-1.5">
                               <span className="block text-[9px] font-axis-bold text-gray-700 uppercase tracking-wider mb-1 select-none">
                                 Calculation Basis
                               </span>
                               {doc.feeDetails}
-                            </Tooltip.Popup>
-                          </Tooltip.Positioner>
-                        </Tooltip.Portal>
-                      </Tooltip.Root>
-                    </Tooltip.Provider>
-                  ) : (
-                    <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1">
-                      {doc.fees || 'Free / No Fees'}
-                    </span>
-                  )}
+                            </Popover.Popup>
+                          </Popover.Positioner>
+                        </Popover.Portal>
+                      </Popover.Root>
+                    )}
+                  </div>
                 </div>
 
                 {/* Vertical Separator Line */}
@@ -517,7 +569,7 @@ export default function Document({
                 </div>
               </div>
 
-              {/* Row 2: Where to Apply (Only displayed if doc.office exists) */}
+              {/* Row 2: Where to Apply */}
               {doc.office && (
                 <div className="flex flex-col items-center lg:items-end w-full">
                   <span className="text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
@@ -526,6 +578,9 @@ export default function Document({
                   <span className="text-xl lg:text-2xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-snug">
                     {doc.office}
                   </span>
+                  <span className="text-sm font-axis-navbar-focus text-gray-600 tracking-wide">
+                    {doc.officeAddress}
+                  </span>
                 </div>
               )}
             </div>
@@ -533,20 +588,20 @@ export default function Document({
         </div>
 
         {doc.isStructured ? (
-          /* 💎 VISUAL DASHBOARD GRID (Triggers when Frontmatter fields exist) */
+          /* 💎 VISUAL DASHBOARD GRID */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column (2/3 Width): Required Documents & Steps Timeline */}
-            <div className="lg:col-span-2 space-y-6">
+            {/* Left Column (2/3 Width): Steps Timeline & Postscripts (Displays 2nd on mobile screens, 1st on desktops) */}
+            <div className="order-2 lg:order-1 lg:col-span-2 space-y-6">
               {/* Stepper Timeline Box */}
               {doc.steps.length > 0 && (
                 <Card className="border border-gray-200/80 shadow-xs rounded-xl">
                   <CardContent className="p-6">
-                    <div className="flex flex-row items-center gap-3 pb-6">
+                    <div className="flex flex-row items-center justify-center gap-2 pb-6">
                       {getIcon(
                         'ri:walk-line',
                         'h-5 w-5 text-burgundy-900 shrink-0'
                       )}
-                      <h3 className="text-sm font-axis-bold uppercase tracking-wider text-burgundy-900">
+                      <h3 className="text-md font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60">
                         Step-by-Step Procedure
                       </h3>
                     </div>
@@ -554,7 +609,6 @@ export default function Document({
                     {/* Vertical Timeline Connection Line */}
                     <div className="relative border-l border-primary-200 ml-4 pl-6 space-y-8">
                       {(() => {
-                        // Dynamic nesting state-machine
                         const counters: number[] = [];
 
                         return doc.steps.map((step, i) => {
@@ -584,7 +638,7 @@ export default function Document({
 
                           counters[level]++; // Increment current level
 
-                          // Generate badge label (alternating numbers and letters, e.g. 1 -> 1.A -> 1.A.1)
+                          // Generate badge label
                           const displayBadge = counters
                             .map((val, idx) => {
                               if (idx === 0) return `${val}`;
@@ -594,7 +648,7 @@ export default function Document({
                             })
                             .join('.');
 
-                          // Vite-safe mobile indentation spacing (prevents content from squeezing off screens)
+                          // Vite-safe mobile indentation spacing
                           const getIndentClass = (lvl: number) => {
                             if (lvl === 1) return 'pl-6 sm:pl-8 mt-4 ml-0';
                             if (lvl === 2)
@@ -611,7 +665,7 @@ export default function Document({
                               key={i}
                               className={`relative transition-all duration-300 ${getIndentClass(level)}`}
                             >
-                              {/* 💡 FIXED BADGE: Solid timeline circles for main steps; NO absolute left badges for sub-steps (clung inline!) */}
+                              {/* FIXED BADGE: Solid timeline circles for main steps */}
                               {!isSubStep && (
                                 <span className="absolute -left-[36.5px] top-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-primary-700 border-white ring-1 ring-primary-50 text-white font-axis-chunky text-[10px] shadow-sm z-10">
                                   {displayBadge}
@@ -619,27 +673,26 @@ export default function Document({
                               )}
 
                               {isAccordion ? (
-                                /* 💡 NATIVE ACCORDION STEP (Accessible, dynamic rich-text parsing via ReactMarkdown) */
-                                <details className="group text-sm font-axis-navbar-focus tracking-wider leading-relaxed text-gray-700 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 cursor-pointer">
+                                /* NATIVE ACCORDION STEP (Keep Uppercase Medium formatting for interactive summaries) */
+                                <details className="group text-sm font-axis-medium tracking-normal leading-relaxed text-gray-700 bg-gray-50/40 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 cursor-pointer">
                                   <summary className="flex items-center justify-between gap-3 select-none list-none outline-none">
                                     <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                      {/* 💡 CLINGED NESTED BADGE: Sits inside the card header for sub-steps */}
                                       {isSubStep && (
                                         <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
                                           {displayBadge}
                                         </span>
                                       )}
-                                      <span className="truncate pr-4 uppercase">
+                                      <span className="pr-4">
                                         {summaryText.trim()}
                                       </span>
                                     </div>
                                     {getIcon(
-                                      'ri:chevron',
+                                      'tabler:chevron-up',
                                       'h-4 w-4 text-primary-600 transition-transform duration-200 group-open:rotate-180'
                                     )}
                                   </summary>
-                                  {/* Detail text is dynamically parsed through ReactMarkdown */}
-                                  <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin tracking-normal leading-relaxed markdown-content">
+                                  {/* Detail text parsing */}
+                                  <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin tracking-normal leading-tight markdown-content">
                                     <ReactMarkdown
                                       remarkPlugins={[remarkGfm]}
                                       components={markdownComponents}
@@ -649,15 +702,16 @@ export default function Document({
                                   </div>
                                 </details>
                               ) : (
-                                /* STANDARD STATIC STEP */
-                                <div className="text-sm font-axis-navbar-focus uppercase tracking-wider text-gray-800 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 flex items-center gap-2.5">
-                                  {/* 💡 CLINGED NESTED BADGE: Sits inside the card content for sub-steps */}
+                                /* STANDARD STATIC STEP (Fallback typography to font-axis-book if no interactive accordions) */
+                                <div className="text-gray-800 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 flex items-center gap-2.5">
                                   {isSubStep && (
                                     <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
                                       {displayBadge}
                                     </span>
                                   )}
-                                  <span className="flex-1">{cleanStep}</span>
+                                  <span className="text-sm font-axis-thin text-gray-800 flex-1">
+                                    {cleanStep}
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -669,7 +723,25 @@ export default function Document({
                 </Card>
               )}
 
-              {/* Optional raw markdown text inside the file (e.g. general notes/FAQ) */}
+              {/* 💡 POSTSCRIPTS (Hidden automatically if undefined) */}
+              {doc.postscripts && (
+                <div className="bg-amber-50/40 border border-amber-200/50 rounded-xl p-6 mt-6 flex items-start gap-3.5 shadow-xs">
+                  {getIcon(
+                    'lucide:info',
+                    'h-5 w-5 text-amber-700 shrink-0 mt-0.5'
+                  )}
+                  <div className="space-y-1.5 flex-1">
+                    <h4 className="text-xs font-axis-navbar-focus uppercase tracking-widest text-amber-800 font-semibold">
+                      Important Reminders / Notes
+                    </h4>
+                    <div className="text-sm font-axis-book text-gray-700/90 leading-relaxed whitespace-pre-line">
+                      {doc.postscripts}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Optional raw markdown text */}
               {doc.rawMarkdownContent && (
                 <Card className="border border-gray-200/80 shadow-xs rounded-xl p-6 markdown-content">
                   <ReactMarkdown
@@ -682,16 +754,16 @@ export default function Document({
               )}
             </div>
 
-            {/* Right Column (1/3 Width): Quick Info Info Hub */}
-            <div className="space-y-6">
+            {/* Right Column (1/3 Width): Quick Info Hub (Displays 1st on mobile screens, 2nd on desktops) */}
+            <div className="order-1 lg:order-2 space-y-6">
               {/* Who can avail Card */}
               {doc.whocanavail.length > 0 && (
                 <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
                   <CardContent className="p-6 space-y-6">
-                    <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                    <h3 className="justify-center text-md font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
                       {getIcon(
                         'lucide:user-check',
-                        'h-4 w-4 text-burgundy-900/60 shrink-0'
+                        'h-5 w-5 text-burgundy-900/60 shrink-0'
                       )}
                       <span>Who can avail</span>
                     </h3>
@@ -699,11 +771,11 @@ export default function Document({
                       {doc.whocanavail.map((req, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg"
+                          className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg font-axis-thin"
                         >
                           {getIcon(
                             'lucide:check-circle-2',
-                            'text-emerald-500 h-5 w-5 shrink-0 mt-0.5'
+                            'text-emerald-500 h-5 w-5 shrink-0'
                           )}
                           <span>{req}</span>
                         </li>
@@ -713,83 +785,54 @@ export default function Document({
                 </Card>
               )}
 
-              {/* Required Documents Card (With Structured Toggles) */}
+              {/* Required Documents Card (With Dynamic Toggles) */}
               <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
                 <CardContent className="p-6 space-y-5">
-                  <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                  <h3 className="justify-center text-md font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
                     {getIcon(
                       'ri:clipboard-line',
-                      'h-4 w-4 text-burgundy-900/60 shrink-0'
+                      'h-5 w-5 text-burgundy-900/60 shrink-0'
                     )}
                     <span>Required Documents</span>
                   </h3>
 
-                  {/* 💡 DYNAMIC BASE UI RADIO TOGGLE CONTROLS */}
-                  {(doc.requirementsConditional.length > 0 ||
-                    doc.requirementsOptional.length > 0) && (
+                  {/* 💡 DYNAMIC BASE UI RADIO TOGGLE CONTROLS FOR CUSTOM GROUPS */}
+                  {doc.requirementsGroups.length > 1 && (
                     <RadioGroup
-                      value={reqType}
-                      onValueChange={val =>
-                        setReqType(
-                          val as 'mandatory' | 'conditional' | 'optional'
-                        )
-                      }
+                      value={activeReqKey}
+                      onValueChange={setActiveReqKey}
                       className="w-full grid grid-cols-2 gap-3 sm:flex sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6 items-center"
                     >
-                      {/* Mandatory Toggle */}
-                      {doc.requirements.length > 0 && (
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1">
+                      {doc.requirementsGroups.map(group => (
+                        <label
+                          key={group.key}
+                          className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1"
+                        >
                           <Radio.Root
-                            value="mandatory"
+                            value={group.key}
                             className="flex size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
                           >
                             <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
                           </Radio.Root>
-                          <span className="font-medium">Mandatory</span>
+                          <span className="font-medium">{group.label}</span>
                         </label>
-                      )}
-
-                      {/* Conditional Toggle */}
-                      {doc.requirementsConditional.length > 0 && (
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1">
-                          <Radio.Root
-                            value="conditional"
-                            className="flex size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
-                          >
-                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
-                          </Radio.Root>
-                          <span className="font-medium">Conditional</span>
-                        </label>
-                      )}
-
-                      {/* Optional Toggle */}
-                      {doc.requirementsOptional.length > 0 && (
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1">
-                          <Radio.Root
-                            value="optional"
-                            className="flex size-4 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 cursor-pointer"
-                          >
-                            <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
-                          </Radio.Root>
-                          <span className="font-medium">Optional</span>
-                        </label>
-                      )}
+                      ))}
                     </RadioGroup>
                   )}
 
-                  {/* Active List Rendering based on Toggle state */}
-                  {getActiveRequirements().length > 0 ? (
+                  {/* Active List Rendering */}
+                  {activeRequirements.length > 0 ? (
                     <ul className="grid grid-cols-1 gap-3">
-                      {getActiveRequirements().map((req, i) => (
+                      {activeRequirements.map((req, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg align-top transition-all duration-200"
+                          className="flex gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg transition-all duration-200"
                         >
                           {getIcon(
                             'lucide:check-circle-2',
-                            'text-emerald-500 h-5 w-5 shrink-0 mt-0.5'
+                            'text-emerald-500 h-5 w-5 shrink-0'
                           )}
-                          <span>{req}</span>
+                          <span className="font-axis-thin">{req}</span>
                         </li>
                       ))}
                     </ul>
@@ -800,59 +843,10 @@ export default function Document({
                   )}
                 </CardContent>
               </Card>
-
-              {/* 💡 DEDICATED OFFICE DIRECTORY CARD */}
-              {doc.office && (
-                <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
-                  <CardContent className="p-6 space-y-4">
-                    <h3 className="text-xs font-axis-bold uppercase tracking-widest text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
-                      {getIcon(
-                        'ri:map-pin-line',
-                        'h-4 w-4 text-burgundy-900/60 shrink-0'
-                      )}
-                      <span>Office Directory</span>
-                    </h3>
-
-                    {/* Office Name/Division */}
-                    <div>
-                      <span className="block text-[10px] uppercase font-axis-book text-gray-500 tracking-wider">
-                        Office / Agency Division
-                      </span>
-                      <span className="text-sm font-semibold text-gray-800 leading-snug block mt-0.5">
-                        {doc.office}
-                      </span>
-                    </div>
-
-                    {/* Dynamic Office Address */}
-                    {doc.officeAddress && (
-                      <div>
-                        <span className="block text-[10px] uppercase font-axis-book text-gray-500 tracking-wider">
-                          Office Location / Address
-                        </span>
-                        <span className="text-xs font-medium text-gray-600 leading-relaxed block mt-0.5">
-                          {doc.officeAddress}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Dynamic Office Operating Hours */}
-                    {doc.officeHours && (
-                      <div>
-                        <span className="block text-[10px] uppercase font-axis-book text-gray-500 tracking-wider">
-                          Operating Hours
-                        </span>
-                        <span className="text-xs font-medium text-gray-600 leading-relaxed block mt-0.5">
-                          {doc.officeHours}
-                        </span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
             </div>
           </div>
         ) : (
-          /* 📄 STANDARD FALLBACK (Renders standard markdown if no custom frontmatter fields exist) */
+          /* 📄 STANDARD FALLBACK */
           <Card className="mb-8 markdown-content border border-gray-200 shadow-xs rounded-xl">
             <CardHeader className="p-6">
               <ReactMarkdown

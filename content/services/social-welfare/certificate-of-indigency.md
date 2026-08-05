@@ -4,6 +4,7 @@ description: 'A certificate provided to an indigent client/applicant as a requir
 fees: 'Free of charge'
 time: '22 mins'
 office: 'Municipal Social Welfare and Development Office'
+office_address: 'Ground Floor near Reception, Infanta Municipal Building'
 requirements:
   - 'Barangay certificate that states an applicant as belonging to an idigent family in the said area.'
   - 'Certificate of No Property from the Municipal Assessor's Office'
