@@ -1,9 +1,10 @@
 # BetterInfanta.org
 
+_Ganda nay-an, hane?_
+
 An accessible, open-source website template for Infanta, Quezon and Infantahins.
 
 Built with React, TypeScript, and Tailwind CSS.
-_Ganda nay-an, hane?_
 
 ## ✨ Features
 
