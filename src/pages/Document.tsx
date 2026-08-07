@@ -498,35 +498,31 @@ export default function Document({
 
         {/* 🏷️ Page Header area (Responsive Layout) */}
         <div className="mb-8 justify-between items-start gap-6 flex flex-col lg:flex-row border-b border-gray-100 pb-6">
-          {/* LEFT COLUMN: Official Guide Tag, Title & Description */}
+          {/* LEFT COLUMN: Official Guide Tag, Title & Description (💡 FIXED: Scaled down text-sizes responsively for phones) */}
           <div className="flex-1 min-w-0 text-center lg:text-start">
-            <span className="text-[12px] font-axis-navbar-focus text-primary-600 uppercase tracking-widest bg-primary-50 px-2.5 py-1 rounded">
+            <span className="text-[10px] sm:text-[12px] font-axis-navbar-focus text-primary-600 uppercase tracking-widest bg-primary-50 px-2.5 py-1 rounded">
               Citizen Charter Guide
             </span>
-            <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 mt-3 tracking-wide leading-snug">
+            <h1 className="text-3xl sm:text-3xl md:text-4xl font-axis-titular-focus uppercase text-gray-900 mt-3 tracking-wide leading-snug break-words text-wrap">
               {doc.title}
             </h1>
             {doc.description && (
-              <p className="text-lg text-gray-700/70 mt-1 max-w-3xl leading-snug tracking-wide font-axis-subtitular-focus mx-auto lg:mx-0">
+              <p className="text-lg text-gray-700/70 mt-2 max-w-3xl leading-snug tracking-wide font-axis-subtitular-focus mx-auto lg:mx-0 break-words text-wrap">
                 {doc.description}
               </p>
             )}
           </div>
 
-          {/* RIGHT COLUMN: Quick Scan Info Hub */}
+          {/* RIGHT COLUMN: Quick Scan Info Hub (💡 FIXED: center-aligned with responsive gap limits and text sizes) */}
           {doc.isStructured && (
             <div className="flex flex-col items-center lg:items-end text-center lg:text-end gap-4 shrink-0 w-full lg:w-auto border-t lg:border-t-0 border-gray-100 pt-4 lg:pt-0">
               {/* Row 1: Fees & Expected Time side-by-side */}
-              <div className="flex items-center justify-center lg:justify-end gap-8 w-full lg:w-auto">
+              <div className="flex items-center justify-center lg:justify-end gap-6 sm:gap-6 md:gap-8 lg:gap-8 w-full lg:w-auto">
                 {/* Estimated Fees */}
                 <div className="relative flex flex-col items-center lg:items-end text-center lg:text-end">
-                  <span className="block uppercase text-[16px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
-                    Estimated Cost
-                  </span>
-
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950">
-                      {doc.fees || 'Free / No Fees'}
+                  <div className="flex flex-row items-center">
+                    <span className="block uppercase text-[14px] xs:text-[12px] font-axis-sng-indlab-header text-gray-500 tracking-widest">
+                      Estimated Cost
                     </span>
                     {/* 💡 Replaced Tooltip with Popover & openOnHover to enable BOTH hovering on desktops and tapping/clicking on mobile screens */}
                     {doc.feeDetails && (
@@ -535,7 +531,7 @@ export default function Document({
                           openOnHover
                           className="inline-flex items-center justify-center p-1 rounded-full text-burgundy-900/60 hover:text-burgundy-950 hover:bg-burgundy-50/50 transition-colors focus:outline-none cursor-pointer"
                         >
-                          {getIcon('lucide:help-circle', 'h-4 w-4')}
+                          {getIcon('tabler:help-circle', 'h-4 w-4')}
                         </Popover.Trigger>
                         <Popover.Portal>
                           <Popover.Positioner side="bottom" sideOffset={6}>
@@ -550,6 +546,12 @@ export default function Document({
                       </Popover.Root>
                     )}
                   </div>
+
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-2xl xs:text-2xl sm:text-2xl md:text-3xl lg:text-3xl font-axis-sng-indlab-value text-burgundy-950 tracking-wide">
+                      {doc.fees || 'Free / No Fees'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Vertical Separator Line */}
@@ -560,10 +562,10 @@ export default function Document({
 
                 {/* Expected Time */}
                 <div className="flex flex-col items-center lg:items-end text-center lg:text-end">
-                  <span className="text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
+                  <span className="text-[14px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
                     Expected Time
                   </span>
-                  <span className="text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 proportional-nums">
+                  <span className="text-2xl xs:text-2xl sm:text-2xl md:text-3xl lg:text-3xl font-axis-sng-indlab-value text-burgundy-950 mt-1 proportional-nums tracking-wide">
                     {doc.time || 'Immediate / Walk-In'}
                   </span>
                 </div>
@@ -575,10 +577,10 @@ export default function Document({
                   <span className="text-[16px] font-axis-sng-indlab-header text-gray-500 uppercase tracking-widest">
                     Where to Apply
                   </span>
-                  <span className="text-xl lg:text-2xl font-axis-sng-indlab-value text-burgundy-950 mt-1 leading-snug">
+                  <span className="text-xl font-axis-sng-indlab-value text-burgundy-950 mt-1.5 leading-snug xs:tracking-normal sm:tracking-normal md:tracking-wide lg:tracking-wide">
                     {doc.office}
                   </span>
-                  <span className="text-sm font-axis-navbar-focus text-gray-600 tracking-wide">
+                  <span className="text-sm font-axis-navbar-focus text-gray-600 tracking-wide mt-0.5">
                     {doc.officeAddress}
                   </span>
                 </div>
@@ -601,7 +603,7 @@ export default function Document({
                         'ri:walk-line',
                         'h-5 w-5 text-burgundy-900 shrink-0'
                       )}
-                      <h3 className="text-md font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60">
+                      <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60">
                         Step-by-Step Procedure
                       </h3>
                     </div>
@@ -648,13 +650,13 @@ export default function Document({
                             })
                             .join('.');
 
-                          // Vite-safe mobile indentation spacing
+                          // Vite-safe mobile indentation spacing (pl-0 on mobile, shifts right on sm:)
                           const getIndentClass = (lvl: number) => {
-                            if (lvl === 1) return 'pl-6 sm:pl-8 mt-4 ml-0';
+                            if (lvl === 1) return 'pl-0 sm:pl-8 mt-4 ml-0';
                             if (lvl === 2)
-                              return 'pl-6 sm:pl-8 mt-4 ml-3 sm:ml-4';
+                              return 'pl-0 sm:pl-8 mt-4 ml-0 sm:ml-4';
                             if (lvl >= 3)
-                              return 'pl-6 sm:pl-8 mt-4 ml-6 sm:ml-8';
+                              return 'pl-0 sm:pl-8 mt-4 ml-0 sm:ml-8';
                             return '';
                           };
 
@@ -665,34 +667,36 @@ export default function Document({
                               key={i}
                               className={`relative transition-all duration-300 ${getIndentClass(level)}`}
                             >
-                              {/* FIXED BADGE: Solid timeline circles for main steps */}
+                              {/* 💡 FIXED BADGE: Solid timeline circles for main steps; hidden on mobile screens to allow flex-col stack */}
                               {!isSubStep && (
-                                <span className="absolute -left-[36.5px] top-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-primary-700 border-white ring-1 ring-primary-50 text-white font-axis-chunky text-[10px] shadow-sm z-10">
+                                <span className="flex absolute -left-[36.5px] top-[14px] h-6 w-6 items-center justify-center rounded-full bg-primary-700 border-white ring-1 ring-primary-50 text-white font-axis-chunky text-[12px] text-center shadow-sm z-10">
                                   {displayBadge}
                                 </span>
                               )}
 
                               {isAccordion ? (
                                 /* NATIVE ACCORDION STEP (Keep Uppercase Medium formatting for interactive summaries) */
-                                <details className="group text-sm font-axis-medium tracking-normal leading-relaxed text-gray-700 bg-gray-50/40 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 cursor-pointer">
+                                <details className="group font-axis-medium tracking-normal text-wrap leading-relaxed text-gray-700 bg-gray-50/40 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 cursor-pointer">
                                   <summary className="flex items-center justify-between gap-3 select-none list-none outline-none">
-                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                    {/* 💡 FIXED: flex-col on mobile to stack badge above summary text, sm:flex-row to align side-by-side */}
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2.5 flex-1 min-w-0 text-wrap break-words">
                                       {isSubStep && (
-                                        <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
+                                        <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
                                           {displayBadge}
                                         </span>
                                       )}
-                                      <span className="pr-4">
+                                      {/* 💡 FIXED: Removed dangerous "min-w-[250px]" and replaced with flexible min-w-0 break-words */}
+                                      <span className="pr-4 text-xs sm:text-sm flex-1 min-w-0 text-pretty break-words leading-normal">
                                         {summaryText.trim()}
                                       </span>
                                     </div>
                                     {getIcon(
-                                      'tabler:chevron-up',
-                                      'h-4 w-4 text-primary-600 transition-transform duration-200 group-open:rotate-180'
+                                      'mynaui:chevron-down-solid',
+                                      'h-4 w-4 text-primary-600 transition-transform duration-200 group-open:rotate-180 shrink-0 mt-1 sm:mt-0'
                                     )}
                                   </summary>
                                   {/* Detail text parsing */}
-                                  <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin tracking-normal leading-tight markdown-content">
+                                  <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin xs:text-xs sm:text-sm tracking-normal leading-snug markdown-content text-wrap break-words overflow-hidden">
                                     <ReactMarkdown
                                       remarkPlugins={[remarkGfm]}
                                       components={markdownComponents}
@@ -702,14 +706,17 @@ export default function Document({
                                   </div>
                                 </details>
                               ) : (
-                                /* STANDARD STATIC STEP (Fallback typography to font-axis-book if no interactive accordions) */
-                                <div className="text-gray-800 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 flex items-center gap-2.5">
+                                /* STANDARD STATIC STEP */
+                                /* 💡 FIXED: flex-col on mobile, sm:flex-row on desktop, removed hardcoded min-w-[250px] layout constraints */
+                                <div className="text-gray-800 bg-gray-50/20 hover:bg-gray-50/60 p-3.5 rounded-lg border border-gray-100 transition-colors duration-200 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2.5 text-wrap break-words">
+                                  {/* 💡 MOBILE-ONLY MAIN STEP BADGE */}
+
                                   {isSubStep && (
                                     <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
                                       {displayBadge}
                                     </span>
                                   )}
-                                  <span className="text-sm font-axis-thin text-gray-800 flex-1">
+                                  <span className="text-xs sm:text-sm font-axis-medium text-gray-800 flex-1 min-w-0 max-w-auto xs:text-pretty break-words leading-snug">
                                     {cleanStep}
                                   </span>
                                 </div>
@@ -723,27 +730,9 @@ export default function Document({
                 </Card>
               )}
 
-              {/* 💡 POSTSCRIPTS (Hidden automatically if undefined) */}
-              {doc.postscripts && (
-                <div className="bg-amber-50/40 border border-amber-200/50 rounded-xl p-6 mt-6 flex items-start gap-3.5 shadow-xs">
-                  {getIcon(
-                    'lucide:info',
-                    'h-5 w-5 text-amber-700 shrink-0 mt-0.5'
-                  )}
-                  <div className="space-y-1.5 flex-1">
-                    <h4 className="text-xs font-axis-navbar-focus uppercase tracking-widest text-amber-800 font-semibold">
-                      Important Reminders / Notes
-                    </h4>
-                    <div className="text-sm font-axis-book text-gray-700/90 leading-relaxed whitespace-pre-line">
-                      {doc.postscripts}
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Optional raw markdown text */}
               {doc.rawMarkdownContent && (
-                <Card className="border border-gray-200/80 shadow-xs rounded-xl p-6 markdown-content">
+                <Card className="border border-gray-200/80 shadow-xs rounded-xl p-6 markdown-content text-wrap break-words overflow-hidden">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={markdownComponents}
@@ -758,12 +747,12 @@ export default function Document({
             <div className="order-1 lg:order-2 space-y-6">
               {/* Who can avail Card */}
               {doc.whocanavail.length > 0 && (
-                <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
-                  <CardContent className="p-6 space-y-6">
-                    <h3 className="justify-center text-md font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-xs bg-cream-50/40 rounded-xl">
+                  <CardContent className="p-6 space-y-5">
+                    <h3 className="justify-center text-lg font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
                       {getIcon(
                         'lucide:user-check',
-                        'h-5 w-5 text-burgundy-900/60 shrink-0'
+                        'h-4 w-4 text-burgundy-900/60 shrink-0'
                       )}
                       <span>Who can avail</span>
                     </h3>
@@ -771,13 +760,15 @@ export default function Document({
                       {doc.whocanavail.map((req, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg font-axis-thin"
+                          className="flex items-center gap-2.5 text-sm md:text-md lg:text-lg text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg font-axis-thin xs:text-xs xs:text-xs text-wrap break-words"
                         >
                           {getIcon(
                             'lucide:check-circle-2',
-                            'text-emerald-500 h-5 w-5 shrink-0'
+                            'text-emerald-600 h-4 w-4 shrink-0 mt-0.5'
                           )}
-                          <span>{req}</span>
+                          <span className="text-xs sm:text-sm leading-normal">
+                            {req}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -786,12 +777,12 @@ export default function Document({
               )}
 
               {/* Required Documents Card (With Dynamic Toggles) */}
-              <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-sm bg-cream-50/40 rounded-xl">
+              <Card className="border-t-4 border-t-burgundy-900 border border-gray-200 shadow-xs bg-cream-50/40 rounded-xl">
                 <CardContent className="p-6 space-y-5">
-                  <h3 className="justify-center text-md font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
+                  <h3 className="justify-center text-lg font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 border-b border-burgundy-900/10 pb-2 flex items-center gap-2">
                     {getIcon(
                       'ri:clipboard-line',
-                      'h-5 w-5 text-burgundy-900/60 shrink-0'
+                      'h-4 w-4 text-burgundy-900/60 shrink-0'
                     )}
                     <span>Required Documents</span>
                   </h3>
@@ -806,7 +797,7 @@ export default function Document({
                       {doc.requirementsGroups.map(group => (
                         <label
                           key={group.key}
-                          className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors py-1"
+                          className="flex items-center gap-2 cursor-pointer text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700 select-none transition-colors"
                         >
                           <Radio.Root
                             value={group.key}
@@ -814,7 +805,9 @@ export default function Document({
                           >
                             <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1.5 before:rounded-full before:bg-current" />
                           </Radio.Root>
-                          <span className="font-medium">{group.label}</span>
+                          <span className="font-axis-navbar-focus tracking-wider text-sm">
+                            {group.label}
+                          </span>
                         </label>
                       ))}
                     </RadioGroup>
@@ -826,28 +819,47 @@ export default function Document({
                       {activeRequirements.map((req, i) => (
                         <li
                           key={i}
-                          className="flex gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg transition-all duration-200"
+                          className="flex items-center gap-2.5 text-sm text-gray-700 bg-gray-50/50 border border-gray-100 p-3 rounded-lg transition-all duration-200 text-wrap break-words"
                         >
                           {getIcon(
                             'lucide:check-circle-2',
-                            'text-emerald-500 h-5 w-5 shrink-0'
+                            'text-emerald-600 h-4 w-4 shrink-0 mt-0.5'
                           )}
-                          <span className="font-axis-thin">{req}</span>
+                          <span className="font-axis-thin xs:text-xs text-xs sm:text-sm leading-normal">
+                            {req}
+                          </span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-xs text-center text-gray-400 font-axis-thin py-2">
+                    <p className="text-xs text-center text-gray-400 font-axis-thin xs:text-xs xs:text-xs py-2">
                       No documents specified for this category.
                     </p>
                   )}
                 </CardContent>
               </Card>
+              {/* 💡 POSTSCRIPTS (Hidden automatically if undefined) */}
+              {doc.postscripts && (
+                <div className="bg-amber-50/40 border border-amber-200/50 rounded-xl p-5 mt-6 flex items-start gap-3 shadow-xs">
+                  {getIcon(
+                    'lucide:info',
+                    'h-5 w-5 text-amber-700 shrink-0 mt-0.5'
+                  )}
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <h3 className="text-md font-axis-navbar-focus uppercase tracking-widest text-amber-800 mb-2">
+                      Important Reminders / Notes
+                    </h3>
+                    <div className="text-xs sm:text-sm font-axis-book text-gray-700/90 leading-normal whitespace-pre-line text-wrap break-words">
+                      {doc.postscripts}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ) : (
           /* 📄 STANDARD FALLBACK */
-          <Card className="mb-8 markdown-content border border-gray-200 shadow-xs rounded-xl">
+          <Card className="mb-8 markdown-content border border-gray-200 shadow-xs rounded-xl text-wrap break-words overflow-hidden">
             <CardHeader className="p-6">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}

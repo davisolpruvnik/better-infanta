@@ -17,3 +17,7 @@ pages:
   - name: "Pre-Marriage Counseling Certificate"
     slug: "pre-marriage-counseling-certificate"
     description: "Mandatory pre-marriage counseling and family planning seminars conducted by health and social welfare officers."
+
+  - name: "Medical Assistance Request"
+    slug: "medical-assistance-request"
+    description:

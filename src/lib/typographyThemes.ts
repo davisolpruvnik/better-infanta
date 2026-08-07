@@ -43,7 +43,7 @@ export const defaultTheme: TypographyTheme = {
     h4: 'text-xl text-gray-800 mb-3 mt-5 ',
     h5: 'text-lg text-gray-800 mb-3 mt-4 ',
     h6: 'text-base text-gray-800 mb-3 mt-4 ',
-    p: 'text-sm text-gray-700 mb-4 leading-relaxed',
+    p: 'text-xs md:text-sm lg:text-sm text-gray-700 mb-4 leading-relaxed',
     small: 'text-sm text-gray-600 mb-3 ',
     ul: 'list-none mb-6 space-y-4 pl-0',
     ol: 'list-none mb-6 space-y-4 pl-0',
