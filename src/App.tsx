@@ -37,7 +37,6 @@ function App() {
               <Route path="/:lang/:documentSlug" element={<Document />} />
               <Route path="/:documentSlug" element={<Document />} />
             </Routes>
-            <Disclaimer />
             <Footer />
           </div>
         </NuqsAdapter>

@@ -15,11 +15,11 @@ interface LocationConfig {
 }
 
 const WEATHER_LOCATIONS: LocationConfig[] = [
-  { name: 'Infanta', lat: 14.7452, lon: 121.6492 },
-  { name: 'Umiray (Gen. Nakar)', lat: 15.199, lon: 121.4222 },
-  { name: 'Llavac (Real)', lat: 14.519, lon: 121.5352 },
-  { name: 'Polillo', lat: 14.7247, lon: 121.9389 },
-  { name: 'Jomalig', lat: 14.6959, lon: 122.3307 },
+  { name: 'Infanta (Pob)', lat: 14.7452, lon: 121.6492 },
+  { name: 'Dinahican', lat: 14.6937, lon: 121.7178 },
+  { name: 'Ungos Port', lat: 14.519, lon: 121.5352 },
+  { name: 'Umiray', lat: 15.199, lon: 121.4222 },
+  { name: 'Kilometer 90', lat: 14.5441, lon: 121.4841 }
 ];
 
 interface WeatherMapEntry {
@@ -194,7 +194,13 @@ export default function Timekeeper() {
           { code: 'EUR', symbol: '€', rateInPhp: phpRate / data.rates.EUR },
           { code: 'GBP', symbol: '£', rateInPhp: phpRate / data.rates.GBP },
           { code: 'JPY', symbol: '¥', rateInPhp: phpRate / data.rates.JPY },
+          { code: 'SGD', symbol: '$', rateInPhp: phpRate / data.rates.SGD },
+          { code: 'AUD', symbol: 'A$', rateInPhp: phpRate / data.rates.AUD },
+          { code: 'CAD', symbol: 'C$', rateInPhp: phpRate / data.rates.CAD },
           { code: 'BRL', symbol: 'R$', rateInPhp: phpRate / data.rates.BRL },
+          { code: 'SAR', symbol: 'SAR', rateInPhp: phpRate / data.rates.SAR },
+          { code: 'KWD', symbol: 'KWD', rateInPhp: phpRate / data.rates.KWD },
+          { code: 'QAR', symbol: 'QR', rateInPhp: phpRate / data.rates.QAR },
         ];
 
         setCurrencyRates(rates);
@@ -282,10 +288,10 @@ export default function Timekeeper() {
                     : 'opacity-100 translate-y-0 scale-100'
                 }`}
               >
-                <span className="font-axis-subtitular-focus text-burgundy-900/80 text-[10px] sm:text-[12px]">
+                <span className="font-axis-plantao-text-focus text-burgundy-900/80 text-[10px] sm:text-[12px]">
                   {activeCurrency.code}
                 </span>
-                <span className="font-axis-sng-indlab-value text-primary-800 proportional-nums text-[10px] sm:text-[12px]">
+                <span className="font-axis-plantao-num-focus text-primary-800 proportional-nums text-[10px] sm:text-[12px]">
                   ₱{activeCurrency.rateInPhp.toFixed(2)}
                 </span>
               </div>
@@ -316,11 +322,9 @@ export default function Timekeeper() {
                 }`}
               >
                 {/* 💡 SPACE SAVER: Truncates long town names on extremely small mobile screens */}
-                <span className="font-axis-subtitular-focus text-burgundy-900/85 text-[10px] sm:text-[12px] truncate max-w-[65px] sm:max-w-none">
+                <span className="font-axis-plantao-text-focus text-burgundy-900/85 text-[10px] sm:text-[12px] truncate max-w-[65px] sm:max-w-none">
                   {activeWeather.name}
                 </span>
-
-                <span className="text-burgundy-300/40">|</span>
 
                 <div
                   className="flex items-center gap-1"
@@ -337,7 +341,7 @@ export default function Timekeeper() {
                       className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${weatherDetails?.iconClass}`}
                     />
                   </Suspense>
-                  <span className="font-axis-sng-indlab-value text-primary-800 text-[11px] sm:text-[12px] proportional-nums">
+                  <span className="font-axis-plantao-num-focus text-primary-800 text-[11px] sm:text-[12px] proportional-nums">
                     {activeWeather.temp}°C
                   </span>
                 </div>

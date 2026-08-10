@@ -13,3 +13,7 @@ pages:
   - name: "Tourism Information and Guest Assistance Services"
     slug: "tourism-information-assistance"
     description: "Facilitating walking tourist inquiries, tour guides mapping, and digital travel support queries via communication lines."
+
+  - name: "Payment of Municipal Environment User's Fee (MEUF)"
+    slug: "environment-fee-municipal"
+    description: "Processing the charges and/or fees imposed to people entering/visiting Infanta."

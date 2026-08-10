@@ -8,12 +8,12 @@ import {
   type Subcategory,
   type CategoryIndex,
 } from '../data/yamlLoader';
-import Breadcrumbs from '../components/ui/Breadcrumbs';
 import ServicesSection from '../components/home/ServicesSection';
 import SEO from '../components/SEO';
 import { Banner } from '@bettergov/kapwa/banner';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
+import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
 
 // 💡 1. Import your modular shared icon resolver
 
@@ -83,7 +83,7 @@ const Services: React.FC = () => {
   if (!categoryData) {
     return (
       <Section className="p-3 mb-12">
-        <Breadcrumbs className="mb-8" />
+        <Breadcrumbsless className="mb-8" />
         <Banner
           type="error"
           title="Category not found"
@@ -102,13 +102,13 @@ const Services: React.FC = () => {
         keywords={`${categoryData.category}, government services, public services, local government`}
       />
       <Section className="p-3 mb-8">
-        <Breadcrumbs className="mb-8" />
+        <Breadcrumbsless className="mb-8" />
 
         {/* Category Header Area */}
         <div className="flex flex-row items-center text-start gap-4">
           {/* 💡 FIXED: Renders larger h-10 category icon dynamically with no <Icon> wrapper */}
           {getIcon(categoryData.icon, 'h-10 w-10 text-primary-600')}
-          <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 tracking-wide leading-relaxed">
+          <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 tracking-wide leading-tight">
             {categoryData.category || category}
           </h1>
         </div>
@@ -138,7 +138,7 @@ const Services: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/services/${category}/${subcategory.slug}`}
-                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
+                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-700 translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
                   >
                     {/* 🌊 Sliding Wipe Background Layer */}
                     <div
@@ -180,7 +180,7 @@ const Services: React.FC = () => {
                     </div>
 
                     {/* Right Accent Strip Indicator */}
-                    <div className="relative z-10 flex items-center justify-center w-11 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
+                    <div className="relative z-10 flex items-center justify-center w-11 bg-primary-50/50 group-hover:bg-primary-800 border-primary-100/40 group-hover:border-primary-700 transition-colors duration-300 shrink-0">
                       {/* 💡 FIXED: Uses getIcon directly to render the right arrow indicators cleanly */}
                       {getIcon(
                         'ri:arrow-right-double-line',
@@ -197,7 +197,7 @@ const Services: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/services/${category}/${subcategory.slug}`}
-                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
+                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
                   >
                     {/* 🌊 Sliding Wipe Background Layer */}
                     <div

@@ -11,6 +11,7 @@ export const WEATHER_LOCATIONS: LocationConfig[] = [
   { name: 'General Nakar', lat: 14.7667, lon: 121.6333 },
   { name: 'Real', lat: 14.6622, lon: 121.6033 },
   { name: 'Polillo', lat: 14.7247, lon: 121.9389 },
+  {}
 ];
 
 export interface WeatherMapEntry {

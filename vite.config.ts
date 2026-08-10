@@ -22,4 +22,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'), // 💡 Maps "@/*" directly to your "src" directory
     },
   },
+  server: {
+    host: true,
+    port: 5173,
+  }
 });

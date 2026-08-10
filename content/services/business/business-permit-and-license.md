@@ -44,7 +44,7 @@ steps:
   - '> Claim the permit upon receiving notification from the personnel.'
   - 'This step is for online application. Go back to Step 1 for walk-in applications.'
   - '> Go to https://bpbc.ibpls.com/infantaquezon website. Enter log-in credentials or create your own account.'
-  - '> For new applicants, proceed here; for renewal applications, proceed to Step 2.B.'
+  - '> For new applicants, proceed here; for renewal applications, proceed to Step 2.C.'
   - ">> Click the 'Business Permit' icon at the homepage. | You can also click at the top of website: 'Business Permits' then 'Application.'"
   - ">> Click the 'New' button, which will open the application page."
   - ">> Upload additional documentary requirements issued by the regulating office if needed. | On the left side of the application form, select the requirements you want to upload. Click 'Upload' then 'Browse' button or drag to the box a file you want to upload from the computer. Click 'Upload' again."
@@ -63,6 +63,7 @@ steps:
   - '> If you used Landbank, enter your Landbank account number and complete the necessary steps.'
   - ">> A one-time password (OTP) will be sent to your registered email address. Select the space beside the JAI's right and enter your PIN code."
   - ">> Click 'Submit' and you will see the confirmation page and the receipt will be sent to your verified email address."
+  - 'Claim the business permit upon receiving notification from the BPLO personnel.'
 postscripts:
   - "- Always keep your Mayor's Permit laminated and displayed prominently at your business location."
   - '- When claiming business permits, applicants who applied online must present the required documents to the BPLO and have the form signed by the business owner.'

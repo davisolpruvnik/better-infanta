@@ -3,6 +3,7 @@ import React, { lazy, Suspense } from 'react';
 import { footerNavigation } from '../../data/navigation';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Disclaimer from './disclaimer';
 
 // 💡 1. Lazy load the Iconify component as LazyIconify to avoid bundle bloat on load
 const LazyIconify = lazy(() =>
@@ -43,7 +44,8 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 pt-12 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <Disclaimer />
+        <div className="grid grid-cols-1 xs:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-12">
           <div>
             <div className="flex items-center mb-4">
               {/* 💡 Checkmark Portal Logo (Lazy Loaded with pulse placeholder) */}
@@ -59,20 +61,21 @@ const Footer: React.FC = () => {
               </Suspense>
 
               <div>
-                <div className="font-bold">Infanta, Quezon Portal</div>
-                <div className="text-xs text-gray-400">
+                <div className="font-axis-sng-indlab-value tracking-wider uppercase">Infanta, Quezon Portal</div>
+                <div className="font-axis-subtitular-focus tracking-wider uppercase text-sm text-gray-400">
                   A BetterGov.ph Portal
                 </div>
               </div>
             </div>
 
-            <p className="text-gray-500 text-sm mb-4">
+            <p className="font-axis-footer-focus text-gray-500/80 tracking-wider text-sm mb-4 wrap-break-word">
               A community portal providing Philippine citizens, businesses, and
               visitors with information and services.
             </p>
 
             {/* Social Links Row */}
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 justify-center md:justify-start lg:justify-start">
+              <span className='uppercase font-axis-subtitular-focus tracking-wider text-sm text-gray-500'>Profile</span>
               {footerNavigation.socialLinks.map(link => (
                 <Link
                   key={link.label}
@@ -89,8 +92,11 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Navigation Links Columns */}
-          {footerNavigation.mainSections.map(section => (
-            <div key={section.title}>
+          {footerNavigation.mainSections.map((section, index) => (
+            <div
+              key={section.title}
+              className={index === 2 ? 'xs:col-start-2 md:col-start-2 lg:col-start-auto' : ''}
+            >
               <h3 className="text-lg text-gray-400 font-axis-navbar-focus uppercase tracking-wider mb-4">
                 {section.title}
               </h3>
@@ -113,25 +119,25 @@ const Footer: React.FC = () => {
         {/* Bottom Bar: Copyright & Standard Footer Links */}
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-center text-sm sm:text-xs font-axis-medium tracking-wide mb-4 md:mb-0">
+            <p className="text-gray-500 text-center text-xs font-axis-footer-focus uppercase tracking-wider mb-4 md:mb-0 text-pretty">
               {t('footer.copyright')}
             </p>
-            <div className="flex space-x-6 font-axis-subtitular-focus tracking-wider uppercase">
+            <div className="flex space-x-6 font-axis-footer-focus tracking-wider uppercase">
               <Link
                 to="https://github.com/bettergovph/bettergov"
-                className="text-gray-500 hover:text-white text-sm transition-colors"
+                className="text-gray-500 hover:text-white text-xs transition-colors"
               >
-                Contribute at GitHub
+                Contribute
               </Link>
               <Link
                 to="/sitemap"
-                className="text-gray-500 hover:text-white text-sm transition-colors"
+                className="text-gray-500 hover:text-white text-xs transition-colors"
               >
                 Sitemap
               </Link>
               <a
                 href="/accessibility"
-                className="text-gray-500 hover:text-white text-sm transition-colors"
+                className="text-gray-500 hover:text-white text-xs transition-colors"
               >
                 Accessibility
               </a>

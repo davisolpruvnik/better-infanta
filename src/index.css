@@ -232,6 +232,20 @@
     'wdth' 60,
     'opsz' 18; /* 💡 Combined into a single comma-separated list */
 }
+.font-axis-plantao-text-focus {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-variation-settings:
+    'wdth' 75,
+    'opsz' 18; /* 💡 Combined into a single comma-separated list */
+}
+.font-axis-plantao-num-focus {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-variation-settings:
+    'wdth' 75,
+    'opsz' 18; /* 💡 Combined into a single comma-separated list */
+}
 .font-axis-number-focus {
   font-family: var(--font-mono);
   font-weight: 600;

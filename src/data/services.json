@@ -1,0 +1,64 @@
+{
+  "categories": [
+    {
+      "category": "Health Services",
+      "slug": "health-services",
+      "description": "Check health facilities, know government programs, and avail free health services.",
+      "icon": "RiHeartPulseFill"
+    },
+    {
+      "category": "Education",
+      "slug": "education",
+      "description": "Enroll kids, apply scholarships, educational programs.",
+      "icon": "FaBookOpen"
+    },
+    {
+      "category": "Business and Livelihood",
+      "slug": "business",
+      "description": "Permits, taxes, renewals, trade opportunities.",
+      "icon": "RiBuilding2Fill"
+    },
+    {
+      "category": "Social Welfare",
+      "slug": "social-welfare",
+      "description": "Assistance for seniors, PWDs, solo parents, indigents.",
+      "icon": "RiShieldUserFill"
+    },
+    {
+      "category": "Agriculture & Fisheries",
+      "slug": "agriculture-fisheries",
+      "description": "Seeds, fertilizers, veterinary care, training opportunities.",
+      "icon": "MdAgriculture"
+    },
+    {
+      "category": "Infrastructure, Public Works, and Safety",
+      "slug": "infrastructure-public-works",
+      "description": "Report roads, request water, electricity concerns, access facilities.",
+      "icon": "FaBridgeWater"
+    },
+    {
+      "category": "Environment",
+      "slug": "environment",
+      "description": "Clean-ups, tree planting activities, and environment-related ordinances and laws.",
+      "icon": "PiTreePalmFill"
+    },
+    {
+      "category": "Disaster Preparedness",
+      "slug": "disaster-preparedness",
+      "description": "Disaster preparedness plans, emergency response, evacuation.",
+      "icon": "FaHelmetSafety"
+    },
+    {
+      "category": "Housing & Land Use",
+      "slug": "housing-land-use",
+      "description": "Housing projects, zoning, building permits, relocation.",
+      "icon": "FaHouseUser"
+    },
+    {
+      "category": "Tourism",
+      "slug": "tourism",
+      "description": "Attractions, accommodations, culture.",
+      "icon": "TiCamera"
+    }
+  ]
+}

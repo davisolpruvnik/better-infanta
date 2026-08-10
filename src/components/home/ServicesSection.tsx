@@ -66,7 +66,7 @@ export default function ServicesSection({
           <Link
             key={category.slug}
             to={`/services/${category.slug}`}
-            className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 shadow-xs hover:shadow-xs -translate-y-0 hover:-translate-y-0.2 transition-all duration-300 ease-in-and-out"
+            className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 -translate-y-0 hover:-translate-y-0.2 transition-all duration-300 ease-in-and-out"
           >
             {/* 🌊 Sliding Wipe Background Layer */}
             <div

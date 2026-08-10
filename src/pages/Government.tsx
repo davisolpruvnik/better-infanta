@@ -8,12 +8,12 @@ import {
   type Subcategory,
   type CategoryIndex,
 } from '../data/yamlLoader';
-import Breadcrumbs from '../components/ui/Breadcrumbs';
 import GovernmentActivitySection from '../components/home/GovernmentActivitySection';
 import SEO from '../components/SEO';
 import { Banner } from '@bettergov/kapwa/banner';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
+import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
 
 // 💡 1. Lazy load the Iconify component as LazyIconify to avoid namespace collisions
 const LazyIconify = lazy(() =>
@@ -81,7 +81,7 @@ const Government: React.FC = () => {
   if (!categoryData) {
     return (
       <Section className="p-3 mb-12">
-        <Breadcrumbs className="mb-8" />
+        <Breadcrumbsless className="mb-8" />
         <Banner
           type="error"
           title="Category not found"
@@ -100,13 +100,13 @@ const Government: React.FC = () => {
         keywords={`${categoryData.category}, government services, public services, local government`}
       />
       <Section className="p-3 mb-8">
-        <Breadcrumbs className="mb-8" />
+        <Breadcrumbsless className="mb-8" />
 
         {/* Category Header Area */}
         <div className="flex flex-row items-center text-start gap-4">
           {/* 💡 FIXED: Renders larger h-10 category icon dynamically with no static/built-in <Icon> wrapper */}
           {getIcon(categoryData.icon, 'h-10 w-10 text-primary-600')}
-          <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 tracking-wide leading-relaxed">
+          <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 tracking-wide leading-tight">
             {categoryData.category || category}
           </h1>
         </div>
@@ -136,7 +136,7 @@ const Government: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/government/${category}/${subcategory.slug}`}
-                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md -translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
+                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 -translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
                   >
                     {/* 🌊 Sliding Wipe Background Layer */}
                     <div
@@ -195,7 +195,7 @@ const Government: React.FC = () => {
                   <Link
                     key={subcategory.slug}
                     to={`/government/${category}/${subcategory.slug}`}
-                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 shadow-xs hover:shadow-md -translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
+                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 -translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
                   >
                     {/* 🌊 Sliding Wipe Background Layer */}
                     <div

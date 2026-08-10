@@ -45,14 +45,14 @@ export const mainNavigation: NavigationItem[] = [
 export const footerNavigation = {
   mainSections: [
     {
-      title: 'About',
+      title: 'About BettergovPH',
       links: [
         { label: 'About the Portal', href: '/about' },
         // { label: 'Privacy Policy', href: '/privacy' },
         // { label: 'Terms of Use', href: '/terms' },
-        { label: 'Accessibility', href: '/accessibility' },
-        { label: 'Contact Us', href: '/about' },
-        { label: 'Community Discord', href: '/discord' },
+        // { label: 'Accessibility', href: '/accessibility' },
+        // { label: 'Contact Us', href: '/about' },
+        { label: 'Join BetterGovPH Community', href: 'https://bettergov.ph/join-us' },
       ],
     },
     {
@@ -60,20 +60,17 @@ export const footerNavigation = {
       links: [
         { label: 'All Services', href: '/services' },
         ...(servicesData.categories as Category[])
-          .slice(0, 6)
+          .slice(0, 4)
           .map(category => ({
             label: category.category,
             href: `/services/${category.slug}`,
           })),
         { label: 'Hotlines', href: '/philippines/hotlines' },
-        { label: 'Holidays', href: '/philippines/holidays' },
       ],
     },
     {
       title: 'Government',
       links: [
-        { label: 'Open Data', href: 'https://data.gov.ph' },
-        { label: 'Freedom of Information', href: 'https://www.foi.gov.ph' },
         {
           label: 'Contact Center',
           href: 'https://contactcenterngbayan.gov.ph',
@@ -84,12 +81,23 @@ export const footerNavigation = {
         },
       ],
     },
+    {
+      title: 'Open Data',
+      links: [
+        { label: 'Open Data', href: 'https://data.gov.ph' },
+        { label: 'Freedom of Information', href: 'https://www.foi.gov.ph' },
+        {
+          label: 'Project NOAH',
+          href: 'https://noah.up.edu.ph/'
+        },
+        {
+          label: 'Bureau of Local Government & Finance',
+          href: 'https://blgf.gov.ph/lgu-fiscal-data/'
+        }
+      ],
+    }
   ],
   socialLinks: [
-    { label: 'Facebook', href: 'https://facebook.com/govph' },
-    { label: 'Twitter', href: 'https://twitter.com/govph' },
-    { label: 'Instagram', href: 'https://instagram.com/govph' },
-    { label: 'YouTube', href: 'https://youtube.com/govph' },
     {
       label: 'GitHub',
       href: 'https://github.com/davisolpruvnik/betterinfanta',
