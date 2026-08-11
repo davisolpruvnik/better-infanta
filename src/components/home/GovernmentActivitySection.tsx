@@ -1,9 +1,8 @@
-// src/components/home/GovernmentActivitySection.tsx
+import { lazy, Suspense } from 'react';
 import Section from '../ui/Section';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Link } from 'react-router-dom';
 import { governmentCategories } from '../../data/yamlLoader';
-import { lazy, Suspense } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
 
 interface Subcategory {
@@ -14,7 +13,7 @@ interface Subcategory {
 interface Category {
   category: string;
   slug: string;
-  subcategories: Subcategory[];
+  subcategories?: Subcategory[];
   description: string;
   icon: string;
 }
@@ -23,87 +22,101 @@ const LazyIconify = lazy(() =>
   import('@iconify/react').then(module => ({ default: module.Icon }))
 );
 
+interface GovernmentActivitySectionProps {
+  title?: string;
+  description?: string;
+  previewLimit?: number;
+}
+
 export default function GovernmentActivitySection({
   title,
   description,
-}: {
-  title?: string;
-  description?: string;
-}) {
+  previewLimit = 3,
+}: GovernmentActivitySectionProps) {
   const { t } = useTranslation();
 
-  const getIcon = (categoryName?: string, className = 'h-6 w-6') => {
+  const getIcon = (iconName?: string, className = 'h-6 w-6') => {
     return (
       <Suspense
         fallback={
-          <div
-            className={`${className} rounded bg-purple-200/40 animate-pulse shrink-0`}
-          />
+          <div className={`${className} rounded-full bg-purple-200/40 animate-pulse shrink-0`} />
         }
       >
         <LazyIconify
-          icon={resolveIconName(categoryName)}
+          icon={resolveIconName(iconName)}
           className={`${className} shrink-0 transition-transform duration-300 group-hover:scale-105`}
         />
       </Suspense>
     );
   };
 
-  const displayedCategories = governmentCategories.categories as Category[];
+  const allCategories = (governmentCategories.categories || []) as Category[];
+  const displayedCategories = allCategories.slice(0, previewLimit);
 
   return (
     <Section id="#government">
-      {/* 🏷️ Synchronized Header */}
-      <div className="mb-8 text-center items-center font-axis-sng-indlab-value">
-        <h1 className="text-4xl mb-2 uppercase tracking-wider">
-          {title || t('governmentActivity.title', 'Government Agencies')}
-        </h1>
-        <span className="text-gray-600 mb-6 font-axis-medium">
-          {description || t('governmentActivity.description')}
-        </span>
-      </div>
+      {/* 📐 Flex Container: Header on the LEFT (desktop), Circles on the RIGHT */}
+      <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 my-4 py-4 overflow-x-hidden">
 
-      {/* 💎 Synchronized Slide-Wipe Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {displayedCategories.map(category => (
-          <Link
-            key={category.slug}
-            to={`/government/${category.slug}`}
-            className="group relative flex h-full w-full overflow-hidden rounded-xl border border-purple-100/30 bg-purple-50/10 -translate-y-0 hover:-translate-y-0.2 transition-all duration-300 ease-in-and-out"
-          >
-            {/* 🌊 Sliding Wipe Background Layer */}
-            <div
-              className="absolute inset-0 bg-purple-800 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
-              aria-hidden="true"
-            />
+        {/* 1️⃣ LEFT SIDE (Desktop): Header and Subheader */}
+        <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start text-left gap-3 pt-2">
+          <div className="flex items-center gap-2.5 text-gray-900 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
+            {getIcon('ri:building-line', 'h-8 w-8 text-purple-600')}
+            <h2 className="leading-snug">
+              {title || t('governmentActivity.title', 'Government Agencies')}
+            </h2>
+          </div>
 
-            {/* 📝 Left Content Column (z-10 to stay above the sliding background) */}
-            <div className="relative z-10 flex-1 p-5 flex flex-col justify-start items-start text-start gap-4">
-              {/* Header: Icon inline with the Title */}
-              <div className="flex items-center gap-3 w-full">
-                <div className="bg-purple-100 text-purple-700 group-hover:bg-white/20 group-hover:text-white p-2.5 rounded-lg shrink-0 transition-colors duration-300">
-                  {getIcon(category.icon, 'h-5 w-5')}
+          <p className="text-gray-600 font-axis-thin text-sm leading-relaxed">
+            {description ||
+              t('governmentActivity.description', 'Find government offices, agencies, and public services.')}
+          </p>
+        </div>
+
+        {/* 2️⃣ VERTICAL DIVIDER BAR ( | ) */}
+        <div
+          className="hidden lg:block w-[1.5px] bg-gray-200 self-stretch my-1 mx-2"
+          aria-hidden="true"
+        />
+
+        {/* 3️⃣ RIGHT SIDE (Desktop): Circles & "View All" Button */}
+        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 justify-items-center items-start py-2 p-1">
+
+          {/* Service Circles */}
+          {displayedCategories.map(category => (
+            <Link
+              key={category.slug}
+              to={`/government/${category.slug}`}
+              className="group flex flex-col items-center text-center w-full max-w-[140px] sm:max-w-[160px] transition-transform duration-300"
+            >
+              {/* Purple Badge Circle */}
+              <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full border-1 border-gray-300 bg-purple-50/20 flex items-center justify-center p-3 sm:p-5 group-hover:scale-105 group-hover:border-purple-600 transition-all duration-300 overflow-hidden">
+                <div className="text-purple-600 group-hover:text-purple-800 transition-colors">
+                  {getIcon(category.icon, 'h-9 w-9 sm:h-14 sm:w-14')}
                 </div>
-                <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
-                  {category.category}
-                </h3>
               </div>
 
-              {/* Subtitle / Description */}
-              <p className="text-sm text-gray-600 group-hover:text-purple-100/95 font-axis-thin transition-colors duration-300 leading-relaxed">
-                {category.description}
-              </p>
-            </div>
+              {/* Label */}
+              <h3 className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wider text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
+                {category.category}
+              </h3>
+            </Link>
+          ))}
 
-            {/* ➡️ Right Accent Strip (Visual Height-spanning bar with indicator) */}
-            <div className="relative z-10 flex items-center justify-center w-12 bg-purple-50/50 group-hover:bg-purple-900 border-l border-purple-100/40 group-hover:border-purple-900 transition-colors duration-300 shrink-0">
-              {getIcon(
-                'ri:arrow-right-double-line',
-                'h-5 w-5 text-purple-600 group-hover:text-white transition-all duration-300'
-              )}
+          {/* "VIEW ALL" BUTTON */}
+          {allCategories.length > previewLimit && (
+            <div className="flex items-center justify-center w-full h-full min-h-[100px] sm:min-h-[128px]">
+              <Link
+                to="/government"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border-1 border-purple-400 text-purple-600 font-axis-medium hover:bg-purple-600 hover:text-white transition-all duration-300 shadow-sm text-sm sm:text-md uppercase tracking-wider text-center whitespace-nowrap font-axis-navbar-focus"
+              >
+                {t('governmentActivity.viewAll', 'View all')}
+              </Link>
             </div>
-          </Link>
-        ))}
+          )}
+
+        </div>
+
       </div>
     </Section>
   );

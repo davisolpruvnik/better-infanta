@@ -1,9 +1,10 @@
+import { lazy, Suspense } from 'react';
 import Section from '../ui/Section';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Link } from 'react-router-dom';
 import { serviceCategories } from '../../data/yamlLoader';
-import { lazy, Suspense } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
+import { Button } from '@base-ui/react';
 
 interface Subcategory {
   name: string;
@@ -13,7 +14,7 @@ interface Subcategory {
 interface Category {
   category: string;
   slug: string;
-  subcategories: Subcategory[];
+  subcategories?: Subcategory[];
   description: string;
   icon: string;
 }
@@ -22,85 +23,105 @@ const LazyIconify = lazy(() =>
   import('@iconify/react').then(module => ({ default: module.Icon }))
 );
 
+interface ServicesSectionProps {
+  title?: string;
+  description?: string;
+  previewLimit?: number;
+}
+
 export default function ServicesSection({
   title,
   description,
-}: {
-  title?: string;
-  description?: string;
-}) {
+  previewLimit = 3,
+}: ServicesSectionProps) {
   const { t } = useTranslation();
 
-  const getIcon = (categoryName?: string, className = 'h-6 w-6') => {
+  const getIcon = (iconName?: string, className = 'h-6 w-6') => {
     return (
       <Suspense
         fallback={
-          <div
-            className={`${className} rounded bg-primary-200/40 animate-pulse shrink-0`}
-          />
+          <div className={`${className} rounded-full bg-primary-200/40 animate-pulse shrink-0`} />
         }
       >
         <LazyIconify
-          icon={resolveIconName(categoryName)}
+          icon={resolveIconName(iconName)}
           className={`${className} shrink-0 transition-transform duration-300 group-hover:scale-105`}
         />
       </Suspense>
     );
   };
 
-  const displayedCategories = serviceCategories.categories as Category[];
+  const allCategories = (serviceCategories.categories || []) as Category[];
+  const displayedCategories = allCategories.slice(0, previewLimit);
 
   return (
     <Section>
-      <div className="mb-8 text-center items-center font-axis-sng-indlab-value">
-        <h1 className="text-4xl mb-2 uppercase tracking-wider">
-          {title || t('services.title')}
-        </h1>
-        <span className="text-gray-600 mb-6 font-axis-medium">
-          {description || t('services.description')}
-        </span>
-      </div>
+      {/* 📐 Main Container: Prevents Overflow and Adapts to Screen Sizes */}
+      <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 my-4 py-4 overflow-x-hidden">
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {displayedCategories.map(category => (
-          <Link
-            key={category.slug}
-            to={`/services/${category.slug}`}
-            className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 -translate-y-0 hover:-translate-y-0.2 transition-all duration-300 ease-in-and-out"
-          >
-            {/* 🌊 Sliding Wipe Background Layer */}
-            <div
-              className="absolute inset-0 bg-primary-700 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
-              aria-hidden="true"
-            />
+        {/* 1️⃣ LEFT SIDE: Services and Information Header */}
+        <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start gap-3 pt-2">
+          <div className="flex items-center gap-2.5 text-gray-900 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
+            {getIcon('ri:apps-line', 'h-8 w-8 text-primary-600')}
+            <h2 className="leading-snug">
+              {title || t('services.title') || 'Services and Information'}
+            </h2>
+          </div>
 
-            {/* 📝 Left Content Column (z-10 to stay above the sliding background) */}
-            <div className="relative z-10 flex-1 p-5 flex flex-col justify-start items-start text-start gap-4">
-              {/* Header: Icon inline with the Title */}
-              <div className="flex items-center gap-3 w-full">
-                <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 rounded-lg shrink-0 transition-colors duration-300">
-                  {getIcon(category.icon, 'h-5 w-5')}
+          <p className="text-gray-600 font-axis-thin text-sm leading-relaxed">
+            {description ||
+              t('services.description') ||
+              'Explore available digital services tailored for your profile.'}
+          </p>
+        </div>
+
+        {/* 2️⃣ VERTICAL DIVIDER BAR ( | ) */}
+        <div
+          className="hidden lg:block w-[1.5px] bg-gray-200 self-stretch my-1 mx-2"
+          aria-hidden="true"
+        />
+
+        {/* 3️⃣ RIGHT SIDE: UNIVERSAL AUTO-ADAPTING CSS GRID */}
+        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 justify-items-center items-start py-2 p-1">
+
+          {/* Service Cards */}
+          {displayedCategories.map(category => (
+            <Link
+              key={category.slug}
+              to={`/services/${category.slug}`}
+              className="group flex flex-col items-center text-center w-full h-full max-w-[140px] sm:max-w-[160px] transition-transform duration-300"
+            >
+              {/* Outer Ring Badge Circle */}
+              <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full border-1 border-gray-400 bg-primary-50/20 flex items-center justify-center p-3 sm:p-5 shadow-sm group-hover:scale-105 group-hover:border-primary-600 transition-all duration-300 overflow-hidden">
+                <div className="text-primary-600 group-hover:text-primary-800 transition-colors">
+                  {getIcon(category.icon, 'h-9 w-9 sm:h-14 sm:w-14')}
                 </div>
-                <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
-                  {category.category}
-                </h3>
               </div>
 
-              {/* Subtitle / Description */}
-              <p className="text-sm text-gray-600 group-hover:text-primary-100/95 font-axis-thin transition-colors duration-300 leading-relaxed">
-                {category.description}
-              </p>
-            </div>
+              {/* Badge Label */}
+              <h3 className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wider text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 text-pretty">
+                {category.category}
+              </h3>
+            </Link>
+          ))}
 
-            {/* ➡️ Right Accent Strip (Visual Height-spanning bar with indicator) */}
-            <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-800 transition-colors duration-300 shrink-0">
-              {getIcon(
-                'ri:arrow-right-double-line',
-                'h-5 w-5 text-primary-600 group-hover:text-white transition-all duration-300'
-              )}
+          {/* 4️⃣ "VIEW ALL SERVICES" BUTTON (Adapts seamlessly as a grid item) */}
+          {allCategories.length > previewLimit && (
+            <div className="flex items-center justify-center w-full h-full min-h-[100px] sm:min-h-[128px]">
+              <Link
+                to="/services"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border-2 border-primary-600 text-primary-600 font-axis-medium hover:bg-primary-600 hover:text-white transition-all duration-300 shadow-sm text-sm sm:text-md uppercase tracking-wider text-center whitespace-nowrap font-axis-navbar-focus"
+              >
+                {t('services.viewAll') || 'View all'}
+              </Link>
+              <Button >
+
+              </Button>
             </div>
-          </Link>
-        ))}
+          )}
+
+        </div>
+
       </div>
     </Section>
   );

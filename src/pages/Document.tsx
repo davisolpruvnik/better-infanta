@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Radio, RadioGroup } from '@base-ui/react';
+import { Radio, RadioGroup, Separator } from '@base-ui/react';
 
 import SEO from '../components/SEO';
 import {
@@ -303,13 +303,13 @@ export default function Document({
                                   </span>
                                 )}
 
-                                {/* 💡 INLINE WRAPPER: Placed text and button inline so they flow, wrap, and stay adjacent */}
-                                <span className="pr-4 text-xs sm:text-sm flex-1 min-w-0 text-pretty font-axis-book break-words leading-normal text-gray-900 inline-flex items-center gap-2 flex-wrap">
-                                  <span>{step.summaryText.trim()}</span>
+                                {/* 💡 Normal inline text wrapper */}
+                                <p className="pr-4 text-xs sm:text-sm flex-1 min-w-0 max-w-2xl font-axis-book break-words leading-normal text-gray-900">
+                                  <span>{step.summaryText.trim()}</span>{' '}
 
-                                  {/* 💡 TAPPABLE CHIP: Circular micro-button indicating tap-to-expand */}
+                                  {/* 💡 TAPPABLE CHIP: Positioned inline with text */}
                                   <span
-                                    className="inline-flex items-center justify-center size-5.5 rounded-full bg-primary-50 group-hover:bg-primary-100 text-primary-600 border border-primary-200/50 shadow-2xs transition-all duration-200 group-open:rotate-180 shrink-0 select-none"
+                                    className="inline-flex items-center justify-center size-5.5 rounded-full bg-primary-50 group-hover:bg-primary-100 text-primary-600 border border-primary-200/50 shadow-2xs transition-all duration-200 group-open:rotate-180 shrink-0 select-none align-middle ml-1.5"
                                     aria-hidden="true"
                                   >
                                     <LazyIcon
@@ -317,7 +317,7 @@ export default function Document({
                                       className="h-3.5 w-3.5"
                                     />
                                   </span>
-                                </span>
+                                </p>
                               </div>
                             </summary>
 
@@ -339,7 +339,7 @@ export default function Document({
                                 {step.badge}
                               </span>
                             )}
-                            <span className="text-xs sm:text-sm font-axis-book text-gray-800 flex-1 min-w-0 max-w-auto xs:text-pretty break-words leading-snug">
+                            <span className="text-xs sm:text-sm font-axis-book text-gray-800 flex-1 min-w-0 max-w-2xl xs:text-pretty break-words leading-snug">
                               {step.cleanStep}
                             </span>
                           </div>
@@ -374,7 +374,7 @@ export default function Document({
                       name="lucide:user-check"
                       className="h-4 w-4 text-burgundy-900/60 shrink-0"
                     />
-                    <span className="text-[12px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 leading-tight">
+                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 leading-tight">
                       Who to avail
                     </span>
                   </div>
@@ -391,11 +391,11 @@ export default function Document({
                       {doc.whocanavail.map((req, i) => (
                         <li
                           key={i}
-                          className="flex items-center gap-2.5 text-xs sm:text-sm text-gray-600 font-axis-thin text-wrap break-words"
+                          className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-700 font-axis-thin text-wrap break-words"
                         >
                           <LazyIcon
                             name="lucide:check-circle-2"
-                            className="text-emerald-600 h-4 w-4 shrink-0"
+                            className="text-emerald-600 h-4 w-4 shrink-0 mt-0.5"
                           />
                           <span className="leading-normal">{req}</span>
                         </li>
@@ -415,7 +415,7 @@ export default function Document({
                       name="ri:clipboard-line"
                       className="h-4 w-4 text-burgundy-900/60 shrink-0"
                     />
-                    <span className="text-[12px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 leading-tight">
+                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 leading-tight">
                       Required Documents
                     </span>
                   </div>
@@ -510,6 +510,23 @@ export default function Document({
             </ReactMarkdown>
           </div>
         )}
+
+        <div className="mt-8 flex flex-row flex-wrap items-center justify-center sm:justify-start gap-2 text-sm text-gray-600 font-axis-subtitular-focus uppercase tracking-wide">
+          <span>Source</span>
+          <Separator orientation="vertical" className="h-4 w-px bg-gray-800" />
+          <a
+            href="https://infanta.gov.ph/citizens-charter"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-row gap-1 font-axis-navbar-focus hover:text-primary-800/80 underline-offset-4 hover:underline transition-colors items-center"
+          >
+            Citizen's Charter
+            <LazyIcon
+              name="tabler:file-download"
+              className="h-4 w-4 text-burgundy-900/60 shrink-0"
+            />
+          </a>
+        </div>
       </Section>
     </>
   );

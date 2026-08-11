@@ -14,7 +14,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({ doc, renderIcon 
         <span className="text-[10px] sm:text-[12px] font-axis-navbar-focus text-primary-600 uppercase tracking-widest bg-primary-50 px-2.5 py-1 rounded">
           Citizen Charter Guide
         </span>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-axis-titular-focus uppercase text-gray-900 mt-3 tracking-wide leading-snug break-words text-wrap hyphens-auto max-w-lg md:max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-axis-titular-focus uppercase text-gray-900 mt-3 tracking-wide leading-snug break-words text-wrap max-w-lg md:max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
           {doc.title}
         </h1>
         {doc.description && (
@@ -80,7 +80,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({ doc, renderIcon 
               <span className="text-xl font-axis-sng-indlab-value text-burgundy-950 mt-1.5 leading-snug xs:tracking-normal sm:tracking-normal md:tracking-wide lg:tracking-wide">
                 {doc.office}
               </span>
-              <span className="text-sm font-axis-navbar-focus text-gray-600 tracking-wide mt-0.5">
+              <span className="inline-block max-w-lg text-sm font-axis-navbar-focus text-gray-600 tracking-wide mt-0.5 text-pretty line-clamp-1">
                 {doc.officeAddress}
               </span>
             </div>

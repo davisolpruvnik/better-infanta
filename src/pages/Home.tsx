@@ -2,7 +2,6 @@ import ServicesSection from '../components/home/ServicesSection';
 import GovernmentActivitySection from '../components/home/GovernmentActivitySection';
 import SEO from '../components/SEO';
 import LandingSite from '../components/home/Landing';
-import TownStats from '@/components/home/StatGeneralSinMaps';
 
 const Home: React.FC = () => {
   return (
@@ -16,7 +15,6 @@ const Home: React.FC = () => {
         <LandingSite />
         <ServicesSection />
         <GovernmentActivitySection />
-        <TownStats />
       </main>
     </>
   );

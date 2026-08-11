@@ -1,4 +1,3 @@
-// src/pages/Services.tsx
 import Section from '../components/ui/Section';
 import { useParams, Link } from 'react-router-dom';
 import { Text } from '../components/ui/Text';
@@ -11,17 +10,69 @@ import {
 import ServicesSection from '../components/home/ServicesSection';
 import SEO from '../components/SEO';
 import { Banner } from '@bettergov/kapwa/banner';
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useMemo, memo } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
 import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
 
-// 💡 1. Import your modular shared icon resolver
-
-// 💡 2. Lazy load the Iconify component as LazyIconify to avoid namespace collisions
+// 💡 Dynamic Lazy Loading Iconify
 const LazyIconify = lazy(() =>
   import('@iconify/react').then(module => ({ default: module.Icon }))
 );
 
+// ⚡ 1. Memoized Icon Component (Prevents re-instantiating icons on render)
+const ServiceIcon = memo(({ iconName, className = 'h-6 w-6' }: { iconName?: string; className?: string }) => {
+  return (
+    <Suspense
+      fallback={
+        <div className={`${className} rounded-full bg-primary-200/40 animate-pulse shrink-0`} />
+      }
+    >
+      <LazyIconify
+        icon={resolveIconName(iconName)}
+        className={`${className} shrink-0 transition-transform duration-300 group-hover:scale-110`}
+      />
+    </Suspense>
+  );
+});
+ServiceIcon.displayName = 'ServiceIcon';
+
+// ⚡ 2. Memoized Subcategory Card (Prevents re-rendering cards unless props change)
+interface SubcategoryCardProps {
+  categorySlug: string;
+  subcategory: Subcategory;
+  fallbackIcon?: string;
+}
+
+const SubcategoryCard = memo(({ categorySlug, subcategory, fallbackIcon }: SubcategoryCardProps) => {
+  return (
+    <Link
+      to={`/services/${categorySlug}/${subcategory.slug}`}
+      className="group flex flex-col items-center text-center w-full max-w-[130px] sm:max-w-[160px] md:max-w-[180px] focus:outline-none transition-transform duration-300 py-2"
+    >
+      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full border border-gray-300 group-hover:border-primary-600 bg-linear-to-b from-primary-50/40 to-primary-100/20 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300 overflow-hidden">
+        <div className="text-primary-600 group-hover:text-primary-800 transition-colors">
+          <ServiceIcon
+            iconName={subcategory.icon || fallbackIcon || 'RiFileTextLine'}
+            className="h-9 w-9 sm:h-14 sm:w-14 md:h-16 md:w-16"
+          />
+        </div>
+      </div>
+
+      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-900 group-hover:text-primary-700 transition-colors duration-200 line-clamp-2 leading-snug">
+        {subcategory.name}
+      </h3>
+
+      {subcategory.description && (
+        <p className="mt-1 text-[10px] sm:text-xs font-axis-thin text-gray-600 line-clamp-2 leading-tight px-1">
+          {subcategory.description}
+        </p>
+      )}
+    </Link>
+  );
+});
+SubcategoryCard.displayName = 'SubcategoryCard';
+
+// ⚡ 3. Main Services Page Component
 const Services: React.FC = () => {
   const { category } = useParams();
   const [categoryIndex, setCategoryIndex] = useState<CategoryIndex>({
@@ -29,42 +80,36 @@ const Services: React.FC = () => {
     pages: [],
   });
   const [loading, setLoading] = useState(false);
+
   const subcategories: Subcategory[] = categoryIndex.pages;
 
-  // 💡 3. Dynamic Lazy Icon Helper (Supports custom Tailwind sizes and transitions)
-  const getIcon = (categoryName?: string, className = 'h-6 w-6') => {
-    return (
-      <Suspense
-        fallback={
-          <div
-            className={`${className} rounded bg-primary-200/40 animate-pulse shrink-0`}
-          />
-        }
-      >
-        <LazyIconify
-          icon={resolveIconName(categoryName)}
-          className={`${className} shrink-0 transition-transform duration-300 group-hover:scale-105`}
-        />
-      </Suspense>
-    );
-  };
-
-  const getCategory = () => {
+  // ⚡ Memoized category lookup (Saves CPU cycles on re-renders)
+  const categoryData = useMemo(() => {
     return serviceCategories.categories.find(c => c.slug === category);
-  };
+  }, [category]);
 
-  const categoryData = getCategory();
-
+  // ⚡ Optimized Data Fetching with cancellation cleanup to prevent memory leaks
   useEffect(() => {
+    let isMounted = true;
+
     if (category && categoryData) {
       setLoading(true);
       getCategorySubcategories(category)
-        .then(setCategoryIndex)
+        .then(res => {
+          if (isMounted) setCategoryIndex(res);
+        })
         .catch(console.error)
-        .finally(() => setLoading(false));
+        .finally(() => {
+          if (isMounted) setLoading(false);
+        });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [category, categoryData]);
 
+  // 1️⃣ ALL SERVICES STANDALONE PAGE (/services)
   if (!category) {
     return (
       <>
@@ -76,13 +121,16 @@ const Services: React.FC = () => {
         <ServicesSection
           title={`All local government services`}
           description={`All services provided by the ${import.meta.env.VITE_GOVERNMENT_NAME} government. Find what you need for citizenship, business, education, and more.`}
+          previewLimit={999}
         />
       </>
     );
   }
+
+  // 2️⃣ CATEGORY NOT FOUND VIEW
   if (!categoryData) {
     return (
-      <Section className="p-3 mb-12">
+      <Section className="px-4 mb-12">
         <Breadcrumbsless className="mb-8" />
         <Banner
           type="error"
@@ -94,6 +142,7 @@ const Services: React.FC = () => {
     );
   }
 
+  // 3️⃣ SINGLE CATEGORY SUBCATEGORIES VIEW (/services/:category)
   return (
     <>
       <SEO
@@ -101,156 +150,51 @@ const Services: React.FC = () => {
         description={categoryData.description}
         keywords={`${categoryData.category}, government services, public services, local government`}
       />
-      <Section className="p-3 mb-8">
-        <Breadcrumbsless className="mb-8" />
+      <Section className="px-3 sm:px-6 lg:px-8 mb-12 overflow-x-hidden">
+        <Breadcrumbsless className="mb-6" />
 
-        {/* Category Header Area */}
-        <div className="flex flex-row items-center text-start gap-4">
-          {/* 💡 FIXED: Renders larger h-10 category icon dynamically with no <Icon> wrapper */}
-          {getIcon(categoryData.icon, 'h-10 w-10 text-primary-600')}
-          <h1 className="text-4xl font-axis-titular-focus uppercase text-gray-900 tracking-wide leading-tight">
-            {categoryData.category || category}
-          </h1>
+        {/* Section Header with Line Dividers */}
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 mb-1 sm:mb-2 w-full max-w-4xl mx-auto">
+          <div className="flex-1 h-[1px] bg-gray-200" />
+          <div className="flex items-center gap-2 text-gray-700 shrink-0">
+            <ServiceIcon iconName="ri:group-line" className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+            <h2 className="text-sm sm:text-md md:text-lg lg:text-xl font-axis-titular-focus uppercase tracking-wider text-gray-800 text-center">
+              {categoryData.category || category} Services
+            </h2>
+          </div>
+          <div className="flex-1 h-[1px] bg-gray-200" />
         </div>
-        <p className="text-lg font-axis-subtitular-focus text-gray-600 mb-8 tracking-wide">
-          {categoryData.description}
-        </p>
+
+        {categoryData.description && (
+          <p className="text-center font-axis-subtitular-focus text-gray-600 max-w-2xl mx-auto mb-8 sm:mb-10 tracking-wide text-xs sm:text-sm md:text-base px-2">
+            {categoryData.description}
+          </p>
+        )}
 
         {loading ? (
-          <div className="flex justify-center items-center p-8">
+          <div className="flex justify-center items-center p-12">
             <Text>Loading services...</Text>
           </div>
         ) : (
-          <>
-            {categoryIndex.title && (
-              <h1 className="font-axis-titular-focus uppercase text-gray-900 mt-3 tracking-wide leading-snug">
-                {categoryIndex.title}
-              </h1>
+          <div className="w-full max-w-7xl mx-auto">
+            {/* Grid de Subcategorias com componentes Memoizados */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 md:gap-8 justify-items-center items-start">
+              {subcategories.map(subcategory => (
+                <SubcategoryCard
+                  key={subcategory.slug}
+                  categorySlug={category}
+                  subcategory={subcategory}
+                  fallbackIcon={categoryData?.icon}
+                />
+              ))}
+            </div>
+
+            {subcategories.length === 0 && (
+              <p className="text-center text-gray-500 font-axis-thin my-12 text-xs sm:text-sm">
+                No services available under this category at the moment.
+              </p>
             )}
-            {categoryIndex.description && (
-              <p className="text-gray-600 mb-4">{categoryIndex.description}</p>
-            )}
-
-            {categoryIndex.layout === 'grid' ? (
-              /* 💎 GRID LAYOUT (Synchronized Slide-Wipe Cards with font-axis-navbar-focus) */
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {subcategories.map(subcategory => (
-                  <Link
-                    key={subcategory.slug}
-                    to={`/services/${category}/${subcategory.slug}`}
-                    className="group relative flex h-full w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-700 translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
-                  >
-                    {/* 🌊 Sliding Wipe Background Layer */}
-                    <div
-                      className="absolute inset-0 bg-primary-700 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
-                      aria-hidden="true"
-                    />
-
-                    {/* Left/Main Content Column */}
-                    <div className="relative z-10 flex-1 p-5 flex flex-col justify-start items-start text-start gap-4">
-                      {/* Header: Dynamic Icon inline with Title */}
-                      <div className="flex items-center gap-3 w-full">
-                        <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 flex items-center justify-center rounded-lg shrink-0 transition-colors duration-300">
-                          {/* 💡 FIXED: Uses getIcon directly with standard h-5/w-5 sizes */}
-                          {getIcon(
-                            subcategory.icon ||
-                              categoryData?.icon ||
-                              'RiFileTextLine',
-                            'h-5 w-5'
-                          )}
-                        </div>
-                        <h3 className="text-md font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 line-clamp-2 leading-snug">
-                          {subcategory.name}
-                        </h3>
-                      </div>
-
-                      {/* Description */}
-                      {subcategory.description && (
-                        <p className="text-sm text-gray-600 group-hover:text-primary-100/95 font-axis-thin transition-colors duration-300 leading-relaxed">
-                          {subcategory.description}
-                        </p>
-                      )}
-
-                      {/* Pinned Category Badge (Bottom-anchored, color-inverting) */}
-                      <div className="mt-auto pt-4 flex items-center justify-start">
-                        <span className="inline-block px-2.5 py-1 text-[9px] font-axis-bold uppercase tracking-wider rounded bg-gray-100 group-hover:bg-white/20 text-gray-800 group-hover:text-white transition-all duration-300">
-                          {categoryData?.category || category}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right Accent Strip Indicator */}
-                    <div className="relative z-10 flex items-center justify-center w-11 bg-primary-50/50 group-hover:bg-primary-800 border-primary-100/40 group-hover:border-primary-700 transition-colors duration-300 shrink-0">
-                      {/* 💡 FIXED: Uses getIcon directly to render the right arrow indicators cleanly */}
-                      {getIcon(
-                        'ri:arrow-right-double-line',
-                        'h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300'
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              /* 📄 LIST LAYOUT (Horizontal Slide-Wipe Cards) */
-              <div className="space-y-4 flex flex-col h-full bg-transparent">
-                {subcategories.map(subcategory => (
-                  <Link
-                    key={subcategory.slug}
-                    to={`/services/${category}/${subcategory.slug}`}
-                    className="group relative flex w-full overflow-hidden rounded-xl border border-primary-100/30 bg-primary-50/10 hover:border-primary-500 translate-y-0 hover:-translate-y-0.5 transition-all duration-300 ease-out"
-                  >
-                    {/* 🌊 Sliding Wipe Background Layer */}
-                    <div
-                      className="absolute inset-0 bg-primary-700 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
-                      aria-hidden="true"
-                    />
-
-                    {/* Left Content Column */}
-                    <div className="relative z-10 flex-1 p-5 flex flex-col justify-start items-start text-start gap-4">
-                      {/* Header */}
-                      <div className="flex items-center gap-3 w-full">
-                        <div className="bg-primary-100 text-primary-600 group-hover:bg-white/20 group-hover:text-white p-2.5 flex items-center justify-center rounded-lg shrink-0 transition-colors duration-300">
-                          {/* 💡 FIXED: Uses getIcon directly */}
-                          {getIcon(
-                            subcategory.icon ||
-                              categoryData?.icon ||
-                              'RiFileTextLine',
-                            'h-5 w-5'
-                          )}
-                        </div>
-                        <h4 className="text-lg font-axis-navbar-focus uppercase tracking-wide text-gray-900 group-hover:text-white transition-colors duration-300 leading-snug">
-                          {subcategory.name}
-                        </h4>
-                      </div>
-
-                      {/* Description */}
-                      {subcategory.description && (
-                        <p className="text-sm text-gray-600 group-hover:text-primary-100/95 font-axis-thin transition-colors duration-300 leading-relaxed">
-                          {subcategory.description}
-                        </p>
-                      )}
-
-                      {/* Pinned Category Badge */}
-                      <div className="mt-auto pt-1 flex items-center justify-start">
-                        <span className="inline-block px-2 py-1 text-[10px] font-medium rounded-sm bg-gray-100 text-gray-800 group-hover:bg-white/10 group-hover:text-white transition-colors duration-300">
-                          {categoryData?.category || category}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right Accent Strip */}
-                    <div className="relative z-10 flex items-center justify-center w-12 bg-primary-50/50 group-hover:bg-primary-800 border-l border-primary-100/40 group-hover:border-primary-600 transition-colors duration-300 shrink-0">
-                      {/* 💡 FIXED: Uses getIcon directly */}
-                      {getIcon(
-                        'ri:arrow-right-double-line',
-                        'h-5 w-5 text-primary-600 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300'
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </>
+          </div>
         )}
       </Section>
     </>

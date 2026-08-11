@@ -72,59 +72,58 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden lg:flex items-center space-x-8 pr-4">
-            {mainNavigation.map(item => (
-              <div key={item.label} className="relative group">
-                <a
-                  href={item.href}
-                  className="group flex items-center text-gray-700 font-axis-navbar-focus hover:text-primary-600 uppercase tracking-wider transition-colors"
-                >
-                  {t(`${item.label}`)}
-                  {item.children &&
-                    /* 💡 FIXED: Chevron Down animation icon */
-                    renderIcon(
-                      'lucide:chevron-down',
-                      'ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-all duration-200 group-hover:rotate-180'
-                    )}
-                </a>
-                {item.children && (
-                  <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div
-                      className="py-1"
-                      role="menu"
-                      aria-orientation="vertical"
-                    >
-                      {item.children.map(child => (
-                        <Link
-                          key={child.label}
-                          to={child.href}
-                          className="text-left block px-4 py-2 text-md tracking-wide text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-axis-subtitular-focus"
-                          role="menuitem"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+          <div className="hidden lg:flex items-center justify-end w-full max-w-3xl ml-auto space-x-8">
+            {/* Main Navigation Items */}
+            <div className="flex items-center space-x-8">
+              {mainNavigation.map(item => (
+                <div key={item.label} className="relative group">
+                  <a
+                    href={item.href}
+                    className="group flex items-center text-gray-700 font-axis-navbar-focus hover:text-primary-600 uppercase tracking-wider transition-colors"
+                  >
+                    {t(`${item.label}`)}
+                    {item.children &&
+                      renderIcon(
+                        'lucide:chevron-down',
+                        'ml-1 h-4 w-4 text-gray-800 group-hover:text-primary-600 transition-all duration-200 group-hover:rotate-180'
+                      )}
+                  </a>
+                  {item.children && (
+                    <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div className="py-1" role="menu" aria-orientation="vertical">
+                        {item.children.map(child => (
+                          <Link
+                            key={child.label}
+                            to={child.href}
+                            className="text-left block px-4 py-2 text-md tracking-wide text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-axis-subtitular-focus"
+                            role="menuitem"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="hidden lg:flex items-center space-x-6">
-            <Link
-              to="/about"
-              className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider"
-            >
-              About
-            </Link>
-            <Link
-              to="/search"
-              className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider gap-1"
-            >
-              {/* 💡 FIXED: Search icon */}
-              {renderIcon('lucide:search', 'h-4 w-4')}
-              Search
-            </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Auxiliary Links (About & Search) */}
+            <div className="flex items-center space-x-6">
+              <Link
+                to="/about"
+                className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider"
+              >
+                About
+              </Link>
+              <Link
+                to="/search"
+                className="flex items-center text-gray-700 hover:text-primary-600 font-axis-navbar-focus transition-colors uppercase tracking-wider gap-1"
+              >
+                {renderIcon('lucide:search', 'h-4 w-4')}
+                Search
+              </Link>
+            </div>
           </div>
 
           {/* Mobile menu button */}
