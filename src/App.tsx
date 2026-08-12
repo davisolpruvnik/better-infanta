@@ -9,6 +9,8 @@ import Document from './pages/Document';
 import Government from './pages/Government';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Plantao from './components/layout/plantao';
+import '@fontsource-variable/google-sans-flex';
+import '@fontsource-variable/google-sans-code';
 
 function App() {
   return (
