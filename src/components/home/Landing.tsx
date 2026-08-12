@@ -134,61 +134,53 @@ export default function LandingSite() {
     winds: liveWeather ? `${liveWeather.windSpeed}-${liveWeather.windGusts} kph` : '12 kph',
     humidity: liveWeather ? `${liveWeather.humidity}%` : '75%',
     icon: liveWeather?.condition.icon ?? 'lucide:cloud-lightning',
+    sunrise: liveWeather ? `${liveWeather.sunrise}` : '',
+    sunset: liveWeather ? `${liveWeather.sunset}` : ''
   };
 
-  // 💡 INTERNATIONAL STANDARD AQI COLOR MAPPING (US EPA Standards)
+  // 💡 INTERNATIONAL STANDARD AQI COLOR MAPPING (Light mode compliant)
   const getAqiColor = (aqi: number) => {
-    if (aqi <= 50) return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'; // Good
-    if (aqi <= 100) return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40'; // Moderate
-    if (aqi <= 150) return 'bg-orange-500/20 text-orange-300 border-orange-500/40'; // Unhealthy for Sensitive Groups
-    if (aqi <= 200) return 'bg-red-500/20 text-red-300 border-red-500/40'; // Unhealthy
-    if (aqi <= 300) return 'bg-purple-500/20 text-purple-300 border-purple-500/40'; // Very Unhealthy
-    return 'bg-rose-950/40 text-rose-300 border-rose-700/50'; // Hazardous (301+)
+    if (aqi <= 50) return 'bg-emerald-100 text-emerald-800 border-emerald-300'; // Good
+    if (aqi <= 100) return 'bg-amber-100 text-amber-800 border-amber-300'; // Moderate
+    if (aqi <= 150) return 'bg-orange-100 text-orange-800 border-orange-300'; // Unhealthy Sensitive
+    if (aqi <= 200) return 'bg-rose-100 text-rose-800 border-rose-300'; // Unhealthy
+    if (aqi <= 300) return 'bg-purple-100 text-purple-800 border-purple-300'; // Very Unhealthy
+    return 'bg-rose-900 text-white border-rose-950'; // Hazardous
   };
 
   // Stats data
   const statsData = [
     { label: 'Barangays', value: '36', icon: 'lucide:layers' },
     { label: 'Income Class', value: '1st', icon: 'lucide:shield-check' },
-    { label: 'Citizens Served', value: '77,676', icon: 'lucide:users' },
+    { label: 'Population, 2024', value: '77,676', icon: 'lucide:users' },
     { label: 'Area (in sq km)', value: '342.76', icon: 'lucide:file-text' },
   ];
 
   const getIcon = (iconName: string, className = 'h-5 w-5') => (
-    <Suspense fallback={<div className={`${className} bg-white/10 rounded animate-pulse`} />}>
+    <Suspense fallback={<div className={`${className} bg-stone-200 rounded animate-pulse`} />}>
       <LazyIconify icon={iconName} className={className} />
     </Suspense>
   );
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white py-8 sm:py-12 md:py-20">
-      {/* Decorative Background Glows */}
-      <div className="absolute top-0 -left-20 w-64 sm:w-96 h-64 sm:h-96 bg-primary-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-accent-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative overflow-hidden bg-fantas-50 text-slate-900 py-8 sm:py-12 md:py-20 border-b border-stone-200">
+      {/* Subtle Background Accent Warmth */}
+      <div className="absolute top-0 -left-20 w-64 sm:w-96 h-64 sm:h-96 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-orange-100/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10 flex flex-col gap-8 sm:gap-10 md:gap-14">
+      <div className="container mx-auto px-8 sm:px-12 relative z-10 flex flex-col gap-8 sm:gap-10 md:gap-14">
 
         {/* ========================================================= */}
         {/* 1. TOP SECTION: LOGO + BETTER INFANTA HEADER (2-PART)     */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center border-b border-white/10 pb-8 sm:pb-10">
-
-          {/* TOP LEFT: Rounded Star Logo */}
-          <div className="lg:col-span-3 flex justify-center lg:justify-start">
-            <div className="relative group flex items-center justify-center size-24 sm:size-28 md:size-36 rounded-2xl sm:rounded-3xl bg-white/10 border border-white/20 backdrop-blur-md shadow-xl transition-transform duration-300 hover:scale-105">
-              <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-accent-400/30 to-primary-300/30 blur-md group-hover:blur-lg transition-all" />
-              <div className="relative z-10 flex items-center justify-center text-white">
-                {getIcon('lucide:sparkles', 'h-12 w-12 sm:h-14 sm:w-14 md:h-18 md:w-18 text-accent-200 animate-pulse')}
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center border-b border-stone-200 pb-8 sm:pb-10">
 
           {/* TOP RIGHT: Better Infanta Branding Block */}
           <div className="lg:col-span-9 text-center lg:text-left flex flex-col gap-2 sm:gap-3">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-axis-navbar-focus uppercase tracking-wider text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-axis-navbar-focus uppercase tracking-wider text-fantas-900 leading-tight">
               Better Infanta
             </h1>
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-primary-100/90 font-axis-thin max-w-2xl leading-relaxed mx-auto lg:mx-0">
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-fantas-800 font-axis-thin max-w-2xl leading-relaxed mx-auto lg:mx-0">
               A unified, community-run digital gateway for local government services,
               transparency records, and public municipal accessibility in Infanta, Quezon.
             </p>
@@ -204,7 +196,7 @@ export default function LandingSite() {
           {/* 1️⃣ COLUMN 1 (LEFT): Quick Search */}
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-accent-200">
+              <div className="flex items-center justify-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-fantas-900">
                 {getIcon('lucide:sparkles', 'h-4 w-4')}
                 <span>Quick Search</span>
               </div>
@@ -221,17 +213,17 @@ export default function LandingSite() {
                     expandedOffset={gooeyExpandedOffset}
                     gooeyBlur={4}
                     classNames={{
-                      trigger: "bg-white text-gray-900 shadow-lg border border-white/30",
-                      bubbleSurface: "bg-white text-gray-900 shadow-lg border border-white/30",
-                      input: "text-gray-900 placeholder:text-gray-500 font-axis-book text-xs sm:text-sm",
+                      trigger: "bg-white text-fantas-900 shadow-md border border-stone-200",
+                      bubbleSurface: "bg-white text-fantas-900 shadow-lg border border-stone-200",
+                      input: "text-slate-900 placeholder:text-gray-600 font-axis-book text-xs sm:text-sm",
                     }}
                   />
                 </form>
 
                 {/* 💡 LIVE SEARCH RESULTS DROPDOWN */}
                 {searchValue.trim().length > 0 && (
-                  <div className="absolute left-0 mt-2 w-full max-w-xs sm:max-w-md bg-white text-gray-900 rounded-2xl shadow-2xl border border-gray-200/80 py-2 z-50 divide-y divide-gray-100 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="px-3.5 py-1.5 text-[12px] font-axis-navbar-focus text-gray-600 uppercase tracking-widest">
+                  <div className="absolute left-0 mt-2 w-full max-w-xs sm:max-w-md bg-white text-fantas-900 rounded-2xl shadow-2xl border border-stone-200 py-2 z-50 divide-y divide-stone-100 max-h-48 overflow-y-auto">
+                    <div className="px-3.5 py-1.5 text-[12px] font-axis-navbar-focus text-fantas-800 uppercase tracking-widest">
                       {searchResults.length} Matching Services
                     </div>
 
@@ -241,21 +233,21 @@ export default function LandingSite() {
                           key={`${item.slug}-${index}`}
                           to={item.slug}
                           onClick={() => setSearchValue('')}
-                          className="flex items-center justify-between px-3.5 py-2.5 hover:bg-primary-50 transition-colors text-left group"
+                          className="flex items-center justify-between px-3.5 py-2.5 hover:bg-stone-50 transition-colors text-left group"
                         >
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-xs sm:text-sm font-axis-bold text-gray-900 group-hover:text-primary-600 transition-colors">
+                            <span className="text-xs sm:text-sm font-axis-bold text-fantas-900 group-hover:text-primary-600 transition-colors">
                               {item.label}
                             </span>
-                            <span className="text-[10px] text-gray-500 font-axis-book">
+                            <span className="text-[10px] text-fantas-900/60 font-axis-book">
                               {item.category}
                             </span>
                           </div>
-                          {getIcon('lucide:chevron-right', 'h-4 w-4 text-gray-400 group-hover:text-primary-600 group-hover:translate-x-0.5 transition-all')}
+                          {getIcon('lucide:chevron-right', 'h-4 w-4 text-slate-400 group-hover:text-primary-600 group-hover:translate-x-0.5 transition-all')}
                         </Link>
                       ))
                     ) : (
-                      <div className="px-4 py-3 text-xs text-gray-500 font-axis-book text-center">
+                      <div className="px-4 py-3 text-xs text-slate-500 font-axis-book text-center">
                         No matching services found for "{searchValue}"
                       </div>
                     )}
@@ -266,16 +258,16 @@ export default function LandingSite() {
 
             {/* Quick Search Chips */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-              <span className="text-sm text-primary-200/80 font-axis-subtitular-focus uppercase tracking-wider pr-1">
+              <span className="text-sm text-gray-600 font-axis-subtitular-focus uppercase tracking-wider pr-1">
                 Popular
               </span>
               {quickSearchTerms.map((term) => (
                 <Link
                   key={term.slug || term.label}
                   to={term.slug}
-                  className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-axis-subtitular-focus bg-white/10 hover:bg-white/25 border border-white/15 hover:border-white/30 text-white tracking-wide transition-all duration-200 hover:scale-105"
+                  className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 text-xs font-axis-subtitular-focus bg-white hover:bg-stone-100 border border-stone-200 text-fantas-800 tracking-wide transition-all duration-200 hover:scale-105"
                 >
-                  {getIcon('tabler:search', 'h-3 w-3 text-white-200')}
+                  {getIcon('tabler:search', 'h-3 w-3 text-fantas-900')}
                   <span>{term.label}</span>
                 </Link>
               ))}
@@ -283,86 +275,124 @@ export default function LandingSite() {
           </div>
 
           {/* 2️⃣ COLUMN 2 (MIDDLE): Compact Weather Graphic */}
-          <div className="flex flex-col justify-between h-full gap-3 lg:border-l lg:border-white/15 lg:pl-8 pt-6 lg:pt-0 border-t border-white/10 lg:border-t-0">
+          <div className="flex flex-col justify-between h-full gap-3 lg:border-l lg:border-stone-200 lg:pl-8 pt-6 lg:pt-0 border-t border-stone-200 lg:border-t-0">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-accent-200">
+              <div className="flex items-center justify-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-fantas-900">
                 {getIcon('lucide:cloud-sun', 'h-4 w-4')}
                 <span>Local Weather</span>
               </div>
 
               {/* 📺 COMPACT WEATHER CARD */}
-              <div className="w-full max-w-lg mx-auto lg:max-w-none lg:mx-0 flex flex-col rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-black/30 border-white/20 backdrop-blur-md overflow-hidden">
+              <div className="w-full max-w-lg mx-auto lg:max-w-none lg:mx-0 flex flex-col bg-fantas-200/50 overflow-hidden">
 
-                {/* 1. Town Name & Dynamically Color-Coded AQI Badge */}
-                <div className="py-2.5 px-3 sm:px-4 text-center flex items-center justify-center gap-2.5">
-                  <h3 className="text-xs sm:text-sm md:text-base font-axis-subtitular-focus uppercase tracking-wider text-white">
-                    {townWeather.name}
-                  </h3>
-                  <span className={`px-2 py-0.5 text-[10px] sm:text-[12px] font-axis-navbar-focus rounded-full border tracking-wider transition-colors duration-300 ${getAqiColor(townWeather.aqi)}`}>
-                    AQI {townWeather.aqi}
-                  </span>
+                {/* 1. Town Name & AQI Badge */}
+                <div className="py-2.5 px-3 sm:px-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                  {/* LEFT SIDE: Town Name & AQI */}
+                  <div className="flex items-center gap-2 sm:gap-2.5">
+                    <h3 className="text-xs sm:text-sm md:text-base font-axis-subtitular-focus uppercase tracking-wider text-fantas-800">
+                      {townWeather.name}
+                    </h3>
+                    <span className={`px-2 py-0.5 text-[10px] sm:text-[12px] font-axis-navbar-focus rounded-full border tracking-wider transition-colors duration-300 ${getAqiColor(townWeather.aqi)}`}>
+                      AQI {townWeather.aqi}
+                    </span>
+                  </div>
+
+                  {/* RIGHT SIDE: Sunrise & Sunset */}
+                  <div className="flex flex-col items-center gap-1 text-[10px] sm:text-[12px] font-axis-navbar-focus text-fantas-900 uppercase tracking-wider">
+                    {/* Sunrise */}
+                    <div className="flex items-center gap-1" title="Sunrise">
+                      {getIcon('tabler:sunrise-filled', 'h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600')}
+                      <span>{townWeather.sunrise}</span>
+                    </div>
+
+                    {/* Sunset */}
+                    <div className="flex items-center gap-1" title="Sunset">
+                      {getIcon('tabler:sunset-filled', 'h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent-800')}
+                      <span>{townWeather.sunset}</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Dotted Divider */}
-                <div className="w-full border-b border-dotted border-white/20" />
+                <div className="w-full border-b border-dotted border-gray-600/80" />
 
                 {/* 2. Temperature Beside Icon & Condition */}
                 <div className="py-2.5 sm:py-3 px-3 sm:px-4 flex items-center justify-center gap-2.5 sm:gap-3 text-center">
-                  {getIcon(townWeather.icon, 'h-8 w-8 sm:h-9 sm:w-9 text-accent-200 shrink-0 drop-shadow-md')}
+                  {getIcon(townWeather.icon, 'h-8 w-8 sm:h-9 sm:w-9 text-fantas-500 shrink-0 drop-shadow-sm')}
                   <div className="flex items-baseline gap-1.5 sm:gap-2">
-                    <span className="text-3xl sm:text-4xl font-axis-sng-indlab-value text-white leading-none tracking-wider">
+                    <span className="text-3xl sm:text-4xl font-axis-sng-indlab-value text-fantas-900 leading-none tracking-wider">
                       {townWeather.temp}
                     </span>
-                    <span className="text-[10px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-accent-200/80">
+                    <span className="text-[10px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-600">
                       FEELS LIKE
                     </span>
-                    <span className="text-base sm:text-lg font-axis-sng-indlab-value text-white/80 tracking-wider">
+                    <span className="text-base sm:text-lg font-axis-sng-indlab-value text-fantas-900 tracking-wider">
                       {townWeather.feelsLike}
                     </span>
                   </div>
                 </div>
 
                 {/* Dotted Divider */}
-                <div className="w-full border-b border-dotted border-white/20" />
+                <div className="w-full border-b border-dotted border-gray-600/80" />
 
                 {/* 3. Minimum | Maximum Columns */}
-                <div className="py-2.5 px-2 grid grid-cols-2 text-center divide-x divide-white/10">
+                <div className="py-2.5 px-2 grid grid-cols-2 text-center divide-x divide-gray-500/80">
                   {/* Minimum Temp */}
                   <div className="flex flex-row justify-center items-center gap-1.5 sm:gap-2 tracking-wider">
-                    <span className="text-xs sm:text-[14px] font-axis-navbar-focus uppercase tracking-wider text-blue-300">
+                    <span className="text-xs sm:text-[14px] font-axis-navbar-focus uppercase tracking-wider text-accent-700/80">
                       MIN
                     </span>
-                    <span className="text-xl sm:text-2xl font-axis-sng-indlab-value text-white">
+                    <span className="text-xl sm:text-2xl font-axis-sng-indlab-value text-fantas-900">
                       {townWeather.minTemp}
                     </span>
                   </div>
 
                   {/* Maximum Temp */}
                   <div className="flex flex-row justify-center items-center gap-1.5 sm:gap-2 tracking-wider">
-                    <span className="text-xl sm:text-2xl font-axis-sng-indlab-value text-white">
+                    <span className="text-xl sm:text-2xl font-axis-sng-indlab-value text-fantas-900">
                       {townWeather.maxTemp}
                     </span>
-                    <span className="text-xs sm:text-[14px] font-axis-navbar-focus uppercase tracking-wider text-orange-400">
+                    <span className="text-xs sm:text-[14px] font-axis-navbar-focus uppercase tracking-wider text-plantao-600/80">
                       MAX
                     </span>
                   </div>
                 </div>
 
                 {/* 4. Bottom Highlight Band */}
-                <div className="bg-black/40 border-t border-white/15 py-2.5 px-1 grid grid-cols-3 divide-x divide-white/20 items-center text-center text-[10px] font-axis-bold text-white uppercase tracking-wider">
-                  <div className="flex items-center justify-center gap-1 px-0.5 sm:px-1" title="Chance of Rain">
-                    {getIcon('mingcute:rain-line', 'h-4 w-4 text-primary-200')}
-                    <span className="text-white-200 font-axis-navbar-focus text-[13px] sm:text-[15px]">{townWeather.rainChance}</span>
+                <div className="bg-fantas-200/50 border-t border-gray-500/80 py-2.5 px-1 grid grid-cols-3 divide-x divide-gray-500/80 items-center text-center text-[10px] font-axis-bold text-slate-700 uppercase tracking-wider">
+                  {/* Chance of Rain */}
+                  <div className="flex flex-col items-center justify-center px-0.5 sm:px-1" title="Chance of Rain">
+                    <span className='font-axis-navbar-focus uppercase text-[9px] text-gray-700/70'>
+                      Chance of rain
+                    </span>
+                    <div className='flex flex-row items-center justify-center gap-1 px-0.5 sm:px-1'>
+                      {getIcon('streamline-ultimate:rain-umbrella-1-bold', 'h-3 w-3 text-gray-700/70')}
+                      <span className="text-fantas-900 font-axis-navbar-focus text-[12px] sm:text-[14px]">{townWeather.rainChance}</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-center gap-1 px-0.5 sm:px-1" title="Wind & Gusts">
-                    {getIcon('tabler:wind', 'h-4 w-4 text-primary-200')}
-                    <span className="text-white font-axis-navbar-focus text-[12px] sm:text-[14px]">{townWeather.winds}</span>
+                  {/* Wind / Gust */}
+                  <div className="flex flex-col items-center justify-center px-0.5 sm:px-1" title="Wind / Gust">
+                    <span className='font-axis-navbar-focus uppercase text-[9px] text-gray-700/70'>
+                      Wind / Gust
+                    </span>
+                    <div className='flex flex-row items-center justify-center gap-1 px-0.5 sm:px-1'>
+                      {/* Updated icon to a wind icon instead of umbrella */}
+                      {getIcon('ph:wind-bold', 'h-3 w-3 text-gray-700/70')}
+                      <span className="text-fantas-900 font-axis-navbar-focus text-[12px] sm:text-[14px] whitespace-nowrap">{townWeather.winds}</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-center gap-1 px-0.5 sm:px-1" title="Humidity">
-                    {getIcon('fluent:weather-humidity-24-filled', 'h-4 w-4 text-primary-200')}
-                    <span className="text-white font-axis-navbar-focus text-[13px] sm:text-[15px]">{townWeather.humidity}</span>
+                  {/* Humidity */}
+                  <div className="flex flex-col items-center justify-center px-0.5 sm:px-1" title="Humidity">
+                    <span className='font-axis-navbar-focus uppercase text-[9px] text-gray-700/70'>
+                      Humidity
+                    </span>
+                    <div className='flex flex-row items-center justify-center gap-1 px-0.5 sm:px-1'>
+                      {getIcon('material-symbols:humidity-percentage-outline', 'h-3 w-3 text-gray-700/70')}
+                      {/* Changed text-[12px] sm:text-[14px] -> text-[14px] sm:text-[16px] */}
+                      <span className="text-fantas-900 font-axis-navbar-focus text-[12px] sm:text-[14px]">{townWeather.humidity}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -370,9 +400,9 @@ export default function LandingSite() {
             </div>
           </div>
 
-          {/* 3️⃣ COLUMN 3 (RIGHT): Uncarded Statistics */}
-          <div className="flex flex-col justify-start h-full gap-4 lg:border-l lg:border-white/15 lg:pl-8 pt-6 lg:pt-0 border-t border-white/10 lg:border-t-0">
-            <div className="flex justify-center items-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-accent-200">
+          {/* 3️⃣ COLUMN 3 (RIGHT): Statistics */}
+          <div className="flex flex-col justify-start h-full gap-4 lg:border-l lg:border-stone-200 lg:pl-8 pt-6 lg:pt-0 border-t border-stone-200 lg:border-t-0">
+            <div className="flex justify-center items-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-fantas-900">
               {getIcon('lucide:bar-chart-3', 'h-4 w-4')}
               <span>Municipal Impact & Stats</span>
             </div>
@@ -382,12 +412,12 @@ export default function LandingSite() {
               {statsData.map((stat, idx) => (
                 <div key={idx} className="flex flex-col justify-center gap-1">
                   <div className="flex items-center gap-2">
-                    {getIcon(stat.icon, 'h-4 w-4 text-accent-200')}
-                    <span className="text-2xl sm:text-2xl md:text-3xl font-axis-sng-indlab-value text-white proportional-nums tracking-wide">
+                    {getIcon(stat.icon, 'h-4 w-4 text-fantas-900/60')}
+                    <span className="text-2xl sm:text-2xl md:text-3xl font-axis-sng-indlab-value text-fantas-900 proportional-nums tracking-[0.035em]">
                       {stat.value}
                     </span>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-primary-200/80 font-axis-medium leading-tight">
+                  <p className="text-[11px] sm:text-xs text-fantas-900/60 font-axis-medium leading-tight">
                     {stat.label}
                   </p>
                 </div>

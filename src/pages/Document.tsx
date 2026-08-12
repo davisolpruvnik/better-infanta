@@ -271,15 +271,15 @@ export default function Document({
                   <div className="flex flex-row items-center gap-2 pb-4 border-b border-gray-200">
                     <LazyIcon
                       name="ri:walk-line"
-                      className="h-5 w-5 text-burgundy-900 shrink-0"
+                      className="h-5 w-5 text-fantas-950 shrink-0"
                     />
-                    <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60">
+                    <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-950">
                       Step-by-Step Procedure
                     </h3>
                   </div>
 
                   {/* Clean Stepper Timeline resting directly on the background */}
-                  <div className="relative border-l border-primary-200 ml-4 pl-6 space-y-8">
+                  <div className="relative border-l border-fantas-200 ml-4 pl-6 space-y-8">
                     {processedSteps.map(step => (
                       <div
                         key={step.id}
@@ -287,7 +287,7 @@ export default function Document({
                       >
                         {/* FIXED BADGE ALIGNMENT: top-0.5 to align pixel-perfectly with the first line of text */}
                         {!step.isSubStep && (
-                          <span className="flex absolute -left-[36.5px] top-0.5 h-6 w-6 items-center justify-center rounded-full bg-primary-700 border-white ring-1 ring-primary-50 text-white font-axis-chunky text-[10px] text-center shadow-sm z-10">
+                          <span className="flex absolute -left-[36.5px] top-0.5 h-6 w-6 items-center justify-center rounded-full bg-fantas-800 border-white ring-1 ring-fantas-50 text-white font-axis-chunky text-[10px] text-center shadow-sm z-10">
                             {step.badge}
                           </span>
                         )}
@@ -298,18 +298,18 @@ export default function Document({
                             <summary className="flex items-center justify-start gap-3 select-none list-none outline-none">
                               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2.5 flex-1 min-w-0 text-wrap break-words">
                                 {step.isSubStep && (
-                                  <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
+                                  <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
                                     {step.badge}
                                   </span>
                                 )}
 
                                 {/* 💡 Normal inline text wrapper */}
-                                <p className="pr-4 text-xs sm:text-sm flex-1 min-w-0 max-w-2xl font-axis-book break-words leading-normal text-gray-900">
+                                <p className="pr-4 text-xs sm:text-sm flex-1 min-w-0 max-w-2xl font-axis-book break-words leading-normal text-fantas-950">
                                   <span>{step.summaryText.trim()}</span>{' '}
 
                                   {/* 💡 TAPPABLE CHIP: Positioned inline with text */}
                                   <span
-                                    className="inline-flex items-center justify-center size-5.5 rounded-full bg-primary-50 group-hover:bg-primary-100 text-primary-600 border border-primary-200/50 shadow-2xs transition-all duration-200 group-open:rotate-180 shrink-0 select-none align-middle ml-1.5"
+                                    className="inline-flex items-center justify-center size-5.5 rounded-full bg-fantas-50 group-hover:bg-fantas-100 text-fantas-600 border border-fantas-200/50 shadow-2xs transition-all duration-200 group-open:rotate-180 shrink-0 select-none align-middle ml-1.5"
                                     aria-hidden="true"
                                   >
                                     <LazyIcon
@@ -335,11 +335,11 @@ export default function Document({
                           /* Clean, Flat, Border-free static step layout */
                           <div className="text-gray-800 py-1 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2.5 text-wrap break-words">
                             {step.isSubStep && (
-                              <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-primary-50 border border-primary-200 text-primary-800 rounded shrink-0">
+                              <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
                                 {step.badge}
                               </span>
                             )}
-                            <span className="text-xs sm:text-sm font-axis-book text-gray-800 flex-1 min-w-0 max-w-2xl xs:text-pretty break-words leading-snug">
+                            <span className="text-xs sm:text-sm font-axis-book text-fantas-950 flex-1 min-w-0 max-w-2xl xs:text-pretty break-words leading-snug">
                               {step.cleanStep}
                             </span>
                           </div>
@@ -372,9 +372,9 @@ export default function Document({
                   <div className="w-[115px] shrink-0 flex items-center gap-1.5 pt-0.5">
                     <LazyIcon
                       name="lucide:user-check"
-                      className="h-4 w-4 text-burgundy-900/60 shrink-0"
+                      className="h-4 w-4 text-fantas-950 shrink-0"
                     />
-                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 leading-tight">
+                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
                       Who to avail
                     </span>
                   </div>
@@ -413,9 +413,9 @@ export default function Document({
                   <div className="flex items-start gap-1.5 pt-0.5">
                     <LazyIcon
                       name="ri:clipboard-line"
-                      className="h-4 w-4 text-burgundy-900/60 shrink-0"
+                      className="h-4 w-4 text-fantas-950 shrink-0"
                     />
-                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-burgundy-900/60 leading-tight">
+                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
                       Required Documents
                     </span>
                   </div>
@@ -434,7 +434,7 @@ export default function Document({
                         >
                           <Radio.Root
                             value={group.key}
-                            className="flex size-3.5 shrink-0 items-center justify-center border rounded-full p-0 border-primary-600 bg-white text-white data-checked:bg-primary-700 data-checked:border-primary-700 focus-visible:outline-2 cursor-pointer"
+                            className="flex size-3.5 shrink-0 items-center justify-center border rounded-full p-0 border-fantas-600 bg-white text-white data-checked:bg-fantas-700 data-checked:border-fantas-700 focus-visible:outline-2 cursor-pointer"
                           >
                             <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1 before:rounded-full before:bg-current" />
                           </Radio.Root>
@@ -460,7 +460,7 @@ export default function Document({
                       {activeRequirements.map((req, i) => (
                         <li
                           key={i}
-                          className="flex gap-2.5 text-xs sm:text-sm text-gray-600 text-wrap break-words"
+                          className="flex gap-2.5 text-xs sm:text-sm text-gray-700 text-wrap break-words"
                         >
                           <LazyIcon
                             name="lucide:check-circle-2"
@@ -511,19 +511,19 @@ export default function Document({
           </div>
         )}
 
-        <div className="mt-8 flex flex-row flex-wrap items-center justify-center sm:justify-start gap-2 text-sm text-gray-600 font-axis-subtitular-focus uppercase tracking-wide">
+        <div className="mt-8 flex flex-row flex-wrap items-center justify-center sm:justify-start gap-2 text-sm text-fantas-950/80 font-axis-subtitular-focus uppercase tracking-wide">
           <span>Source</span>
-          <Separator orientation="vertical" className="h-4 w-px bg-gray-800" />
+          <Separator orientation="vertical" className="h-4 w-px bg-fantas-800" />
           <a
             href="https://infanta.gov.ph/citizens-charter"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-row gap-1 font-axis-navbar-focus hover:text-primary-800/80 underline-offset-4 hover:underline transition-colors items-center"
+            className="flex flex-row gap-1 font-axis-navbar-focus hover:text-fantas-700/80 underline-offset-4 hover:underline transition-colors items-center"
           >
             Citizen's Charter
             <LazyIcon
               name="tabler:file-download"
-              className="h-4 w-4 text-burgundy-900/60 shrink-0"
+              className="h-4 w-4 text-fantas-950 shrink-0"
             />
           </a>
         </div>

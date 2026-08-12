@@ -7,7 +7,7 @@ const LazyIconify = lazy(() =>
   import('@iconify/react').then(m => ({ default: m.Icon }))
 );
 
-// --- PRIVATE HELPERS & CONFIGS (No export keyword to satisfy Fast Refresh) ---
+// --- PRIVATE HELPERS & CONFIGS ---
 
 interface HotlineItem {
   agency: string;
@@ -21,31 +21,31 @@ const INFANTA_HOTLINES: HotlineItem[] = [
     agency: 'Infanta MDRRMO',
     number: '0918-395-3839',
     icon: 'mingcute:vest-fill',
-    iconClass: 'text-red-400 fill-red-950/40',
+    iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: 'Infanta PNP',
     number: '0915-789-3115',
     icon: 'game-icons:police-badge',
-    iconClass: 'text-blue-400 fill-blue-950/40',
+    iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: 'Infanta BFP',
     number: '(042) 797-2320',
     icon: 'roentgen:fire-hydrant',
-    iconClass: 'text-amber-500 fill-amber-950/40',
+    iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: 'Infanta RHU',
     number: '(042) 535-9331',
     icon: 'ic:round-health-and-safety',
-    iconClass: 'text-emerald-400 fill-emerald-950/40',
+    iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: "Mayor's Office",
     number: '(042) 535-4045',
     icon: 'roentgen:government',
-    iconClass: 'text-amber-400 fill-amber-950/40',
+    iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
 ];
 
@@ -55,7 +55,7 @@ export default function Plantao() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
 
-  // 1. Calculate items visible in viewport based on screen size (Dynamic Device Adaptability)
+  // 1. Calculate items visible in viewport based on screen size
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
@@ -113,41 +113,41 @@ export default function Plantao() {
   };
 
   return (
-    <div className="w-full bg-red-950 border-b border-red-900/40 text-[10px] font-axis-book uppercase tracking-wider text-red-200/80 py-2 sm:py-1.5 px-3 sm:px-6 select-none transition-all duration-300 relative overflow-hidden">
-      {/* 🚨 Ambient background emergency pulse glow (Gently pulses every 1.5 seconds) */}
+    <div className="w-full animate-emergency border-b text-[10px] font-axis-book uppercase tracking-wider text-red-100 py-2 sm:py-1.5 px-3 sm:px-6 select-none transition-all duration-300 relative overflow-hidden">
+      {/* 🚨 Ambient background emergency pulse glow */}
       <div
         className="absolute inset-0 bg-red-800/15 animate-pulse animation-duration-[1.5s] pointer-events-none"
         aria-hidden="true"
       />
 
-      {/* Main Wrapper (Switches to column layout on mobile to prevent dense cramping) */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-2">
-        {/* TOP PANEL (On mobile: Splits layout horizontally. On desktop: Flexes inline) */}
+      {/* Main Wrapper */}
+      <div className="relative z-10 px-2 w-full max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+        {/* TOP PANEL */}
         <div className="flex items-center justify-between shrink-0 sm:justify-start">
           {/* 🚨 Emergency Label Identifier */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <div className="relative flex h-2 w-2">
-              <span className="animate-ping animation-duration-[0.6s] absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-90"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            <div className="relative flex h-3 w-3">
+              <span className="animate-ping animation-duration-[0.4s] absolute inline-flex h-full w-full rounded-full bg-fantas-50 opacity-100"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-fantas-50"></span>
             </div>
-            <span className="font-axis-navbar-focus text-amber-300 text-[16px] tracking-widest">
+            <span className="font-axis-navbar-focus text-fantas-100 text-[16px] tracking-widest">
               HOTLINES
             </span>
           </div>
 
-          {/* 🕹️ Mobile-Only Compact Controllers (Inline with Emergency label) */}
+          {/* 🕹️ Mobile-Only Compact Controllers */}
           <div className="flex sm:hidden items-center gap-2">
             <div className="flex items-center gap-0.5">
               <button
                 onClick={handlePrev}
-                className="h-6 w-6 flex items-center justify-center hover:bg-white/10 rounded-full text-red-400 hover:text-white transition-colors cursor-pointer"
+                className="h-6 w-6 flex items-center justify-center hover:bg-white/10 rounded-full text-fantas-50 hover:text-white transition-colors cursor-pointer"
                 aria-label="Previous Emergency Agency"
               >
                 {getIcon('tabler:chevron-left', 'h-3.5 w-3.5')}
               </button>
               <button
                 onClick={handleNext}
-                className="h-6 w-6 flex items-center justify-center hover:bg-white/10 rounded-full text-red-400 hover:text-white transition-colors cursor-pointer"
+                className="h-6 w-6 flex items-center justify-center hover:bg-white/10 rounded-full text-fantas-50 hover:text-white transition-colors cursor-pointer"
                 aria-label="Next Emergency Agency"
               >
                 {getIcon('tabler:chevron-right', 'h-3.5 w-3.5')}
@@ -155,48 +155,50 @@ export default function Plantao() {
             </div>
             <a
               href="/safety"
-              className="rounded bg-white/5 hover:bg-white/10 px-2 py-1 text-[9px] font-axis-bold tracking-wider text-red-100 hover:text-white transition-all duration-200 cursor-pointer"
+              className="bg-white/5 hover:bg-white/10 px-2 py-1 text-[12px] font-axis-sng-indlab-value tracking-wider text-fantas-100 hover:text-white transition-all duration-200 cursor-pointer rounded-sm"
             >
               More
             </a>
           </div>
         </div>
 
-        {/* 🎠 Hidden Overflow Window Slider (Expands to take full width of row on mobile) */}
+        {/* 🎠 Hidden Overflow Window Slider */}
         <div className="relative flex-1 overflow-hidden w-full">
+          {/* Added -mx-1 sm:-mx-1.5 to offset item padding */}
           <div
-            className="flex transition-transform duration-500 ease-in-out"
+            className="flex transition-transform duration-800 ease-in-out -mx-1 sm:-mx-1.5"
             style={{
               transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
             }}
           >
             {INFANTA_HOTLINES.map((item, idx) => {
               return (
+                /* Added px-1 sm:px-1.5 to create gaps between hotline cards */
                 <div
                   key={idx}
-                  className="flex-none px-1.5 sm:px-2 flex items-center justify-center"
+                  className="flex-none flex items-center justify-center px-1 sm:px-1.5"
                   style={{ width: `${100 / itemsPerView}%` }}
                 >
                   <a
                     href={`tel:${item.number}`}
-                    className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded px-2.5 py-2 sm:py-1 w-full transition-colors duration-200 justify-between group"
+                    className="flex items-center gap-1.5 sm:gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded px-2.5 py-1.5 sm:py-1 w-full transition-colors duration-200 justify-between group"
                     title={`Click to call ${item.agency}`}
                   >
                     <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden">
                       {getIcon(
                         item.icon,
-                        `h-3.5 w-3.5 shrink-0 ${item.iconClass}`
+                        `h-5 w-5 shrink-0 text-fantas-100 ${item.iconClass}`
                       )}
-                      <span className="font-axis-subtitular-focus tracking-wider truncate text-[12px] text-red-200 group-hover:text-white transition-colors max-w-[130px] min-[370px]:max-w-none">
+                      <span className="font-axis-subtitular-focus tracking-wider truncate text-[12px] text-fantas-100 group-hover:text-white transition-colors max-w-[130px] min-[370px]:max-w-none">
                         {item.agency}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 shrink-0 ml-1">
                       {getIcon(
                         'Phone',
-                        'h-2.5 w-2.5 text-red-400/80 group-hover:text-red-400 transition-colors'
+                        'h-2.5 w-2.5 text-fantas-100 transition-colors'
                       )}
-                      <span className="font-axis-sng-indlab-value text-amber-300 tracking-wide text-[18px] proportional-nums">
+                      <span className="font-axis-sng-indlab-value text-fantas-100 tracking-wide text-[18px] proportional-nums">
                         {item.number}
                       </span>
                     </div>
@@ -207,7 +209,7 @@ export default function Plantao() {
           </div>
         </div>
 
-        {/* 🕹️ Desktop-Only Manual Chevron Controllers & safety links */}
+        {/* 🕹️ Desktop-Only Manual Chevron Controllers */}
         <div className="hidden sm:flex items-center gap-1.5 sm:gap-3 shrink-0 border-l border-red-900/60 pl-2 sm:pl-3">
           <div className="flex items-center gap-0.5">
             <button
@@ -227,7 +229,7 @@ export default function Plantao() {
           </div>
           <a
             href="/safety"
-            className="flex items-center gap-1 shrink-0 rounded bg-white/5 hover:bg-white/10 px-2.5 py-1 text-[10px] font-axis-bold tracking-wider text-red-100 hover:text-white transition-all duration-200 cursor-pointer"
+            className="flex items-center gap-1 shrink-0 rounded font-axis-sng-indlab-value bg-white/5 hover:bg-white/10 px-2.5 py-1 text-[12px] font-axis-bold tracking-wider text-red-100 hover:text-white transition-all duration-200 cursor-pointer"
           >
             More
           </a>

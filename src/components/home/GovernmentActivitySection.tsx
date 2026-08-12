@@ -39,7 +39,7 @@ export default function GovernmentActivitySection({
     return (
       <Suspense
         fallback={
-          <div className={`${className} rounded-full bg-purple-200/40 animate-pulse shrink-0`} />
+          <div className={`${className} rounded-full bg-fantas-200/40 animate-pulse shrink-0`} />
         }
       >
         <LazyIconify
@@ -56,18 +56,18 @@ export default function GovernmentActivitySection({
   return (
     <Section id="#government">
       {/* 📐 Flex Container: Header on the LEFT (desktop), Circles on the RIGHT */}
-      <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 my-4 py-4 overflow-x-hidden">
+      <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 my-4 py-4 overflow-x-hidden mx-auto">
 
         {/* 1️⃣ LEFT SIDE (Desktop): Header and Subheader */}
         <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start text-left gap-3 pt-2">
-          <div className="flex items-center gap-2.5 text-gray-900 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
-            {getIcon('ri:building-line', 'h-8 w-8 text-purple-600')}
+          <div className="flex items-start gap-2.5 text-fantas-700 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
+            {getIcon('ri:building-line', 'h-8 w-8 text-fantas-700 mt-1')}
             <h2 className="leading-snug">
               {title || t('governmentActivity.title', 'Government Agencies')}
             </h2>
           </div>
 
-          <p className="text-gray-600 font-axis-thin text-sm leading-relaxed">
+          <p className="text-fantas-900/70 font-axis-thin text-sm leading-snug">
             {description ||
               t('governmentActivity.description', 'Find government offices, agencies, and public services.')}
           </p>
@@ -89,15 +89,15 @@ export default function GovernmentActivitySection({
               to={`/government/${category.slug}`}
               className="group flex flex-col items-center text-center w-full max-w-[140px] sm:max-w-[160px] transition-transform duration-300"
             >
-              {/* Purple Badge Circle */}
-              <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full border-1 border-gray-300 bg-purple-50/20 flex items-center justify-center p-3 sm:p-5 group-hover:scale-105 group-hover:border-purple-600 transition-all duration-300 overflow-hidden">
-                <div className="text-purple-600 group-hover:text-purple-800 transition-colors">
+              {/* fantas Badge Circle */}
+              <div className="relative w-24 h-24 sm:w-30 sm:h-30 rounded-full border border-fantas-300/80 bg-fantas-50/50 flex items-center justify-center p-3 sm:p-5 group-hover:scale-105 group-hover:border-fantas-700 group-hover:bg-fantas-100/50 transition-all duration-300 overflow-hidden">
+                <div className="text-fantas-700 group-hover:text-fantas-800 transition-colors">
                   {getIcon(category.icon, 'h-9 w-9 sm:h-14 sm:w-14')}
                 </div>
               </div>
 
               {/* Label */}
-              <h3 className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wider text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
+              <h3 className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wider text-gray-800 group-hover:text-fantas-700 transition-colors line-clamp-2 text-pretty leading-snug">
                 {category.category}
               </h3>
             </Link>
@@ -108,7 +108,7 @@ export default function GovernmentActivitySection({
             <div className="flex items-center justify-center w-full h-full min-h-[100px] sm:min-h-[128px]">
               <Link
                 to="/government"
-                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border-1 border-purple-400 text-purple-600 font-axis-medium hover:bg-purple-600 hover:text-white transition-all duration-300 shadow-sm text-sm sm:text-md uppercase tracking-wider text-center whitespace-nowrap font-axis-navbar-focus"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-fantas-400 text-fantas-700 font-axis-navbar-focus hover:bg-fantas-700 hover:text-white hover:border-fantas-700 transition-all duration-300 text-sm sm:text-md uppercase tracking-wider text-center whitespace-nowrap"
               >
                 {t('governmentActivity.viewAll', 'View all')}
               </Link>

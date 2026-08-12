@@ -13,71 +13,65 @@
 @theme {
   --font-serif: Georgia, 'Times New Roman', serif;
 
-  --color-primary-50: #e6f0fd;
-  --color-primary-100: #cce0fb;
-  --color-primary-200: #99c2f7;
-  --color-primary-300: #66a3f3;
-  --color-primary-400: #3385ef;
-  --color-primary-500: #0066eb;
-  --color-primary-600: #0052bc;
-  --color-primary-700: #003d8d;
-  --color-primary-800: #00295e;
-  --color-primary-900: #00142f;
+  --color-fantas-50: #fff4e6;
+  --color-fantas-100: #feebd2;
+  --color-fantas-200: #fed6a5;
+  --color-fantas-300: #fdbf72;
+  --color-fantas-400: #fcab45;
+  --color-fantas-500: #fb9618;
+  --color-fantas-600: #e27f04;
+  --color-fantas-700: #b56603;
+  --color-fantas-800: #884c02;
+  --color-fantas-900: #553001;
+  --color-fantas-950: #402401;
 
-  --color-secondary-50: #ffede6;
-  --color-secondary-100: #ffdbcc;
-  --color-secondary-200: #ffb799;
-  --color-secondary-300: #ff9466;
-  --color-secondary-400: #ff7033;
-  --color-secondary-500: #ff4d00;
-  --color-secondary-600: #cc3e00;
-  --color-secondary-700: #992e00;
-  --color-secondary-800: #661f00;
-  --color-secondary-900: #330f00;
+  --color-arvore-50: #ebffeb;
+  --color-arvore-100: #aaffaa;
+  --color-arvore-200: #00f000;
+  --color-arvore-300: #00cd00;
+  --color-arvore-400: #00ae00;
+  --color-arvore-500: #009100;
+  --color-arvore-600: #007100;
+  --color-arvore-700: #005600;
+  --color-arvore-800: #003c00;
+  --color-arvore-900: #002200;
+  --color-arvore-950: #001500;
 
-  --color-accent-50: #fef3e6;
-  --color-accent-100: #fde7cc;
-  --color-accent-200: #fbd099;
-  --color-accent-300: #f9b866;
-  --color-accent-400: #f7a133;
-  --color-accent-500: #f58900;
-  --color-accent-600: #c46e00;
-  --color-accent-700: #935200;
-  --color-accent-800: #623700;
-  --color-accent-900: #311b00;
+  --color-accent-50: #ebf4ff;
+  --color-accent-100: #d1e6ff;
+  --color-accent-200: #a3ccff;
+  --color-accent-300: #7ab6ff;
+  --color-accent-400: #4d9cff;
+  --color-accent-500: #1f83ff;
+  --color-accent-600: #006bf0;
+  --color-accent-700: #0057c2;
+  --color-accent-800: #004396;
+  --color-accent-900: #00224d;
+  --color-accent-950: #001024;
 
-  --color-success-50: #e6f7ef;
-  --color-success-100: #ccefdf;
-  --color-success-200: #99dfbf;
-  --color-success-300: #66cf9f;
-  --color-success-400: #33bf7f;
-  --color-success-500: #00af5f;
-  --color-success-600: #008c4c;
-  --color-success-700: #006939;
-  --color-success-800: #004626;
-  --color-success-900: #002313;
+  --color-arvore-50: #f0fdf4;
+  --color-arvore-100: #dcfce7;
+  --color-arvore-200: #bbf7d0;
+  --color-arvore-300: #86efac;
+  --color-arvore-400: #4ade80;
+  --color-arvore-500: #22c55e;
+  --color-arvore-600: #16a34a;
+  --color-arvore-700: #15803d;
+  --color-arvore-800: #166534;
+  --color-arvore-900: #14532d;
+  --color-arvore-950: #052e16;
 
-  --color-warning-50: #fff8e6;
-  --color-warning-100: #fff1cc;
-  --color-warning-200: #ffe399;
-  --color-warning-300: #ffd566;
-  --color-warning-400: #ffc733;
-  --color-warning-500: #ffb900;
-  --color-warning-600: #cc9400;
-  --color-warning-700: #996f00;
-  --color-warning-800: #664a00;
-  --color-warning-900: #332500;
-
-  --color-error-50: #fceaea;
-  --color-error-100: #f9d5d5;
-  --color-error-200: #f3abab;
-  --color-error-300: #ed8282;
-  --color-error-400: #e75858;
-  --color-error-500: #e12e2e;
-  --color-error-600: #b42525;
-  --color-error-700: #871c1c;
-  --color-error-800: #5a1212;
-  --color-error-900: #2d0909;
+  --color-plantao-50: #ffedec;
+  --color-plantao-100: #fedada;
+  --color-plantao-200: #fdb8b7;
+  --color-plantao-300: #fd8e8d;
+  --color-plantao-400: #fd5c59;
+  --color-plantao-500: #f31f12;
+  --color-plantao-600: #c4170c;
+  --color-plantao-700: #940f07;
+  --color-plantao-800: #6a0703;
+  --color-plantao-900: #3f0301;
+  --color-plantao-950: #2c0101;
 
   --color-gray-50: #f8f9fa;
   --color-gray-100: #f1f3f5;
@@ -112,6 +106,21 @@
       opacity: 1;
     }
   }
+}
+
+@keyframes emergency-strobe {
+  0%, 100% {
+    background-color: #7f1d1d; /* Deep Red (bg-red-900) */
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    background-color: #b91c1c; /* Bright Emergency Red (bg-red-700) */
+    border-color: rgba(254, 202, 202, 0.8);
+  }
+}
+
+.animate-emergency {
+  animation: emergency-strobe 2s ease-in-out infinite;
 }
 
 @theme inline {

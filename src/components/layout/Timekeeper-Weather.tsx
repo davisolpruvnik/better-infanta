@@ -98,7 +98,7 @@ interface CurrencyRate {
   rateInPhp: number;
 }
 
-// --- PRIMARY COMPONENT EXPORT ---
+// --- fantas COMPONENT EXPORT ---
 
 export default function Timekeeper() {
   const [timeStr, setTimeStr] = useState('');
@@ -245,110 +245,109 @@ export default function Timekeeper() {
   const activeCurrency = currencyRates[activeCurrencyIndex];
 
   return (
-    <nav className="w-full bg-cream-200 border-b border-cream-300 text-[10px] sm:text-[11px] font-axis-medium uppercase tracking-wide text-burgundy-900/60 py-1.5 px-3 sm:px-6 select-none transition-all duration-300">
-      {/* 💡 FIXED: w-full on mobile to use maximum screen width, restricts to max-6xl on desktops */}
-      <div className="w-full max-w-6xl mx-auto flex justify-between items-center gap-2">
+    <nav className="w-full bg-cream-200 border-b border-cream-300 text-[10px] sm:text-[11px] font-axis-medium uppercase tracking-wide text-fantas-900/60 py-1.5 px-3 sm:px-6 select-none transition-all duration-300">
+      <div className="container px-8 sm:px-12 mx-auto flex justify-between items-center gap-2">
         {/* 🏰 LEFT SIDE: Pulse indicators, running system time, & offset metadata */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="relative flex items-center justify-center w-2 h-2">
-            <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-primary-400 opacity-70"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary-500"></span>
+            <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-fantas-900 opacity-70"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-fantas-900"></span>
           </div>
           <div className="flex items-center gap-1 sm:gap-1.5">
-            <span className="font-axis-chunky text-primary-800 proportional-nums text-[10px] sm:text-[12px]">
+            <span className="font-axis-chunky text-fantas-800 proportional-nums text-[10px] sm:text-[12px]">
               {timeStr || '00:00'}
             </span>
-            {/* 💡 SPACE SAVER: Hidden on mobile screens, shown on tablet/desktop */}
-            <span className="hidden sm:inline-block opacity-80 text-[10px] text-primary-800">
+            <span className="hidden sm:inline-block opacity-80 text-[10px] text-fantas-800">
               ({gmtOffsetStr})
             </span>
           </div>
         </div>
 
         {/* ☁️ & 💵 RIGHT SIDE: Live Weather + Exchange Rates Tickers */}
-        <div className="flex items-center gap-2 sm:gap-3 justify-end flex-1 min-w-0 tracking-wider">
-          {/* A. Currency Exchange Ticker (USD, EUR, GBP, JPY, BRL in PHP) */}
-          <div className="flex items-center min-w-18.75 sm:min-w-25 justify-end border-r border-burgundy-300/30 pr-2 sm:pr-3 shrink-0">
-            {loadingRates ? (
-              <Suspense
-                fallback={
-                  <div className="h-3 w-3 rounded-full bg-burgundy-900/10 animate-pulse shrink-0" />
-                }
-              >
-                <LazyIconify
-                  icon="lucide:loader-2"
-                  className="h-3 w-3 animate-spin text-burgundy-900/40"
-                />
-              </Suspense>
-            ) : activeCurrency ? (
-              <div
-                className={`flex items-center gap-1 transition-all duration-300 ease-in-out transform ${
-                  isCurrencyFading
-                    ? 'opacity-0 -translate-y-1 scale-95'
-                    : 'opacity-100 translate-y-0 scale-100'
-                }`}
-              >
-                <span className="font-axis-plantao-text-focus text-burgundy-900/80 text-[10px] sm:text-[12px]">
-                  {activeCurrency.code}
-                </span>
-                <span className="font-axis-plantao-num-focus text-primary-800 proportional-nums text-[10px] sm:text-[12px]">
-                  ₱{activeCurrency.rateInPhp.toFixed(2)}
-                </span>
-              </div>
-            ) : (
-              <span className="text-[9px] text-burgundy-900/30">Rates Off</span>
-            )}
-          </div>
+        <div className="flex items-center justify-end tracking-wider">
+          {/* 💡 EQUAL DISTRIBUTION: 2-column grid guarantees 50/50 equal width distribution for both tickers */}
+          <div className="grid grid-cols-2 items-center gap-2 sm:gap-3 min-w-[210px] sm:min-w-[260px]">
 
-          {/* B. Localized Multi-Town Weather Carousel */}
-          <div className="flex items-center min-w-[110px] sm:min-w-[140px] justify-start shrink-0">
-            {loadingWeather ? (
-              <Suspense
-                fallback={
-                  <div className="h-3 w-3 rounded-full bg-burgundy-900/10 animate-pulse shrink-0" />
-                }
-              >
-                <LazyIconify
-                  icon="lucide:loader-2"
-                  className="h-3 w-3 animate-spin text-burgundy-900/40"
-                />
-              </Suspense>
-            ) : activeWeather && weatherIconName ? (
-              <div
-                className={`flex items-center gap-1.5 sm:gap-2 transition-all duration-300 ease-in-out transform ${
-                  isWeatherFading
-                    ? 'opacity-0 -translate-y-1 scale-95'
-                    : 'opacity-100 translate-y-0 scale-100'
-                }`}
-              >
-                {/* 💡 SPACE SAVER: Truncates long town names on extremely small mobile screens */}
-                <span className="font-axis-plantao-text-focus text-burgundy-900/85 text-[10px] sm:text-[12px] truncate max-w-[65px] sm:max-w-none">
-                  {activeWeather.name}
-                </span>
-
-                <div
-                  className="flex items-center gap-1"
-                  title={weatherDetails?.label}
+            {/* A. Currency Exchange Ticker */}
+            <div className="flex items-center justify-end border-r border-fantas-300/30 pr-2 sm:pr-3 min-w-0">
+              {loadingRates ? (
+                <Suspense
+                  fallback={
+                    <div className="h-3 w-3 rounded-full bg-fantas-900/10 animate-pulse shrink-0" />
+                  }
                 >
-                  {/* 💡 LAZY ENABLED WEATHER ICON */}
-                  <Suspense
-                    fallback={
-                      <div className="h-3.5 w-3.5 rounded bg-primary-200/40 animate-pulse shrink-0" />
-                    }
-                  >
-                    <LazyIconify
-                      icon={weatherIconName}
-                      className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${weatherDetails?.iconClass}`}
-                    />
-                  </Suspense>
-                  <span className="font-axis-plantao-num-focus text-primary-800 text-[11px] sm:text-[12px] proportional-nums">
-                    {activeWeather.temp}°C
+                  <LazyIconify
+                    icon="lucide:loader-2"
+                    className="h-3 w-3 animate-spin text-fantas-900/40"
+                  />
+                </Suspense>
+              ) : activeCurrency ? (
+                <div
+                  className={`flex items-center gap-1 transition-all duration-300 ease-in-out transform ${isCurrencyFading
+                      ? 'opacity-0 -translate-y-1 scale-95'
+                      : 'opacity-100 translate-y-0 scale-100'
+                    }`}
+                >
+                  <span className="font-axis-plantao-text-focus text-fantas-900/80 text-[10px] sm:text-[12px]">
+                    {activeCurrency.code}
+                  </span>
+                  <span className="font-axis-plantao-num-focus text-fantas-800 proportional-nums text-[10px] sm:text-[12px]">
+                    ₱{activeCurrency.rateInPhp.toFixed(2)}
                   </span>
                 </div>
-              </div>
-            ) : (
-              <span className="text-[10px] text-burgundy-900/40">Offline</span>
-            )}
+              ) : (
+                <span className="text-[9px] text-fantas-900/30">Rates Off</span>
+              )}
+            </div>
+
+            {/* B. Localized Multi-Town Weather Carousel */}
+            <div className="flex items-center justify-end min-w-0">
+              {loadingWeather ? (
+                <Suspense
+                  fallback={
+                    <div className="h-3 w-3 rounded-full bg-fantas-900/10 animate-pulse shrink-0" />
+                  }
+                >
+                  <LazyIconify
+                    icon="lucide:loader-2"
+                    className="h-3 w-3 animate-spin text-fantas-900/40"
+                  />
+                </Suspense>
+              ) : activeWeather && weatherIconName ? (
+                <div
+                  className={`flex items-center gap-1.5 sm:gap-2 transition-all duration-300 ease-in-out transform ${isWeatherFading
+                      ? 'opacity-0 -translate-y-1 scale-95'
+                      : 'opacity-100 translate-y-0 scale-100'
+                    }`}
+                >
+                  <span className="font-axis-plantao-text-focus text-fantas-900/85 text-[10px] sm:text-[12px] truncate max-w-[60px] sm:max-w-none">
+                    {activeWeather.name}
+                  </span>
+
+                  <div
+                    className="flex items-center gap-1"
+                    title={weatherDetails?.label}
+                  >
+                    <Suspense
+                      fallback={
+                        <div className="h-3.5 w-3.5 rounded bg-fantas-200/40 animate-pulse shrink-0" />
+                      }
+                    >
+                      <LazyIconify
+                        icon={weatherIconName}
+                        className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${weatherDetails?.iconClass}`}
+                      />
+                    </Suspense>
+                    <span className="font-axis-plantao-num-focus text-fantas-800 text-[11px] sm:text-[12px] proportional-nums">
+                      {activeWeather.temp}°C
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <span className="text-[10px] text-fantas-900/40">Offline</span>
+              )}
+            </div>
+
           </div>
         </div>
       </div>

@@ -42,45 +42,45 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 pt-12 pb-8">
+    <footer className="bg-fantas-900 text-white">
+      <div className="container mx-auto px-8 sm:px-12 pt-12 pb-8">
         <Disclaimer />
         <div className="grid grid-cols-1 xs:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-12">
-          <div>
+          <div className='pb-8'>
             <div className="flex items-center mb-4">
               {/* 💡 Checkmark Portal Logo (Lazy Loaded with pulse placeholder) */}
               <Suspense
                 fallback={
-                  <div className="h-12 w-12 mr-3 rounded-full bg-gray-800 animate-pulse shrink-0" />
+                  <div className="h-12 w-12 mr-3 rounded-full bg-fantas-900 animate-pulse shrink-0" />
                 }
               >
                 <LazyIconify
                   icon="ri:checkbox-circle-fill"
-                  className="h-12 w-12 mr-3 text-primary-400 shrink-0"
+                  className="h-12 w-12 mr-3 text-fantas-100 shrink-0"
                 />
               </Suspense>
 
               <div>
-                <div className="font-axis-sng-indlab-value tracking-wider uppercase">Infanta, Quezon Portal</div>
-                <div className="font-axis-subtitular-focus tracking-wider uppercase text-sm text-gray-400">
+                <div className="font-axis-sng-indlab-value tracking-wider uppercase leading-tight text-fantas-50">Better Infanta</div>
+                <div className="font-axis-subtitular-focus tracking-wider uppercase text-sm text-fantas-50">
                   A BetterGov.ph Portal
                 </div>
               </div>
             </div>
 
-            <p className="font-axis-footer-focus text-gray-500/80 tracking-wider text-sm mb-4 wrap-break-word">
+            <p className="font-axis-footer-focus text-fantas-50/90 tracking-wider text-sm mb-4 wrap-break-word">
               A community portal providing Philippine citizens, businesses, and
               visitors with information and services.
             </p>
 
             {/* Social Links Row */}
             <div className="flex space-x-4 justify-center md:justify-start lg:justify-start">
-              <span className='uppercase font-axis-subtitular-focus tracking-wider text-sm text-gray-500'>Profile</span>
+              <span className='uppercase font-axis-subtitular-focus tracking-wider text-sm text-fantas-50/90'>Profile</span>
               {footerNavigation.socialLinks.map(link => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-fantas-50/90 hover:text-white transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Visit our official ${link.label} page`}
@@ -97,15 +97,15 @@ const Footer: React.FC = () => {
               key={section.title}
               className={index === 2 ? 'xs:col-start-2 md:col-start-2 lg:col-start-auto' : ''}
             >
-              <h3 className="text-lg text-gray-400 font-axis-navbar-focus uppercase tracking-wider mb-4">
-                {section.title}
+              <h3 className="text-lg text-fantas-900 font-axis-navbar-focus uppercase tracking-wider mb-4">
+                <span className='bg-fantas-50 px-1.5 py-0.5'>{section.title}</span>
               </h3>
               <ul className="space-y-2">
                 {section.links.map(link => (
                   <li key={link.label}>
                     <Link
                       to={link.href}
-                      className="text-gray-500 hover:text-white text-sm transition-colors font-axis-footer-focus uppercase tracking-wider leading-snug"
+                      className="text-fantas-50/75 hover:text-white text-sm transition-colors font-axis-footer-focus uppercase tracking-wider"
                     >
                       {link.label}
                     </Link>
@@ -117,27 +117,27 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar: Copyright & Standard Footer Links */}
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <div className="border-t border-fantas-50/30 border-dotted mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-center text-xs font-axis-footer-focus uppercase tracking-wider mb-4 md:mb-0 text-pretty">
+            <p className="text-fantas-50/90 text-center text-xs font-axis-footer-focus uppercase tracking-wider mb-4 md:mb-0 text-pretty">
               {t('footer.copyright')}
             </p>
             <div className="flex space-x-6 font-axis-footer-focus tracking-wider uppercase">
               <Link
                 to="https://github.com/bettergovph/bettergov"
-                className="text-gray-500 hover:text-white text-xs transition-colors"
+                className="text-fantas-50/90 hover:text-white text-xs transition-colors"
               >
                 Contribute
               </Link>
               <Link
                 to="/sitemap"
-                className="text-gray-500 hover:text-white text-xs transition-colors"
+                className="text-fantas-50/90 hover:text-white text-xs transition-colors"
               >
                 Sitemap
               </Link>
               <a
                 href="/accessibility"
-                className="text-gray-500 hover:text-white text-xs transition-colors"
+                className="text-fantas-50/90 hover:text-white text-xs transition-colors"
               >
                 Accessibility
               </a>

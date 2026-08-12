@@ -14,6 +14,15 @@ export interface ProcessedWeatherData {
   windGusts: number;
   aqi: number;
   condition: WeatherMapEntry;
+  sunrise: string;
+  sunset: string;
+}
+
+// Helper function to format ISO time ("2026-08-12T05:42") into 12-hour time ("5:42 AM")
+function formatIsoTime(isoString?: string): string {
+  if (!isoString) return '--:--';
+  const timePart = isoString.split('T')[1];
+  return timePart ? timePart.substring(0, 5) : '--:--';
 }
 
 export function useWeather(location: LocationConfig) {
@@ -29,10 +38,29 @@ export function useWeather(location: LocationConfig) {
         setLoading(true);
         setError(null);
 
-        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&wind_speed_unit=kmh&timezone=Asia%2FManila`;
-        const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${location.lat}&longitude=${location.lon}&current=us_aqi`;
+        // 1. Weather Forecast Parameters
+        const weatherParams = new URLSearchParams({
+          latitude: location.lat.toString(),
+          longitude: location.lon.toString(),
+          current: 'temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m',
+          daily: 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset',
+          wind_speed_unit: 'kmh',
+          timezone: 'Asia/Manila',
+          forecast_days: '1',
+        });
 
-        // Fetch Weather & AQI in parallel
+        // 2. Air Quality Parameters
+        const aqiParams = new URLSearchParams({
+          latitude: location.lat.toString(),
+          longitude: location.lon.toString(),
+          current: 'us_aqi',
+          timezone: 'Asia/Manila',
+        });
+
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?${weatherParams.toString()}`;
+        const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?${aqiParams.toString()}`;
+
+        // Fetch Weather & AQI concurrently
         const [weatherRes, aqiRes] = await Promise.all([
           fetch(weatherUrl),
           fetch(aqiUrl),
@@ -59,6 +87,8 @@ export function useWeather(location: LocationConfig) {
           windGusts: Math.round(current?.wind_gusts_10m ?? 18),
           aqi: Math.round(aqiJson?.current?.us_aqi ?? 24),
           condition: getWeatherConfig(wmoCode),
+          sunrise: formatIsoTime(daily?.sunrise?.[0]),
+          sunset: formatIsoTime(daily?.sunset?.[0]),
         };
 
         if (isMounted) {

@@ -12,11 +12,11 @@
     "title": "Services & Information",
     "governmentServices": "Government Services",
     "description": "Access official government services quickly and easily. Find what you need for citizenship, business, education, and more.",
-    "viewAll": "View All Services",
+    "viewAll": "View All",
     "viewAllCategory": "View All"
   },
   "governmentActivity": {
-    "title": "Government Activity",
+    "title": "About the Government",
     "description": "Stay updated with the latest government activities and announcements."
   },
   "weather": {

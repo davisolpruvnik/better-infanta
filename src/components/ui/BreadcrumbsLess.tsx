@@ -68,33 +68,33 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
 
   return (
     <nav
-      className={`flex items-center text-xs sm:text-sm text-gray-600 max-w-full ${className}`}
+      className={`flex items-center text-xs sm:text-sm text-fantas-800/70 max-w-full ${className}`}
       aria-label="Breadcrumb"
     >
       <ol className="flex items-center flex-wrap sm:flex-nowrap gap-1 max-w-full">
         {shouldCollapse ? (
           <>
             {/* First Item (Home) */}
-            <li className="inline-flex items-center gap-2 shrink-0">
+            <li className="inline-flex items-center gap-1.5 shrink-0">
               <Suspense
                 fallback={
-                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-gray-100 animate-pulse shrink-0" />
+                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
                 }
               >
                 <LazyIconify
                   icon="lucide:home"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-500 shrink-0"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600 shrink-0"
                 />
               </Suspense>
               {firstItem.href ? (
                 <Link
                   to={firstItem.href}
-                  className="hover:text-primary-600 transition-colors font-axis-navbar-focus uppercase tracking-wider duration-200 text-gray-600 truncate max-w-[70px] xs:max-w-[100px] sm:max-w-[160px]"
+                  className="hover:text-fantas-900 transition-colors font-axis-navbar-focus uppercase tracking-wider duration-200 text-fantas-800/70 truncate max-w-[70px] xs:max-w-[100px] sm:max-w-[160px]"
                 >
                   {firstItem.label}
                 </Link>
               ) : (
-                <span className="text-gray-900 font-axis-navbar-focus tracking-wider uppercase truncate max-w-[70px] xs:max-w-[100px] sm:max-w-[160px]">
+                <span className="text-fantas-950 font-axis-navbar-focus tracking-wider uppercase truncate max-w-[70px] xs:max-w-[100px] sm:max-w-[160px]">
                   {firstItem.label}
                 </span>
               )}
@@ -104,12 +104,12 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
             <li aria-hidden="true" className="shrink-0">
               <Suspense
                 fallback={
-                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-gray-100 animate-pulse shrink-0" />
+                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
                 }
               >
                 <LazyIconify
                   icon="lucide:chevron-right"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400"
                 />
               </Suspense>
             </li>
@@ -119,7 +119,7 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
               <button
                 type="button"
                 onClick={() => setIsExpanded(true)}
-                className="inline-flex items-center justify-center p-0.5 sm:p-1 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer"
+                className="inline-flex items-center justify-center p-0.5 sm:p-1 rounded hover:bg-fantas-100 text-fantas-800/70 hover:text-fantas-950 transition-colors focus:outline-none focus:ring-1 focus:ring-fantas-500 cursor-pointer"
                 title="Show all breadcrumbs"
                 aria-label={`Show ${middleItems.length} hidden breadcrumb items`}
               >
@@ -136,12 +136,12 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
             <li aria-hidden="true" className="shrink-0">
               <Suspense
                 fallback={
-                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-gray-100 animate-pulse shrink-0" />
+                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
                 }
               >
                 <LazyIconify
                   icon="lucide:chevron-right"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400"
                 />
               </Suspense>
             </li>
@@ -151,13 +151,13 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
               {lastItem.href ? (
                 <Link
                   to={lastItem.href}
-                  className="hover:text-primary-600 font-axis-navbar-focus uppercase tracking-wider transition-colors duration-200 text-gray-600 truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[260px] md:max-w-[380px]"
+                  className="hover:text-fantas-950 font-axis-navbar-focus uppercase tracking-wider transition-colors duration-200 text-fantas-800/70 truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[260px] md:max-w-[380px]"
                 >
                   {lastItem.label}
                 </Link>
               ) : (
                 <span
-                  className="text-gray-900 font-axis-navbar-focus tracking-wider uppercase truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[260px] md:max-w-[380px]"
+                  className="text-fantas-950 font-axis-navbar-focus font-bold tracking-wider uppercase truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[260px] md:max-w-[380px]"
                   aria-current="page"
                 >
                   {lastItem.label}
@@ -173,16 +173,16 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
 
             return (
               <React.Fragment key={index}>
-                <li className="inline-flex items-center gap-1 min-w-0 shrink-0 sm:shrink">
+                <li className="inline-flex items-center gap-1.5 min-w-0 shrink-0 sm:shrink">
                   {isFirst && (
                     <Suspense
                       fallback={
-                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-gray-100 animate-pulse shrink-0" />
+                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
                       }
                     >
                       <LazyIconify
                         icon="lucide:home"
-                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-500 shrink-0"
+                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600 shrink-0"
                       />
                     </Suspense>
                   )}
@@ -190,13 +190,13 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
                   {item.href ? (
                     <Link
                       to={item.href}
-                      className="hover:text-primary-600 font-axis-navbar-focus uppercase tracking-wider transition-colors duration-200 text-gray-600 truncate max-w-[90px] xs:max-w-[130px] sm:max-w-[200px] md:max-w-[300px]"
+                      className="hover:text-fantas-950 font-axis-navbar-focus uppercase tracking-wider transition-colors duration-200 text-fantas-800/70 truncate max-w-[90px] xs:max-w-[130px] sm:max-w-[200px] md:max-w-[300px]"
                     >
                       {item.label}
                     </Link>
                   ) : (
                     <span
-                      className="text-gray-900 font-axis-navbar-focus tracking-wider uppercase truncate max-w-[110px] xs:max-w-[160px] sm:max-w-[240px] md:max-w-[380px]"
+                      className="text-fantas-950 font-axis-navbar-focus font-bold tracking-wider uppercase truncate max-w-[110px] xs:max-w-[160px] sm:max-w-[240px] md:max-w-[380px]"
                       aria-current={isLast ? 'page' : undefined}
                     >
                       {item.label}
@@ -208,12 +208,12 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
                   <li aria-hidden="true" className="shrink-0">
                     <Suspense
                       fallback={
-                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-gray-100 animate-pulse shrink-0" />
+                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
                       }
                     >
                       <LazyIconify
                         icon="lucide:chevron-right"
-                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400"
+                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400"
                       />
                     </Suspense>
                   </li>

@@ -24,7 +24,7 @@ const ServiceIcon = memo(({ iconName, className = 'h-6 w-6' }: { iconName?: stri
   return (
     <Suspense
       fallback={
-        <div className={`${className} rounded-full bg-primary-200/40 animate-pulse shrink-0`} />
+        <div className={`${className} rounded-full bg-fantas-200/40 animate-pulse shrink-0`} />
       }
     >
       <LazyIconify
@@ -49,8 +49,9 @@ const SubcategoryCard = memo(({ categorySlug, subcategory, fallbackIcon }: Subca
       to={`/services/${categorySlug}/${subcategory.slug}`}
       className="group flex flex-col items-center text-center w-full max-w-[130px] sm:max-w-[160px] md:max-w-[180px] focus:outline-none transition-transform duration-300 py-2"
     >
-      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full border border-gray-300 group-hover:border-primary-600 bg-linear-to-b from-primary-50/40 to-primary-100/20 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300 overflow-hidden">
-        <div className="text-primary-600 group-hover:text-primary-800 transition-colors">
+      {/* fantas Badge Circle */}
+      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full border border-fantas-300/80 bg-fantas-50/50 flex items-center justify-center p-3 sm:p-5 group-hover:scale-105 group-hover:border-fantas-700 group-hover:bg-fantas-100/50 transition-all duration-300 overflow-hidden">
+        <div className="text-fantas-700 group-hover:text-fantas-800 transition-colors">
           <ServiceIcon
             iconName={subcategory.icon || fallbackIcon || 'RiFileTextLine'}
             className="h-9 w-9 sm:h-14 sm:w-14 md:h-16 md:w-16"
@@ -58,7 +59,7 @@ const SubcategoryCard = memo(({ categorySlug, subcategory, fallbackIcon }: Subca
         </div>
       </div>
 
-      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-900 group-hover:text-primary-700 transition-colors duration-200 line-clamp-2 leading-snug">
+      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-800 group-hover:text-fantas-700 transition-colors duration-200 line-clamp-2 leading-snug">
         {subcategory.name}
       </h3>
 
@@ -157,7 +158,7 @@ const Services: React.FC = () => {
         <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 mb-1 sm:mb-2 w-full max-w-4xl mx-auto">
           <div className="flex-1 h-[1px] bg-gray-200" />
           <div className="flex items-center gap-2 text-gray-700 shrink-0">
-            <ServiceIcon iconName="ri:group-line" className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+            <ServiceIcon iconName="ri:group-line" className="h-4 w-4 sm:h-5 sm:w-5 text-fantas-700" />
             <h2 className="text-sm sm:text-md md:text-lg lg:text-xl font-axis-titular-focus uppercase tracking-wider text-gray-800 text-center">
               {categoryData.category || category} Services
             </h2>
