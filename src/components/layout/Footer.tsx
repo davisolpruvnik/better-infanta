@@ -89,7 +89,7 @@ const Footer: React.FC = () => {
                 </Link>
               ))}
             </div>
-            <div className='py-8 flex flex-col gap-4'>
+            <div className='pt-8 flex flex-col gap-4'>
               {/* Cost to create website */}
               <div className='flex flex-row items-center justify-between gap-2'>
                 <span className='uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty'>

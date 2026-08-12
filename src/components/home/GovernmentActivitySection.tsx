@@ -60,8 +60,8 @@ export default function GovernmentActivitySection({
 
         {/* 1️⃣ LEFT SIDE (Desktop): Header and Subheader */}
         <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start text-left gap-3 pt-2">
-          <div className="flex items-start gap-2.5 text-fantas-700 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
-            {getIcon('ri:building-line', 'h-8 w-8 text-fantas-700 mt-1')}
+          <div className="flex items-start gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
+            {getIcon('ri:building-line', 'h-8 w-8 text-fantas-800 mt-1')}
             <h2 className="leading-snug">
               {title || t('governmentActivity.title', 'Government Agencies')}
             </h2>
@@ -108,7 +108,7 @@ export default function GovernmentActivitySection({
             <div className="flex items-center justify-center w-full h-full min-h-[100px] sm:min-h-[128px]">
               <Link
                 to="/government"
-                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-fantas-400 text-fantas-700 font-axis-navbar-focus hover:bg-fantas-700 hover:text-white hover:border-fantas-700 transition-all duration-300 text-sm sm:text-md uppercase tracking-wider text-center whitespace-nowrap"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-fantas-400 text-fantas-800 font-axis-navbar-focus hover:bg-fantas-800 hover:text-white hover:border-fantas-800 transition-all duration-300 text-sm sm:text-md uppercase tracking-wider text-center whitespace-nowrap"
               >
                 {t('governmentActivity.viewAll', 'View all')}
               </Link>
