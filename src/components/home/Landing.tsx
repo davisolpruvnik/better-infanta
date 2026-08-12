@@ -298,7 +298,7 @@ export default function LandingSite() {
                   </div>
 
                   {/* RIGHT SIDE: Sunrise & Sunset */}
-                  <div className="flex flex-col items-center gap-1 text-[10px] sm:text-[12px] font-axis-navbar-focus text-fantas-900 uppercase tracking-wider">
+                  <div className="flex flex-col items-center gap-1 text-[12px] sm:text-[14px] font-axis-navbar-focus text-fantas-900 uppercase tracking-wider">
                     {/* Sunrise */}
                     <div className="flex items-center gap-1" title="Sunrise">
                       {getIcon('tabler:sunrise-filled', 'h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600')}
@@ -352,7 +352,7 @@ export default function LandingSite() {
                     <span className="text-xl sm:text-2xl font-axis-sng-indlab-value text-fantas-900">
                       {townWeather.maxTemp}
                     </span>
-                    <span className="text-xs sm:text-[14px] font-axis-navbar-focus uppercase tracking-wider text-plantao-600/80">
+                    <span className="text-xs sm:text-[14px] font-axis-navbar-focus uppercase tracking-wider text-flamengo-600/80">
                       MAX
                     </span>
                   </div>

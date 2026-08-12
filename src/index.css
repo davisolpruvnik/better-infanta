@@ -25,18 +25,6 @@
   --color-fantas-900: #553001;
   --color-fantas-950: #402401;
 
-  --color-arvore-50: #ebffeb;
-  --color-arvore-100: #aaffaa;
-  --color-arvore-200: #00f000;
-  --color-arvore-300: #00cd00;
-  --color-arvore-400: #00ae00;
-  --color-arvore-500: #009100;
-  --color-arvore-600: #007100;
-  --color-arvore-700: #005600;
-  --color-arvore-800: #003c00;
-  --color-arvore-900: #002200;
-  --color-arvore-950: #001500;
-
   --color-accent-50: #ebf4ff;
   --color-accent-100: #d1e6ff;
   --color-accent-200: #a3ccff;
@@ -61,17 +49,17 @@
   --color-arvore-900: #14532d;
   --color-arvore-950: #052e16;
 
-  --color-plantao-50: #ffedec;
-  --color-plantao-100: #fedada;
-  --color-plantao-200: #fdb8b7;
-  --color-plantao-300: #fd8e8d;
-  --color-plantao-400: #fd5c59;
-  --color-plantao-500: #f31f12;
-  --color-plantao-600: #c4170c;
-  --color-plantao-700: #940f07;
-  --color-plantao-800: #6a0703;
-  --color-plantao-900: #3f0301;
-  --color-plantao-950: #2c0101;
+  --color-flamengo-50: #ffedec;
+  --color-flamengo-100: #fedada;
+  --color-flamengo-200: #fdb8b7;
+  --color-flamengo-300: #fd8e8d;
+  --color-flamengo-400: #fd5c59;
+  --color-flamengo-500: #f31f12;
+  --color-flamengo-600: #c4170c;
+  --color-flamengo-700: #940f07;
+  --color-flamengo-800: #6a0703;
+  --color-flamengo-900: #3f0301;
+  --color-flamengo-950: #2c0101;
 
   --color-gray-50: #f8f9fa;
   --color-gray-100: #f1f3f5;

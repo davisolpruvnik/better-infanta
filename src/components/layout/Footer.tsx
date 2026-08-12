@@ -89,7 +89,31 @@ const Footer: React.FC = () => {
                 </Link>
               ))}
             </div>
+            <div className='py-8 flex flex-col gap-4'>
+              {/* Cost to create website */}
+              <div className='flex flex-row items-center justify-between gap-2'>
+                <span className='uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty'>
+                  Cost to create this website
+                </span>
+                <div className='min-w-[130px] bg-flamengo-500/75 px-2.5 py-1.5 ml-auto shrink-0 flex items-baseline justify-end gap-1.5'>
+                  <span className='text-xs font-axis-navbar-focus tracking-wider opacity-90 text-fantas-50'>PHP</span>
+                  <span className='uppercase font-axis-sng-indlab-value tracking-wider text-4xl text-fantas-50'>650</span>
+                </div>
+              </div>
+
+              {/* Cost for every Infantahin */}
+              <div className='flex flex-row items-center justify-between gap-2'>
+                <span className='uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty'>
+                  Cost for every Infantahin
+                </span>
+                <div className='min-w-[130px] bg-arvore-600/80 px-2.5 py-1.5 ml-auto shrink-0 flex items-baseline justify-end gap-1.5'>
+                  <span className='text-xs font-axis-navbar-focus tracking-wider opacity-90 text-fantas-50'>PHP</span>
+                  <span className='uppercase font-axis-sng-indlab-value tracking-wider text-4xl text-fantas-50'>0</span>
+                </div>
+              </div>
+            </div>
           </div>
+
 
           {/* Navigation Links Columns */}
           {footerNavigation.mainSections.map((section, index) => (

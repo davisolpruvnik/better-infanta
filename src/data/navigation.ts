@@ -65,7 +65,6 @@ export const footerNavigation = {
             label: category.category,
             href: `/services/${category.slug}`,
           })),
-        { label: 'Hotlines', href: '/philippines/hotlines' },
       ],
     },
     {
@@ -79,6 +78,11 @@ export const footerNavigation = {
           label: 'Official Gazette',
           href: 'https://www.officialgazette.gov.ph',
         },
+        {
+          label: 'Electronic Notary Services',
+          href: 'https://sc.judiciary.gov.ph/enotarization/'
+        },
+        { label: 'Hotlines', href: '/philippines/hotlines' }
       ],
     },
     {
