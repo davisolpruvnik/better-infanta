@@ -4,6 +4,7 @@ import { GooeyInput } from '@/components/ui/gooey-input';
 import { useWeather } from '@/hooks/useWeather';
 import { WEATHER_LOCATIONS } from '@/components/config/weather-config';
 import { getCategorySubcategories, serviceCategories } from '@/data/yamlLoader';
+import logoImg from '../../assets/better_infanta_logotemp.svg';
 
 const LazyIconify = lazy(() =>
   import('@iconify/react').then(m => ({ default: m.Icon }))
@@ -179,7 +180,7 @@ export default function LandingSite() {
           <div className="lg:col-span-9 text-center lg:text-left flex flex-col md:flex-row items-center justify-around gap-6 lg:gap-8">
             {/* LOGO */}
             <img
-              src="/src/assets/better_infanta_logotemp.svg"
+              src={logoImg}
               alt="Better Infanta Logo"
               className="w-48 h-24 sm:w-64 sm:h-36 md:w-84 md:h-48 object-contain shrink-0"
             />

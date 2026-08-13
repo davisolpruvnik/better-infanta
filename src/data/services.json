@@ -59,6 +59,12 @@
       "slug": "tourism",
       "description": "Attractions, accommodations, culture.",
       "icon": "TiCamera"
+    },
+    {
+      "category": "Stop Gambling Addiction!",
+      "slug": "stop-sugal",
+      "description": "Ban yourself or someone on all gambling platforms.",
+      "icon": "mdi:poker-chip"
     }
   ]
 }

@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
                 }
               >
                 <div
-                  className="w-32 h-18 bg-fantas-50 shrink-0 [mask-image:url('/src/assets/better_infanta_logotemp.svg')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:clear-left] scale-115"
+                  className="w-32 h-18 bg-fantas-50 shrink-0 [mask-image:url('../../assets/better_infanta_logotemp.svg')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:clear-left] scale-115"
                   role="img"
                   aria-label="Better Infanta Logo"
                 />

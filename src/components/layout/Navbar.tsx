@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../../i18n/languages';
 import Timekeeper from './Timekeeper-Weather';
+import icoImg from '../../assets/better_infanta_ico.svg';
 
 // 💡 1. Lazy load the Iconify component (0% bundle tax on initial page load)
 const LazyIconify = lazy(() =>
@@ -59,7 +60,7 @@ const Navbar: React.FC = () => {
             <Link to="/" className="flex items-center">
               <div>
                 <img
-                  src="/src/assets/better_infanta_ico.svg"
+                  src={icoImg}
                   alt="Better Infanta IcoLogo"
                   className="w-16 h-16 object-contain shrink-0"
                 />
