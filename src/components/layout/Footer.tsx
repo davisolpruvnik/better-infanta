@@ -4,6 +4,7 @@ import { footerNavigation } from '../../data/navigation';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Disclaimer from './disclaimer';
+import logoSvg from '../../assets/better_infanta_logotemp.svg';
 
 // 💡 1. Lazy load the Iconify component as LazyIconify to avoid bundle bloat on load
 const LazyIconify = lazy(() =>
@@ -55,7 +56,17 @@ const Footer: React.FC = () => {
                 }
               >
                 <div
-                  className="w-32 h-18 bg-fantas-50 shrink-0 [mask-image:url('../../assets/better_infanta_logotemp.svg')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:clear-left] scale-115"
+                  style={{
+                    maskImage: `url(${logoSvg})`,
+                    WebkitMaskImage: `url(${logoSvg})`,
+                    maskSize: 'contain',
+                    WebkitMaskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                    WebkitMaskPosition: 'center',
+                  }}
+                  className="w-32 h-18 bg-fantas-50 shrink-0 scale-[1.15]"
                   role="img"
                   aria-label="Better Infanta Logo"
                 />

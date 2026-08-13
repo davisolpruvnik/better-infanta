@@ -1,3 +1,5 @@
+import '@fontsource-variable/google-sans-flex';
+import '@fontsource-variable/google-sans-code';
 import { NuqsAdapter } from 'nuqs/adapters/react';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/layout/Navbar';
@@ -9,8 +11,6 @@ import Document from './pages/Document';
 import Government from './pages/Government';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Plantao from './components/layout/plantao';
-import '@fontsource-variable/google-sans-flex';
-import '@fontsource-variable/google-sans-code';
 
 function App() {
   return (

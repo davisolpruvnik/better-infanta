@@ -19,34 +19,41 @@ interface HotlineItem {
 const INFANTA_HOTLINES: HotlineItem[] = [
   {
     agency: 'Infanta MDRRMO',
-    number: '0918-395-3839',
+    number: '0918 395 3839',
     icon: 'mingcute:vest-fill',
     iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: 'Infanta PNP',
-    number: '0915-789-3115',
+    number: '0998 598 5754',
     icon: 'game-icons:police-badge',
     iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: 'Infanta BFP',
-    number: '(042) 797-2320',
+    number: '(042) 535 2700',
     icon: 'roentgen:fire-hydrant',
     iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
-    agency: 'Infanta RHU',
-    number: '(042) 535-9331',
-    icon: 'ic:round-health-and-safety',
+    agency: 'Task Force Disiplina',
+    number: '(042) 535 9928',
+    icon: 'game-icons:police-badge',
     iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
   {
     agency: "Mayor's Office",
-    number: '(042) 535-4045',
+    number: '(042) 535 4045',
     icon: 'roentgen:government',
     iconClass: 'text-fantas-100 fill-fantas-100/40',
   },
+  {
+    agency: "National Emergency Hotline",
+    number: '911',
+    icon: 'ic:sharp-emergency',
+    iconClass: 'text-fantas-100 fill-fantas-100/40',
+
+  }
 ];
 
 // --- COMPONENT ---
