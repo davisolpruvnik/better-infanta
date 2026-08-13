@@ -54,23 +54,23 @@ const Footer: React.FC = () => {
                   <div className="h-12 w-12 mr-3 rounded-full bg-fantas-900 animate-pulse shrink-0" />
                 }
               >
-                <LazyIconify
-                  icon="ri:checkbox-circle-fill"
-                  className="h-12 w-12 mr-3 text-fantas-100 shrink-0"
+                <div
+                  className="w-32 h-18 bg-fantas-50 shrink-0 [mask-image:url('/src/assets/better_infanta_logotemp.svg')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:clear-left] scale-115"
+                  role="img"
+                  aria-label="Better Infanta Logo"
                 />
               </Suspense>
 
-              <div>
+              {/*<div>
                 <div className="font-axis-sng-indlab-value tracking-wider uppercase leading-tight text-fantas-50">Better Infanta</div>
                 <div className="font-axis-subtitular-focus tracking-wider uppercase text-sm text-fantas-50">
                   A BetterGov.ph Portal
                 </div>
-              </div>
+              </div>*/}
             </div>
 
             <p className="font-axis-footer-focus text-fantas-50/90 tracking-wider text-sm mb-4 wrap-break-word">
-              A community portal providing Philippine citizens, businesses, and
-              visitors with information and services.
+              A community portal providing Infantahins, visitors, and businesses with information and services.
             </p>
 
             {/* Social Links Row */}

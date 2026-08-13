@@ -27,31 +27,31 @@ categories:
     slug: 'social-welfare'
     description: 'Assistance for seniors, PWDs, solo parents, indigents.'
     icon: 'RiShieldUserFill'
-  
+
   # Agriculture & Fisheries Services
   - category: 'Agriculture & Fisheries'
     slug: 'agriculture-fisheries'
     description: 'Seeds, fertilizers, veterinary care, training opportunities.'
     icon: 'MdAgriculture'
-  
+
   # Infrastructure & Public Works Services
   - category: 'Infrastructure, Public Works, and Safety'
     slug: 'infrastructure-public-works'
     description: 'Report roads, request water, electricity concerns, access facilities.'
     icon: 'FaBridgeWater'
-  
+
   # Environment Services
   - category: 'Environment'
     slug: 'environment'
     description: 'Clean-ups, tree planting activities, and environment-related ordinances and laws.'
     icon: 'PiTreePalmFill'
-  
+
   # Disaster Preparedness Services
   - category: 'Disaster Preparedness'
     slug: 'disaster-preparedness'
     description: 'Disaster preparedness plans, emergency response, evacuation.'
     icon: 'FaHelmetSafety'
-  
+
   # Housing & Land Use Services
   - category: 'Housing & Land Use'
     slug: 'housing-land-use'
@@ -63,4 +63,8 @@ categories:
     slug: 'tourism'
     description: 'Attractions, accommodations, culture.'
     icon: 'TiCamera'
-  
+
+  - category: 'Stop Gambling Addiction!'
+    slug: 'stop-sugal'
+    description: 'Ban yourself or someone on all gambling platforms.'
+    icon: 'mdi:poker-chip'

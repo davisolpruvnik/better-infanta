@@ -78,6 +78,7 @@ export const footerNavigation = {
           label: 'Official Gazette',
           href: 'https://www.officialgazette.gov.ph',
         },
+        { label: 'Stop Gambling Addiction!', href: 'https://www.pagcor.ph/regulatory/exclusion.php' },
         {
           label: 'Electronic Notary Services',
           href: 'https://sc.judiciary.gov.ph/enotarization/'

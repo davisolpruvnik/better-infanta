@@ -7,8 +7,8 @@ const Home: React.FC = () => {
   return (
     <>
       <SEO
-        title="Home"
-        description="Official website of your local government. Access government services, information, and resources."
+        title="BetterInfanta.org"
+        description="A one-stop location for accessing services and government resources of Infanta, Quezon."
         keywords="government, local government, services, public services, civic services"
       />
       <main className="flex-grow">

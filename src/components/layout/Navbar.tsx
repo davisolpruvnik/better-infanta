@@ -57,18 +57,15 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              {/* 💡 FIXED: Unified dynamic checkmark logo */}
-              {renderIcon(
-                'lucide:check-circle-2',
-                'h-10 w-10 mr-3 text-fantas-900'
-              )}
               <div>
-                <div className="text-fantas-900 font-bold">Better Infanta</div>
-                <div className="text-xs text-fantas-800">
-                  A community-run platform for Infanta, Quezon
-                </div>
+                <img
+                  src="/src/assets/better_infanta_ico.svg"
+                  alt="Better Infanta IcoLogo"
+                  className="w-16 h-16 object-contain shrink-0"
+                />
               </div>
             </Link>
+
           </div>
 
           {/* Desktop navigation */}

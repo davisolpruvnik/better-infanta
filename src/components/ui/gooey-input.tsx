@@ -176,7 +176,7 @@ export function GooeyInput({
   }, [searchText, setExpanded]);
 
   const surfaceClass =
-    "bg-foreground text-background shadow-sm ring-1 ring-border/60";
+    "bg-foreground text-background";
 
   return (
     <div

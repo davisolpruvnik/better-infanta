@@ -173,14 +173,25 @@ export default function LandingSite() {
         {/* ========================================================= */}
         {/* 1. TOP SECTION: LOGO + BETTER INFANTA HEADER (2-PART)     */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center border-b border-stone-200 pb-8 sm:pb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center border-b border-stone-200 pb-8 sm:pb-10">
 
           {/* TOP RIGHT: Better Infanta Branding Block */}
-          <div className="lg:col-span-9 text-center lg:text-left flex flex-col gap-2 sm:gap-3">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-axis-navbar-focus uppercase tracking-wider text-fantas-900 leading-tight">
-              Better Infanta
-            </h1>
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-fantas-800 font-axis-thin max-w-2xl leading-relaxed mx-auto lg:mx-0">
+          <div className="lg:col-span-9 text-center lg:text-left flex flex-col md:flex-row items-center justify-around gap-6 lg:gap-8">
+            {/* LOGO */}
+            <img
+              src="/src/assets/better_infanta_logotemp.svg"
+              alt="Better Infanta Logo"
+              className="w-48 h-24 sm:w-64 sm:h-36 md:w-84 md:h-48 object-contain shrink-0"
+            />
+
+            {/* VERTICAL DIVIDER (Visible on medium/large screens) */}
+            <div className="hidden md:block w-px h-24 lg:h-32 bg-fantas-800/30 shrink-0 self-center" />
+
+            {/* HORIZONTAL DIVIDER (Visible on mobile screens) */}
+            <div className="block md:hidden w-24 h-px bg-fantas-800/30 my-2" />
+
+            {/* DESCRIPTION */}
+            <p className="text-sm sm:text-md md:text-lg lg:text-xl text-fantas-800 font-axis-subtitular-focus max-w-2xl leading-relaxed mx-auto lg:mx-0 uppercase tracking-wider">
               A unified, community-run digital gateway for local government services,
               transparency records, and public municipal accessibility in Infanta, Quezon.
             </p>
@@ -213,8 +224,8 @@ export default function LandingSite() {
                     expandedOffset={gooeyExpandedOffset}
                     gooeyBlur={4}
                     classNames={{
-                      trigger: "bg-white text-fantas-900 shadow-md border border-stone-200",
-                      bubbleSurface: "bg-white text-fantas-900 shadow-lg border border-stone-200",
+                      trigger: "bg-white text-fantas-900 border border-stone-200",
+                      bubbleSurface: "bg-white text-fantas-900 border border-stone-200",
                       input: "text-slate-900 placeholder:text-gray-600 font-axis-book text-xs sm:text-sm",
                     }}
                   />
