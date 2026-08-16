@@ -14,11 +14,11 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({ doc, renderIcon 
         <span className="text-[10px] sm:text-[12px] font-axis-navbar-focus text-fantas-800 uppercase tracking-widest bg-fantas-50 px-2.5 py-1 rounded">
           Citizen Charter Guide
         </span>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-axis-titular-focus uppercase text-fantas-900 mt-3 tracking-wide leading-snug break-words text-wrap max-w-lg md:max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-axis-titular-focus uppercase text-fantas-900 mt-3 tracking-wide leading-tight break-words text-wrap max-w-lg md:max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
           {doc.title}
         </h1>
         {doc.description && (
-          <p className="text-lg text-fantas-900/80 mt-2 leading-snug tracking-wide font-axis-subtitular-focus mx-auto lg:mx-0 break-words text-wrap hyphens-auto max-w-2xl md:max-w-3xl lg:max-w-3xl">
+          <p className="text-lg sm:text-md text-fantas-900/80 mt-4 leading-tight tracking-wide font-axis-subtitular-focus mx-auto lg:mx-0 break-words text-wrap hyphens-auto max-w-2xl md:max-w-3xl lg:max-w-3xl">
             {doc.description}
           </p>
         )}
@@ -43,10 +43,10 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({ doc, renderIcon 
                     <Popover.Portal>
                       <Popover.Positioner side="bottom" sideOffset={6}>
                         <Popover.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-fantas-900/80 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[ending-style]:scale-90 data-[ending-style]:opacity-0">
-                          <span className="block text-[9px] font-axis-bold text-fantas-700 uppercase tracking-wider mb-1 select-none">
+                          <span className="block text-[10px] font-axis-navbar-focus text-fantas-800 uppercase tracking-wider mb-1 select-none">
                             Calculation Basis
                           </span>
-                          {doc.feeDetails}
+                          <span className="font-axis-medium">{doc.feeDetails}</span>
                         </Popover.Popup>
                       </Popover.Positioner>
                     </Popover.Portal>

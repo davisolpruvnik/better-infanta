@@ -13,6 +13,7 @@ import { Banner } from '@bettergov/kapwa/banner';
 import { useState, useEffect, lazy, Suspense, useMemo, memo } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
 import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
+import LazyIcon from '@/components/ui/Lazying';
 
 // 💡 Dynamic Lazy Loading Iconify
 const LazyIconify = lazy(() =>
@@ -131,14 +132,17 @@ const Services: React.FC = () => {
   // 2️⃣ CATEGORY NOT FOUND VIEW
   if (!categoryData) {
     return (
-      <Section className="px-4 mb-12">
-        <Breadcrumbsless className="mb-8" />
-        <Banner
-          type="error"
-          title="Category not found"
-          description="The category you are looking for does not exist."
-          icon
-        />
+      <Section className="px-4 mb-12 gap-4">
+        <Breadcrumbsless className="mb-12" />
+        <div className='flex flex-col justify-center items-center gap-2'>
+          <LazyIcon
+            name="fluent-emoji-high-contrast:construction"
+            className='w-8 h-8 text-fantas-800'
+          />
+          <span className='text-fantas-800 font-axis-bold'>
+            Process not available yet.
+          </span>
+        </div>
       </Section>
     );
   }

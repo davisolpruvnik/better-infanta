@@ -13,6 +13,7 @@ import { Banner } from '@bettergov/kapwa/banner';
 import { useState, useEffect, lazy, Suspense, useMemo, memo } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
 import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
+import LazyIcon from '@/components/ui/Lazying';
 
 const LazyIconify = lazy(() =>
   import('@iconify/react').then(module => ({ default: module.Icon }))
@@ -122,12 +123,15 @@ const Government: React.FC = () => {
     return (
       <Section className="px-4 mb-12">
         <Breadcrumbsless className="mb-8" />
-        <Banner
-          type="error"
-          title="Category not found"
-          description="The category you are looking for does not exist."
-          icon
-        />
+        <div>
+          <LazyIcon
+            name="fluent-emoji-high-contrast:construction"
+            className='w-8 h-8 text-black'
+          />
+          <span>
+            Process not found.
+          </span>
+        </div>
       </Section>
     );
   }

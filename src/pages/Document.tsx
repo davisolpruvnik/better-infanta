@@ -3,7 +3,6 @@ import Section from '../components/ui/Section';
 import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
 import { Heading } from '../components/ui/Heading';
 import { Text } from '../components/ui/Text';
-import { Banner } from '@bettergov/kapwa/banner';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -35,6 +34,7 @@ import {
   parseServiceDocument,
   processSteps,
 } from '@/lib/serviceDocParsing';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface DocumentProps {
   theme?: string;
@@ -52,6 +52,7 @@ export default function Document({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeReqKey, setActiveReqKey] = useState<string>('');
+  const [openStepId, setOpenStepId] = useState<string | null>(null);
 
   const markdownComponents = useMemo(
     () => createMarkdownComponents(getTypographyTheme(initialTheme)),
@@ -185,7 +186,15 @@ export default function Document({
   if (loading) {
     return (
       <Section className="p-3 mb-12">
-        <Banner type="info" description="Loading document..." />
+        <div>
+          <LazyIcon
+            name="fluent-emoji-high-contrast:construction"
+            className='w-8 h-8 text-black'
+            />
+        </div>
+        <span>
+          Loading...
+        </span>
       </Section>
     );
   }
@@ -196,12 +205,15 @@ export default function Document({
         <div className="flex justify-center mb-8">
           <Breadcrumbsless items={breadcrumbs} />
         </div>
-        <Banner
-          type="error"
-          title="Document Not Found"
-          description={error}
-          icon
-        />
+        <div className='flex flex-col justify-center items-center gap-2'>
+          <LazyIcon
+            name="fluent-emoji-high-contrast:construction"
+            className='w-8 h-8 text-fantas-800'
+          />
+          <span className='text-fantas-800 font-axis-bold'>
+            Process not available yet.
+          </span>
+        </div>
       </Section>
     );
   }
@@ -294,77 +306,117 @@ export default function Document({
 
                   {/* Clean Stepper Timeline resting directly on the background */}
                   <div className="relative border-l border-fantas-200 ml-4 pl-6 space-y-8">
-                    {processedSteps.map(step => (
-                      <div
-                        key={step.id}
-                        className={`relative transition-all duration-300 ${step.indentClass}`}
-                      >
-                        {/* FIXED BADGE ALIGNMENT: top-0.5 to align pixel-perfectly with the first line of text */}
-                        {!step.isSubStep && (
-                          <span className="flex absolute -left-[36.5px] top-0.5 h-6 w-6 items-center justify-center rounded-full bg-fantas-800 border-white ring-1 ring-fantas-50 text-white font-axis-chunky text-[10px] text-center shadow-sm z-10">
-                            {step.badge}
-                          </span>
-                        )}
+                    {processedSteps.map(step => {
+                      const isStepOpen = openStepId === step.id;
 
-                        {/* 💡 NEW ELEMENT: Renders a horizontal connector line from the nested card back to the vertical timeline line */}
-                        {step.isSubStep && (
-                          <span className={getConnectorClass(step.indentClass)} aria-hidden="true" />
-                        )}
-
-                        {step.isAccordion ? (
-                          /* 💡 Clean, Border-free details disclosure */
-                          <details className="group text-sm font-axis-book tracking-normal text-wrap leading-relaxed text-gray-700 py-1 cursor-pointer">
-                            <summary className="flex items-start justify-start gap-3 select-none list-none outline-none">
-                              <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 flex-1 min-w-0 text-wrap break-words">
-                                {step.isSubStep && (
-                                  <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
-                                    {step.badge}
-                                  </span>
-                                )}
-
-                                {/* 💡 Normal inline text wrapper */}
-                                <p className="pr-4 text-xs sm:text-sm flex-1 min-w-0 max-w-2xl font-axis-book break-words leading-normal text-fantas-950">
-                                  <span>{step.summaryText.trim()}</span>{' '}
-
-                                  {/* 💡 TAPPABLE CHIP: Positioned inline with text */}
-                                  <span
-                                    className="inline-flex items-center justify-center size-5.5 rounded-full bg-fantas-50 group-hover:bg-fantas-100 text-fantas-600 border border-fantas-200/50 shadow-2xs transition-all duration-200 group-open:rotate-180 shrink-0 select-none align-middle ml-1.5"
-                                    aria-hidden="true"
-                                  >
-                                    <LazyIcon
-                                      name="mynaui:chevron-down-solid"
-                                      className="h-3.5 w-3.5"
-                                    />
-                                  </span>
-                                </p>
-                              </div>
-                            </summary>
-
-                            {/* Detail text parsing */}
-                            <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-gray-600 font-axis-thin xs:text-xs sm:text-sm tracking-normal leading-snug markdown-content text-wrap break-words overflow-hidden">
-                              <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
-                                components={markdownComponents}
-                              >
-                                {step.detailText}
-                              </ReactMarkdown>
-                            </div>
-                          </details>
-                        ) : (
-                          /* Clean, Flat, Border-free static step layout */
-                          <div className="text-gray-800 py-1 flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 text-wrap break-words">
-                            {step.isSubStep && (
-                              <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
-                                {step.badge}
-                              </span>
-                            )}
-                            <span className="text-xs sm:text-sm font-axis-book text-fantas-950 flex-1 min-w-0 max-w-2xl xs:text-pretty break-words leading-snug">
-                              {step.cleanStep}
+                      return (
+                        <div
+                          key={step.id}
+                          className={`relative transition-all duration-300 ${step.indentClass}`}
+                        >
+                          {/* FIXED BADGE ALIGNMENT: top-0.5 to align pixel-perfectly with the first line of text */}
+                          {!step.isSubStep && (
+                            <span className="flex absolute -left-[36.5px] top-0.5 h-6 w-6 items-center justify-center rounded-full bg-fantas-800 border-white ring-1 ring-fantas-50 text-white font-axis-chunky text-[10px] text-center shadow-sm z-10">
+                              {step.badge}
                             </span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                          )}
+
+                          {/* 💡 NEW ELEMENT: Renders a horizontal connector line from the nested card back to the vertical timeline line */}
+                          {step.isSubStep && (
+                            <span className={getConnectorClass(step.indentClass)} aria-hidden="true" />
+                          )}
+
+                          {step.isAccordion ? (
+                            <div className="text-sm font-axis-book tracking-normal text-wrap leading-relaxed text-gray-700 py-1">
+                              {/* 💡 Accessible toggle header replacing <summary> */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setOpenStepId(prev => (prev === step.id ? null : step.id))
+                                }
+                                aria-expanded={isStepOpen}
+                                className="w-full text-left flex items-start justify-start gap-3 select-none outline-none cursor-pointer group"
+                              >
+                                <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 flex-1 min-w-0 text-wrap break-words">
+                                  {step.isSubStep && (
+                                    <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
+                                      {step.badge}
+                                    </span>
+                                  )}
+
+                                  {/* 💡 Normal inline text wrapper */}
+                                  <span className="pr-4 text-xs sm:text-sm flex-1 min-w-0 max-w-2xl font-axis-book break-words leading-normal text-fantas-950">
+                                    <span>{step.summaryText.trim()}</span>{' '}
+
+                                    {/* 💡 TAPPABLE CHIP: Animates rotation with state */}
+                                    <span
+                                      className={`inline-flex items-center justify-center size-5.5 rounded-full bg-fantas-50 group-hover:bg-fantas-100 text-fantas-600 border border-fantas-200/50 shadow-2xs transition-transform duration-200 shrink-0 select-none align-middle ml-1.5 ${
+                                        isStepOpen ? 'rotate-180' : 'rotate-0'
+                                      }`}
+                                      aria-hidden="true"
+                                    >
+                                      <LazyIcon
+                                        name="mynaui:chevron-down-solid"
+                                        className="h-3.5 w-3.5"
+                                      />
+                                    </span>
+                                  </span>
+                                </div>
+                              </button>
+
+                              {/* 💡 Animated Accordion Body */}
+                              <AnimatePresence initial={false}>
+                                {isStepOpen && (
+                                  <motion.div
+                                    key={`accordion-${step.id}`}
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{
+                                      height: 'auto',
+                                      opacity: 1,
+                                      transition: {
+                                        height: { duration: 0.25, ease: [0.04, 0.62, 0.23, 0.98] },
+                                        opacity: { duration: 0.2, delay: 0.05 },
+                                      },
+                                    }}
+                                    exit={{
+                                      height: 0,
+                                      opacity: 0,
+                                      transition: {
+                                        height: { duration: 0.2, ease: [0.04, 0.62, 0.23, 0.98] },
+                                        opacity: { duration: 0.15 },
+                                      },
+                                    }}
+                                    className="overflow-hidden"
+                                  >
+                                    {/* Detail text parsing */}
+                                    <div className="mt-2.5 pt-2.5 border-t border-gray-300 border-dotted text-fantas-800 font-axis-thin xs:text-xs sm:text-sm tracking-normal leading-snug markdown-content text-wrap break-words">
+                                      <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        components={markdownComponents}
+                                      >
+                                        {step.detailText}
+                                      </ReactMarkdown>
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          ) : (
+                            /* Clean, Flat, Border-free static step layout */
+                            <div className="text-gray-800 py-1 flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 text-wrap break-words">
+                              {step.isSubStep && (
+                                <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
+                                  {step.badge}
+                                </span>
+                              )}
+                              <span className="text-xs sm:text-sm font-axis-book text-fantas-950 flex-1 min-w-0 max-w-2xl xs:text-pretty break-words leading-snug">
+                                {step.cleanStep}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -388,7 +440,7 @@ export default function Document({
               {doc.whocanavail.length > 0 && (
                 <div className="flex flex-row items-stretch gap-4 border-b border-gray-200 pb-6">
                   {/* Left Column: Vertical Label Segment */}
-                  <div className="w-[115px] shrink-0 flex items-center gap-1.5 pt-0.5">
+                  <div className="w-[115px] shrink-0 flex items-start gap-1.5 pt-0.5">
                     <LazyIcon
                       name="lucide:user-check"
                       className="h-4 w-4 text-fantas-950 shrink-0"
@@ -449,7 +501,7 @@ export default function Document({
                       {doc.requirementsGroups.map(group => (
                         <label
                           key={group.key}
-                          className="flex items-center gap-2 cursor-pointer text-[10px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700/80 hover:text-gray-900 select-none"
+                          className="flex items-start gap-2 cursor-pointer text-[10px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700/80 hover:text-gray-900 select-none"
                         >
                           <Radio.Root
                             value={group.key}
@@ -501,18 +553,20 @@ export default function Document({
 
               {/* Minimalist, Clean Postscripts Indicator */}
               {doc.postscripts && (
-                <div className="border-l-2 border-amber-500 pl-4 py-1 mt-8 flex items-start gap-3">
-                  <LazyIcon
+                <div className="border-l-2 border-amber-500 pl-4 py-1 mt-8 flex flex-col items-start gap-3">
+                  <div className='flex flex-row gap-2 items-center'>
+                    <LazyIcon
                     name="lucide:info"
-                    className="h-5 w-5 text-amber-700 shrink-0 mt-0.5"
-                  />
-                  <div className="space-y-1.5 flex-1 min-w-0">
-                    <h3 className="text-xs font-axis-navbar-focus uppercase tracking-widest text-amber-800 font-semibold leading-none">
-                      Important Reminders / Notes
-                    </h3>
-                    <div className="text-xs sm:text-sm font-axis-book text-gray-600 leading-normal whitespace-pre-line text-wrap break-words">
-                      {doc.postscripts}
+                      className="h-5 w-5 text-amber-700 shrink-0"
+                    />
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-amber-800 font-semibold leading-none">
+                        Important Reminders / Notes
+                      </h3>
                     </div>
+                  </div>
+                  <div className="text-xs sm:text-sm font-axis-book text-gray-600 leading-normal whitespace-pre-line text-wrap break-words">
+                    {doc.postscripts}
                   </div>
                 </div>
               )}
@@ -539,7 +593,7 @@ export default function Document({
             rel="noopener noreferrer"
             className="flex flex-row gap-1 font-axis-navbar-focus hover:text-fantas-700/80 underline-offset-4 hover:underline transition-colors items-center"
           >
-            Citizen's Charter
+            Citizen's Charter (March 2026 Issue)
             <LazyIcon
               name="tabler:file-download"
               className="h-4 w-4 text-fantas-950 shrink-0"

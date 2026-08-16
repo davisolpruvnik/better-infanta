@@ -7,9 +7,9 @@ fee_details:
 time: '~10 mins (min.)'
 office: 'Office of the Municipal Treasurer'
 office_address: 'Windows 4 & 6, beside Local Finance Hall and BPLO of Infanta Municipal Hall.'
-requirements:
+requirements_individual:
   - 'Personal information (full name, address, nationality, place and date of birth, gender, profession/occupation, monthly income'
-requirements_conditional:
+requirements_corporation/group:
   - 'Organization/group information (name, address, place and date of registration, type of organization, annual gross income)'
 whocanavail:
   - Any individual (18 years old and above)
@@ -17,9 +17,9 @@ whocanavail:
   - Associations or registered organized groups
 steps:
   - 'Proceed to Windows 4 & 6, Office of the Municipal Treasurer and write the information on a piece of paper provided by the assigned staff. | The office is located beside Local Finance Hall and BPLO of Infanta Municipal Hall.'
-  - 'Pay the corresponding amount after the cedula is prepared.'
-  - '> Fees to pay | For individuals, there is a P1 fee for every P1,000 annual gross income plus a P5 basic tax. For non-individuals, there is a P2 fee for every P5,000 annual gross income and assessed property value plus a P500 basic tax'
+  - 'Pay the corresponding amount after the cedula is prepared. | For individuals, there is a P1 fee for every P1,000 annual gross income plus a P5 basic tax. For non-individuals, there is a P2 fee for every P5,000 annual gross income and assessed property value plus a P500 basic tax'
   - 'Sign and claim the CTC/cedula.'
 postscripts:
-  - "* Press 'conditional' for organization/non-individual requirements."
+  - "- Applicants may also apply in barangay hall where they reside."
+  - "- For modifications in procedures, email betterinfantaquezon.org@atomicmail.io."
 ---

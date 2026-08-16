@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Disclaimer from './disclaimer';
 import logoSvg from '../../assets/better_infanta_logotemp.svg';
+import VisitorCounter from '../ui/VisitorCount';
 
 // 💡 1. Lazy load the Iconify component as LazyIconify to avoid bundle bloat on load
 const LazyIconify = lazy(() =>

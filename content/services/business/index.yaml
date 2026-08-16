@@ -30,9 +30,9 @@ pages:
     slug: "market-stall-occupancy-application"
     description: "Application and evaluation process for leasing commercial stalls inside the municipal market/commercial center."
 
-  - name: "Collection of Monthly Stall Rental"
-    slug: "market-stall-rental-collection"
-    description: "Processing of recurring monthly rental payments for registered occupants of municipal market stalls."
+  - name: "Certificate of Occupancy/Certificate of Business Cancellation"
+    slug: "certificate-occupancy-business-cancellation"
+    description: ""
 
   - name: "Withdrawal or Surrender of Market Stall"
     slug: "market-stall-surrender"
