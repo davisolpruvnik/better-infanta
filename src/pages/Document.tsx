@@ -83,6 +83,20 @@ export default function Document({
     return processSteps(doc.steps);
   }, [doc?.steps]);
 
+  // 💡 HELPER: Calculates the exact horizontal distance back to the main timeline line responsively
+  const getConnectorClass = (indentClass: string) => {
+    if (indentClass.includes('ml-4')) {
+      // 💡 Level 3 (24px parent padding + 16px margin = 40px)
+      return "absolute top-[14px] -left-[40px] w-[48px] h-px bg-fantas-200 pointer-events-none";
+    }
+    if (indentClass.includes('ml-2')) {
+      // 💡 Level 2 (24px parent padding + 8px margin = 32px)
+      return "absolute top-[14px] -left-[32px] w-[40px] h-px bg-fantas-200 pointer-events-none";
+    }
+    // 💡 Level 1 (24px parent padding + 0px margin = 24px)
+    return "absolute top-[14px] -left-6 w-8 h-px bg-fantas-200 pointer-events-none";
+  };
+
   // Handle active dynamic requirement tab defaults
   useEffect(() => {
     if (doc?.requirementsGroups && doc.requirementsGroups.length > 0) {
@@ -292,11 +306,16 @@ export default function Document({
                           </span>
                         )}
 
+                        {/* 💡 NEW ELEMENT: Renders a horizontal connector line from the nested card back to the vertical timeline line */}
+                        {step.isSubStep && (
+                          <span className={getConnectorClass(step.indentClass)} aria-hidden="true" />
+                        )}
+
                         {step.isAccordion ? (
                           /* 💡 Clean, Border-free details disclosure */
                           <details className="group text-sm font-axis-book tracking-normal text-wrap leading-relaxed text-gray-700 py-1 cursor-pointer">
-                            <summary className="flex items-center justify-start gap-3 select-none list-none outline-none">
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2.5 flex-1 min-w-0 text-wrap break-words">
+                            <summary className="flex items-start justify-start gap-3 select-none list-none outline-none">
+                              <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 flex-1 min-w-0 text-wrap break-words">
                                 {step.isSubStep && (
                                   <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
                                     {step.badge}
@@ -333,7 +352,7 @@ export default function Document({
                           </details>
                         ) : (
                           /* Clean, Flat, Border-free static step layout */
-                          <div className="text-gray-800 py-1 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2.5 text-wrap break-words">
+                          <div className="text-gray-800 py-1 flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 text-wrap break-words">
                             {step.isSubStep && (
                               <span className="px-2 py-0.5 text-[9px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
                                 {step.badge}

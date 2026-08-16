@@ -157,9 +157,9 @@ export function processSteps(steps: string[]): ProcessedStep[] {
   const counters: number[] = [];
 
   const getIndentClass = (lvl: number) => {
-    if (lvl === 1) return 'pl-0 sm:pl-8 mt-4 ml-0';
-    if (lvl === 2) return 'pl-0 sm:pl-8 mt-4 ml-0 sm:ml-4';
-    if (lvl >= 3) return 'pl-0 sm:pl-8 mt-4 ml-0 sm:ml-8';
+    if (lvl === 1) return 'pl-2 mt-2 ml-0';
+    if (lvl === 2) return 'pl-2 mt-2 ml-2';
+    if (lvl >= 3) return 'pl-2 mt-2 ml-4';
     return '';
   };
 
