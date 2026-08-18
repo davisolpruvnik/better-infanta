@@ -4,7 +4,8 @@ description: 'Secure an official Barangay Clearance for local transactions, buil
 fees: 'Varies'
 fee_details:
   - 'For individuals, ₱5.00 basic fee plus ₱1.00 for every ₱1,000.00 of gross annual income/earnings declared. For non-individuals, ₱500.00 basic fee plus ₱2.00 for every ₱5,000.00 of gross annual income/asset value declared.'
-time: '~10 mins (min.)'
+time: '~10 mins'
+time_details: 'The processing time indicated is for one cedula application; it takes 5 minutes for each cedula and 5 minutes for payment.'
 office: 'Office of the Municipal Treasurer'
 office_address: 'Windows 4 & 6, beside Local Finance Hall and BPLO of Infanta Municipal Hall.'
 requirements_individual:
@@ -21,5 +22,4 @@ steps:
   - 'Sign and claim the CTC/cedula.'
 postscripts:
   - "- Applicants may also apply in barangay hall where they reside."
-  - "- For modifications in procedures, email betterinfantaquezon.org@atomicmail.io."
 ---

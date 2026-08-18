@@ -18,7 +18,7 @@ pages:
     slug: "land-segregation"
     description: "Processing files for subdividing, partitioning, or separating land ownership records under the Municipal Assessor."
 
-  - name: "Issuance of Certificate of With/Without Landholdings"
+  - name: "Issuance of Certificate of Landholdings"
     slug: "certificate-of-landholdings"
     description: "Assessor documentation certifying whether an individual has registered land assets under their name within the municipality."
 
@@ -29,3 +29,11 @@ pages:
   - name: "Property Reclassification and Reassessment"
     slug: "property-reassessment-reclassification"
     description: "Updating assessor logs and tax assessments based on changes in actual property use (e.g., agricultural to commercial conversion)."
+
+  - name: "Transfer of Declared Owner"
+    slug: "transfer-declared-owner"
+    description: "A document showing a transfer of real property ownership usually by means of registered deed or title. It contains changes in the real property owner and title number and the basis for transfer."
+
+  - name: "Correction in Area/Boundaries"
+    slug: "correction-area-boundaries"
+    description: "A document correcting the area/boundaries found on the tax declaration as a result of the approved survey plan. It contains the new area and the newly computed market value and assessed value."

@@ -10,7 +10,8 @@ export interface ParsedServiceDoc {
   description: string;
   fees?: string;
   feeDetails?: string;
-  time?: string;
+  time?: string
+  timeDetails?: string;
   office?: string;
   officeAddress?: string;
   officeHours?: string;

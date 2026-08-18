@@ -4,6 +4,7 @@ description: 'The birth of the child, being a vital event, should be registered 
 fees: 'Varies'
 fee_details: 'Fixed rate of P200 for affidavit to use the surname of the father (only applies to unmarried parents); P40 for first copy of birth certificate and additional P25 for each succeeding copies.'
 time: 'Varies*'
+time_details: 'Processing time can vary; where 55 minutes apply to on-time births, while additional 10 minutes for those who availed certified true copies. Delayed birth registrations can take up to 10 days and 55 minutes.'
 office: 'Office of the Local Civil Registrar'
 office_address: '2/F Infanta Municipal Building, Poblacion 38, Infanta, Quezon'
 office_hours: 'Mon to Fri, 8AM-5PM (No Noon Break)'
@@ -39,6 +40,4 @@ steps:
   - ">> Proceed to Municipal Treasury Office first, near BPLO, and pay fees. | The fees include: P40 for first copy of birth certificate and additional P25 for each succeeding copies."
   - ">> Present official receipt and claim the certified copy/ies of COLB."
 
-postscripts:
-  - "- Processing time can vary, 55 minutes apply to on-time births, while additional 10 minutes for those who availed certified true copies. Delayed birth registrations can take up to 10 days and 55 minutes."
 ---

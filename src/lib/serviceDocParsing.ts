@@ -128,6 +128,7 @@ export function parseServiceDocument(
       fees: data['fees'] as string,
       feeDetails: data['fee_details'] as string,
       time: (data['time'] || data['processingTime']) as string,
+      timeDetails: (data['time_details'] || data['processingTime_details']) as string,
       office: data['office'] as string,
       officeAddress: (data['office_address'] as string) || undefined,
       officeHours: (data['office_hours'] as string) || undefined,

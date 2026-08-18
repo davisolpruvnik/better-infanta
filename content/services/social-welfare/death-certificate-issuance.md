@@ -5,6 +5,7 @@ fees: 'Varies'
 fee_details:
 - "Fixed P40 fee for the first copy, P25 for additional (but optional) death certificate copies; payment to municipal treasurer's office depend on burial's location and computation, but a P60 burial fee if to be buried outside public cemetery."
 time: '27-40 minutes'
+time_details: 'The processing time for those who did not request for certified true copy/ies (CTC) is 27 minutes, while the time for those who requested is 40 minutes.'
 office: 'Local Civil Registrar'
 office_address: "Ground Floor, Left Wing, Infanta Municipal Hall, Brgy. Poblacion, Infanta, Quezon"
 office_hours: "Mon to Fri, 8AM-5PM (No Noon Break)"

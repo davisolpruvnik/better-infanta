@@ -5,14 +5,23 @@ pages:
   - name: "Municipal Fishing Gear Registration"
     slug: "municipal-fishing-gear-registration"
     description: "Official registration and documentation of fishing gears used by municipal fisherfolk to ensure compliant local fishing operations."
-    icon: "GiHook"
-  
+    icon: "material-symbols:anchor"
+
   - name: "Municipal Boat Registration"
     slug: "boat-registration"
     description: "Registration and licensing of motorized and non-motorized fishing boats (Adat-Adat) operating within municipal waters."
     icon: "MdBoat"
 
+  - name: "Boad Admeasurement"
+    slug: "boat-admeasurement"
+    description: "A legal action taken showing the proof of a fishing vessel weighing no more than 3 tons."
+
   - name: "Issuance of Certificate as Bonafide Farmer/Fisherfolk"
     slug: "bonafide-farmer-fisherfolk-certificate"
     description: "Certification provided to local residents verifying their status as active, registered farmers or fisherfolk for government aid eligibility."
     icon: "FaHatCowboy"
+
+  - name: "Farmers and Fisherfolks Registration"
+    slug: "farmers-fisherfolks-registration"
+    description: "Farmer and Fisherfolk registration is the initial requirement for securing benefits and assistance from local and national agriculture and fishery programs."
+    icon: "healthicons:agriculture-worker-alt"

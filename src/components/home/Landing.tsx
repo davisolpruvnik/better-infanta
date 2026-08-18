@@ -117,8 +117,8 @@ export default function LandingSite() {
 
   // Quick search tags
   const quickSearchTerms = [
-    { label: 'Business Permit', slug: '/services/business-permit' },
-    { label: 'Birth Certificate', slug: '/services/birth-certificate' },
+    { label: 'Business Permit', slug: '/services/business/business-permit-and-license' },
+    { label: 'Birth Certificate', slug: '/services/social-welfare/birth-registration' },
     { label: 'Building Permit', slug: '/services/building-permit' },
   ];
 

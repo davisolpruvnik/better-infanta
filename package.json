@@ -36,6 +36,7 @@
     "@govbr-ds/webcomponents-react": "^2.0.0",
     "@govtechsg/sgds-web-component": "^3.26.0",
     "@iconify/react": "^6.0.2",
+    "@meteocons/svg-static": "^0.1.0",
     "@tailwindcss/typography": "^0.5.18",
     "@types/js-yaml": "^4.0.9",
     "class-variance-authority": "^0.7.1",

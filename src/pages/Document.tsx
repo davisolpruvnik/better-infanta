@@ -445,7 +445,7 @@ export default function Document({
                       name="lucide:user-check"
                       className="h-4 w-4 text-fantas-950 shrink-0"
                     />
-                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
+                    <span className="text-[14px] font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
                       Who to avail
                     </span>
                   </div>
@@ -466,7 +466,7 @@ export default function Document({
                         >
                           <LazyIcon
                             name="lucide:check-circle-2"
-                            className="text-emerald-600 h-4 w-4 shrink-0 mt-0.5"
+                            className="text-kapwa-green-600 h-4 w-4 shrink-0 mt-0.5"
                           />
                           <span className="leading-normal">{req}</span>
                         </li>
@@ -486,7 +486,7 @@ export default function Document({
                       name="ri:clipboard-line"
                       className="h-4 w-4 text-fantas-950 shrink-0"
                     />
-                    <span className="text-[14px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
+                    <span className="text-[14px] font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
                       Required Documents
                     </span>
                   </div>
@@ -509,7 +509,7 @@ export default function Document({
                           >
                             <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1 before:rounded-full before:bg-current" />
                           </Radio.Root>
-                          <span className="font-axis-navbar-focus tracking-wider text-[11px] leading-snug">
+                          <span className="font-axis-navbar-focus tracking-wider text-[12px] leading-snug">
                             {group.label}
                           </span>
                         </label>
@@ -535,7 +535,7 @@ export default function Document({
                         >
                           <LazyIcon
                             name="lucide:check-circle-2"
-                            className="text-emerald-600 h-4 w-4 shrink-0 mt-0.5"
+                            className="text-kapwa-green-600 h-4 w-4 shrink-0 mt-0.5"
                           />
                           <span className="font-axis-thin leading-normal">
                             {req}
@@ -553,23 +553,41 @@ export default function Document({
 
               {/* Minimalist, Clean Postscripts Indicator */}
               {doc.postscripts && (
-                <div className="border-l-2 border-amber-500 pl-4 py-1 mt-8 flex flex-col items-start gap-3">
+                <div className="border-l-2 border-fantas-500 pl-4 py-1 mt-8 flex flex-col items-start gap-3">
                   <div className='flex flex-row gap-2 items-center'>
                     <LazyIcon
                     name="lucide:info"
-                      className="h-5 w-5 text-amber-700 shrink-0"
+                      className="h-5 w-5 text-fantas-700 shrink-0"
                     />
                     <div className="space-y-1.5 flex-1 min-w-0">
-                      <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-amber-800 font-semibold leading-none">
+                      <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-800 font-semibold leading-none">
                         Important Reminders / Notes
                       </h3>
                     </div>
                   </div>
-                  <div className="text-xs sm:text-sm font-axis-book text-gray-600 leading-normal whitespace-pre-line text-wrap break-words">
+                  <div className="text-xs sm:text-sm font-axis-book text-gray-700/80 leading-normal whitespace-pre-line text-wrap break-words">
                     {doc.postscripts}
                   </div>
                 </div>
               )}
+              <div className="border-l-2 border-fantas-500 pl-4 py-1 mt-8 flex flex-col items-start gap-3">
+                <div className='flex flex-row gap-2 items-center'>
+                  <LazyIcon
+                    name="mingcute:contacts-fill"
+                    className='text-fantas-700 w-5 h-5'
+                  />
+                  <div className="space-y-1.5 flex-1 min-w-0">
+                    <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-800 font-semibold leading-none">
+                      Contact for Suggestions/Feedback
+                    </h3>
+                  </div>
+                </div>
+                <div className='text-xs sm:text-sm font-axis-book text-gray-700/80 leading-normal whitespace-pre-line text-wrap break-words'>
+                  <span>
+                    For any suggestions or modifications in procedures or services of the local government, do not hesitate to contact through email: <span className='font-axis-bold text-fantas-800'>betterinfantaquezon.org@atomicmail.io</span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         ) : (

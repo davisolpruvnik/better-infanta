@@ -2,6 +2,7 @@ import ServicesSection from '../components/home/ServicesSection';
 import GovernmentActivitySection from '../components/home/GovernmentActivitySection';
 import SEO from '../components/SEO';
 import LandingSite from '../components/home/Landing';
+import WeatherCardDetail from '@/components/home/DetailedWeather';
 
 const Home: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Home: React.FC = () => {
         <LandingSite />
         <ServicesSection />
         <GovernmentActivitySection />
+        <WeatherCardDetail />
       </main>
     </>
   );
