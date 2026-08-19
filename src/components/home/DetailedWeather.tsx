@@ -28,17 +28,14 @@ function getWeatherConfig(code: number, isDay: boolean = true) {
     case 51:
     case 53:
     case 55:
+    case 56:
+    case 57:
       return {
         icon: isDay
           ? 'partly-cloudy-day-drizzle'
           : 'partly-cloudy-night-drizzle',
         label: 'Drizzle',
       };
-    case 56:
-    case 57:
-    case 66:
-    case 67:
-      return { icon: 'sleet', label: 'Freezing Rain' };
     case 61:
     case 80:
       return {
@@ -46,25 +43,16 @@ function getWeatherConfig(code: number, isDay: boolean = true) {
         label: 'Light Rain',
       };
     case 63:
-    case 81:
-      return { icon: 'rain', label: 'Moderate Rain' };
     case 65:
+    case 66:
+    case 67:
+    case 81:
     case 82:
-      return { icon: 'extreme-rain', label: 'Heavy Rain' };
-    case 71:
-    case 73:
-    case 75:
-    case 77:
-    case 85:
-    case 86:
-      return {
-        icon: isDay ? 'partly-cloudy-day-snow' : 'partly-cloudy-night-snow',
-        label: 'Snow',
-      };
+      return { icon: 'rain', label: 'Moderate / Heavy Rain' };
     case 95:
       return {
         icon: isDay ? 'thunderstorms-day-rain' : 'thunderstorms-night-rain',
-        label: 'Stormy',
+        label: 'Thunderstorm',
       };
     case 96:
     case 99:
@@ -90,16 +78,13 @@ function MetricItem({
 }) {
   return (
     <div className="w-full flex items-center justify-between py-1.5">
-      {/* Left side: Icon + Label grouped together */}
-      <div className="flex items-center gap-2.5 min-w-0">
-        <LazyIcon name={icon} className="h-5 w-5 text-fantas-100/90 shrink-0" />
-        <span className="font-axis-navbar-focus text-[11px] leading-tight tracking-wider uppercase text-fantas-100/75 truncate">
+      <div className="flex items-center gap-2 min-w-0">
+        <LazyIcon name={icon} className="h-4 w-4 sm:h-5 sm:w-5 text-fantas-100/90 shrink-0" />
+        <span className="font-axis-navbar-focus text-[10px] sm:text-[11px] leading-tight tracking-wider uppercase text-fantas-100/75 truncate">
           {label}
         </span>
       </div>
-
-      {/* Right side: Value */}
-      <span className="font-axis-navbar-focus text-sm sm:text-base tracking-wider text-fantas-100 shrink-0 ml-3">
+      <span className="font-axis-navbar-focus text-xs sm:text-sm tracking-wider text-fantas-100 shrink-0 ml-2">
         {value}
       </span>
     </div>
@@ -123,8 +108,8 @@ function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
     : '';
 
   return (
-    <div className="w-full pt-4 px-4 sm:px-8 flex flex-col">
-      <div className="relative h-28 w-full">
+    <div className="w-full pt-4 px-6 sm:px-8 flex flex-col">
+      <div className="relative h-24 sm:h-28 w-full">
         <svg
           className="w-full h-full overflow-visible"
           viewBox="0 0 500 100"
@@ -150,7 +135,7 @@ function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
           )}
         </svg>
 
-        <div className="absolute inset-0 pointer-events-none text-xs font-axis-sng-indlab-value text-fantas-800">
+        <div className="absolute inset-0 pointer-events-none text-sm tracking-wide font-axis-sng-indlab-value text-fantas-800">
           {points.map((p, idx) => (
             <div
               key={idx}
@@ -166,7 +151,7 @@ function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
         </div>
       </div>
 
-      <div className="relative w-full h-6 text-xs text-[#0f384d] font-bold mt-1">
+      <div className="relative w-full h-6 text-[10px] sm:text-xs text-[#0f384d] mt-1">
         {points.map((p, idx) => (
           <div
             key={idx}
@@ -219,50 +204,44 @@ export default function WeatherCardDetail() {
         </span>
       </div>
 
-      {/* ROOT CONTAINER (Flat sharp borders, no shadow, no rounded corners) */}
-      <div className="flex flex-col md:flex-row w-full max-w-4xl mx-auto overflow-hidden font-sans select-none border border-slate-700/20">
+      {/* ROOT CONTAINER */}
+      <div className="flex flex-col lg:flex-row w-full max-w-4xl mx-auto overflow-hidden font-sans select-none border border-slate-700/20">
         {/* LEFT PANEL */}
-        <div className="w-full md:w-[38%] bg-fantas-900/90 text-white pt-7 pb-5 px-7 flex flex-col justify-between">
+        <div className="w-full lg:w-[38%] bg-fantas-900/90 text-white pt-6 pb-5 px-6 flex flex-col justify-between">
           <div>
             <div className="w-full flex flex-row justify-between items-start">
               <div className="flex flex-col gap-1">
-                <h1 className="text-3xl lg:text-4xl font-axis-subtitular-focus text-fantas-100/90 leading-none tracking-wide">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-axis-subtitular-focus text-fantas-100/90 leading-none tracking-wide">
                   {weather.name}
                 </h1>
-                <span className="text-6xl lg:text-7xl font-axis-sng-indlab-value tracking-wide text-white block mt-2">
+                <span className="text-5xl sm:text-6xl lg:text-7xl font-axis-sng-indlab-value tracking-wide text-white block mt-2">
                   {weather.temp}°C
                 </span>
               </div>
 
-              <div className="w-16 h-16 flex items-center justify-center">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
                 <MeteoIcon
                   name={currentWeatherConfig.icon}
-                  className="w-16 h-16"
+                  className="w-14 h-14 sm:w-16 sm:h-16"
                 />
               </div>
             </div>
           </div>
 
-          {/* Metrics List with independent divider lines */}
-          <div className="w-full mt-6 flex flex-col">
+          {/* Metrics List */}
+          <div className="w-full mt-5 flex flex-col">
             <MetricItem
               icon="streamline-ultimate:rain-umbrella-1-bold"
               label="Chance of Rain"
               value={`${weather.rainChance}%`}
             />
-
-            {/* Standalone Divider 1 */}
             <div className="w-full h-px bg-gray-500/40 my-1" />
-
             <MetricItem
               icon="material-symbols:humidity-percentage-outline"
               label="Humidity"
               value={`${weather.humidity}%`}
             />
-
-            {/* Standalone Divider 2 */}
             <div className="w-full h-px bg-gray-500/40 my-1" />
-
             <MetricItem
               icon="ph:wind-bold"
               label="Wind Speed"
@@ -272,56 +251,58 @@ export default function WeatherCardDetail() {
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="w-full md:w-[62%] bg-fantas-800/20 flex flex-col justify-between">
+        <div className="w-full lg:w-[62%] bg-fantas-800/20 flex flex-col justify-between">
           {/* Top: Hourly Curve */}
           <HourlyChart hourly={weather.hourly} />
 
           {/* Bottom: 4-Day Forecast Grid */}
-          <div className="w-full grid grid-cols-4 divide-x divide-fantas-900/10 pb-6 pt-4 border-t border-fantas-900/10">
+          <div className="w-full grid grid-cols-4 divide-x divide-fantas-900/10 pb-5 pt-3 border-t border-fantas-900/10">
             {weather.daily.map((item, index) => {
               const config = getWeatherConfig(item.weatherCode, true);
               return (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-between px-1 pt-1 gap-2"
+                  className="flex flex-col items-center justify-between px-1 sm:px-2 pt-1 gap-1.5 min-w-0"
                 >
                   {/* Day Header */}
-                  <span className="text-xs sm:text-sm font-axis-navbar-focus text-fantas-800 tracking-wider truncate block">
+                  <span className="text-[11px] sm:text-xs font-axis-navbar-focus text-fantas-800 tracking-wider truncate block uppercase">
                     {item.dayName}
                   </span>
 
                   {/* Weather Icon */}
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 flex justify-center items-center my-1">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex justify-center items-center my-0.5">
                     <MeteoIcon
                       name={config.icon}
-                      className="w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18"
+                      className="w-10 h-10 sm:w-12 sm:h-12"
                     />
                   </div>
 
                   {/* Temperatures:
-                      Desktop: min on left, divide-x, max on right
-                      Mobile: flex-col-reverse (max on top, min below, no vertical line) */}
-                  <div className="w-full flex flex-col-reverse md:flex-row justify-center items-center md:divide-x md:divide-gray-600">
-                    <div className="text-base sm:text-lg md:text-2xl font-axis-sng-indlab-value tracking-wider text-kapwa-brand-500 md:pr-2.5">
+                      - Mobile, Tablet & Half-Screen: Stacked vertically (Max on top in Red, Min below in Blue)
+                      - Full Wide Screen (xl:): Side-by-side with divider line */}
+                  <div className="w-full flex flex-col-reverse xl:flex-row justify-center items-center xl:divide-x xl:divide-gray-500/50 gap-0.5 xl:gap-0">
+                    <span className="text-sm sm:text-base xl:text-xl font-axis-sng-indlab-value tracking-wider text-kapwa-brand-500 xl:pr-2 leading-none">
                       {item.tempMin}°
-                    </div>
-                    <div className="text-lg sm:text-xl md:text-2xl font-axis-sng-indlab-value tracking-wider text-flamengo-600 md:pl-2.5">
+                    </span>
+                    <span className="text-base sm:text-lg xl:text-xl font-axis-sng-indlab-value tracking-wider text-flamengo-600 xl:pl-2 leading-none">
                       {item.tempMax}°
-                    </div>
+                    </span>
                   </div>
 
-                  {/* Rain Details */}
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 mt-1.5 px-1 md:px-2 py-0.5 bg-fantas-900/20 text-fantas-100/90 text-xs">
-                    <div className="flex items-center gap-1 font-axis-navbar-focus tracking-wide">
+                  {/* Rain Badge:
+                      - Mobile, Tablet & Half-Screen: Stacked vertically (Umbrella + % on top, MM below)
+                      - Full Wide Screen (xl:): Horizontal row */}
+                  <div className="w-full max-w-[70px] sm:max-w-[80px] xl:max-w-none flex flex-col xl:flex-row items-center justify-center gap-0.5 xl:gap-1.5 mt-1 px-1 sm:px-1.5 py-1 bg-fantas-900/15 text-center">
+                    <div className="flex items-center gap-1 font-axis-navbar-focus leading-none">
                       <LazyIcon
                         name="streamline-ultimate:rain-umbrella-1-bold"
-                        className="h-3.5 w-3.5 text-fantas-900/70 shrink-0"
+                        className="h-3 w-3 text-fantas-900/70 shrink-0"
                       />
-                      <span className="text-[12px] sm:text-[12px] md:text-[12px] text-fantas-900/70">
+                      <span className="text-[12px] sm:text-[13px] tracking-wide text-fantas-900/80">
                         {item.precipitationProb}%
                       </span>
                     </div>
-                    <span className="text-[9px] md:text-[10px] text-fantas-900/70 font-axis-navbar-focus tracking-wide">
+                    <span className="text-[10px] sm:text-[11px] text-fantas-900/70 font-axis-navbar-focus tracking-wide leading-none">
                       ({item.precipitationSum} MM)
                     </span>
                   </div>
