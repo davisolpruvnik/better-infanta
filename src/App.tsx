@@ -1,5 +1,4 @@
-import '@fontsource-variable/google-sans-flex';
-import '@fontsource-variable/google-sans-code';
+import './fonts.css';
 import { NuqsAdapter } from 'nuqs/adapters/react';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/layout/Navbar';

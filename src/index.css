@@ -4,12 +4,50 @@
 
 @source '../node_modules/@bettergov/kapwa/dist';
 @import '@bettergov/kapwa/styles';
-@import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import 'leaflet/dist/leaflet.css';
 @import './fonts.css';
 
 @custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Connect Kapwa font variables to the loaded fontsource fonts */
+  --font-kapwa-sans: 'Google Sans Flex Variable', 'Google Sans Flex', system-ui, -apple-system, sans-serif;
+  --font-kapwa-mono: 'Google Sans Code Variable', 'Google Sans Code', monospace;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
 
 @theme {
   --font-serif: Georgia, 'Times New Roman', serif;
@@ -99,11 +137,11 @@
 
 @keyframes emergency-strobe {
   0%, 100% {
-    background-color: #7f1d1d; /* Deep Red (bg-red-900) */
+    background-color: #7f1d1d;
     border-color: rgba(239, 68, 68, 0.4);
   }
   50% {
-    background-color: #b91c1c; /* Bright Emergency Red (bg-red-700) */
+    background-color: #b91c1c;
     border-color: rgba(254, 202, 202, 0.8);
   }
 }
@@ -157,96 +195,77 @@
 }
 
 .font-axis-thin {
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-variation-settings: 'wdth' 100;
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 300, 'wdth' 100;
 }
 .font-axis-book {
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-variation-settings: 'wdth' 100;
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 400, 'wdth' 100;
 }
 .font-axis-medium {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-variation-settings: 'wdth' 100;
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 500, 'wdth' 100;
 }
 .font-axis-semibold {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-variation-settings: 'wdth' 100;
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 600, 'wdth' 100;
 }
 .font-axis-bold {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-variation-settings: 'wdth' 100;
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 700, 'wdth' 100;
 }
 .font-axis-chunky {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-variation-settings: 'wdth' 100;
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 800, 'wdth' 100;
 }
 
-/* For detailed services and government processes */
+/* =========================================
+   Custom Width (wdth) & Optical Size (opsz)
+   ========================================= */
 .font-axis-sng-indlab-header {
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-variation-settings:
-    'wdth' 50,
-    'opsz' 12; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 50%;
+  font-variation-settings: 'wght' 300, 'wdth' 50, 'opsz' 12;
 }
 .font-axis-sng-indlab-value {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-variation-settings:
-    'wdth' 50,
-    'opsz' 36; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 50%;
+  font-variation-settings: 'wght' 700, 'wdth' 50, 'opsz' 36;
 }
 .font-axis-titular-focus {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-variation-settings:
-    'wdth' 50,
-    'opsz' 36; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 50%;
+  font-variation-settings: 'wght' 800, 'wdth' 50, 'opsz' 36;
 }
 .font-axis-subtitular-focus {
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-variation-settings:
-    'wdth' 60,
-    'opsz' 18; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 60%;
+  font-variation-settings: 'wght' 400, 'wdth' 60, 'opsz' 18;
 }
 .font-axis-navbar-focus {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-variation-settings:
-    'wdth' 60,
-    'opsz' 54; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 60%;
+  font-variation-settings: 'wght' 600, 'wdth' 60, 'opsz' 54;
 }
 .font-axis-footer-focus {
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-variation-settings:
-    'wdth' 60,
-    'opsz' 18; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 60%;
+  font-variation-settings: 'wght' 300, 'wdth' 60, 'opsz' 18;
 }
 .font-axis-plantao-text-focus {
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-variation-settings:
-    'wdth' 75,
-    'opsz' 18; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 75%;
+  font-variation-settings: 'wght' 400, 'wdth' 75, 'opsz' 18;
 }
 .font-axis-plantao-num-focus {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-variation-settings:
-    'wdth' 75,
-    'opsz' 18; /* 💡 Combined into a single comma-separated list */
+  font-family: var(--font-kapwa-sans);
+  font-stretch: 75%;
+  font-variation-settings: 'wght' 700, 'wdth' 75, 'opsz' 18;
 }
+
 .font-axis-number-focus {
-  font-family: var(--font-mono);
-  font-weight: 600;
+  font-family: var(--font-kapwa-mono);
+  font-variation-settings: 'wght' 600;
 }
 
 /* Checklist styling */
@@ -276,41 +295,6 @@
 
 .sticky-table tbody tr:hover td:first-child {
   background-color: #f3f4f6;
-}
-
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {

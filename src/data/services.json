@@ -1,7 +1,7 @@
 {
   "categories": [
     {
-      "category": "Health Services",
+      "category": "Health",
       "slug": "health-services",
       "description": "Check health facilities, know government programs, and avail free health services.",
       "icon": "RiHeartPulseFill"
@@ -62,7 +62,7 @@
     },
     {
       "category": "Stop Gambling Addiction!",
-      "slug": "stop-sugal",
+      "slug": "stop-gambling-addiction",
       "description": "Ban yourself or someone on all gambling platforms.",
       "icon": "mdi:poker-chip"
     }
