@@ -1,5 +1,4 @@
 // src/components/home/WeatherCard.tsx
-import { Loader2 } from 'lucide-react';
 import Section from '../ui/Section';
 import MeteoIcon from '../ui/WeatherIcon';
 import LazyIcon from '../ui/Lazying';
@@ -133,6 +132,19 @@ function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
               strokeWidth="2.5"
             />
           )}
+
+          {/* --- ADD CIRCLE POINTS HERE --- */}
+          {points.map((p, idx) => (
+            <circle
+              key={idx}
+              cx={p.x}
+              cy={p.y}
+              r="3"
+              fill="#884c02"
+              stroke="#884c02"
+              strokeWidth="2.5"
+            />
+          ))}
         </svg>
 
         <div className="absolute inset-0 pointer-events-none text-sm tracking-wide font-axis-sng-indlab-value text-fantas-800">
@@ -142,7 +154,7 @@ function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
               className="absolute -translate-x-1/2"
               style={{
                 left: `${(p.x / 500) * 100}%`,
-                top: `${Math.max(p.y - 18, 2)}px`,
+                top: `${Math.max(p.y - 20, 2)}px`, // Note: removed 'xs:' prefix which is invalid in inline styles
               }}
             >
               <span>{p.temp}°</span>
@@ -174,7 +186,7 @@ export default function WeatherCardDetail() {
   if (loading) {
     return (
       <div className="w-full max-w-4xl h-80 bg-fantas-900/80 flex items-center justify-center text-sky-400 mx-auto my-4">
-        <Loader2 className="w-8 h-8 animate-spin" />
+        <LazyIcon name='line-md:loading-twotone-loop' />
       </div>
     );
   }
@@ -214,7 +226,7 @@ export default function WeatherCardDetail() {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-axis-subtitular-focus text-fantas-100/90 leading-none tracking-wide">
                   {weather.name}
                 </h1>
-                <span className="text-5xl sm:text-6xl lg:text-7xl font-axis-sng-indlab-value tracking-wide text-white block mt-2">
+                <span className="text-5xl sm:text-6xl lg:text-7xl font-axis-sng-indlab-value tracking-wide text-white block mt-1">
                   {weather.temp}°C
                 </span>
               </div>
