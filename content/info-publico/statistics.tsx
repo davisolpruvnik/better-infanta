@@ -1,10 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Activity,
-  Building2,
-  Wheat,
-} from 'lucide-react';
 import BarangayCensusTab from '@/components/stats/BarangayCensusTab';
 import { INFANTA_BARANGAYS } from '@/data/censusDataInfanta';
 import CmciAnalyticsSection from '@/components/stats/crumbs/CmciAnalytics';
@@ -177,17 +172,6 @@ export default function StatsPage() {
             }`}
           >
             BLGF Financials (1992–2026)
-          </button>
-
-          <button
-            onClick={() => setActiveTab('local')}
-            className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors whitespace-nowrap ${
-              activeTab === 'local'
-                ? 'bg-fantas-700 text-white shadow-sm'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Local Sectoral Stats
           </button>
         </div>
       </div>
