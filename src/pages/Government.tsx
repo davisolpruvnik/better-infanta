@@ -9,7 +9,6 @@ import {
 } from '../data/yamlLoader';
 import GovernmentActivitySection from '../components/home/GovernmentActivitySection';
 import SEO from '../components/SEO';
-import { Banner } from '@bettergov/kapwa/banner';
 import { useState, useEffect, lazy, Suspense, useMemo, memo } from 'react';
 import { resolveIconName } from '@/lib/icon-resolver';
 import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';

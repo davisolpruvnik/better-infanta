@@ -34,11 +34,11 @@ export const mainNavigation: NavigationItem[] = [
   },
   {
     label: 'Statistics',
-    href: '/statistics',
+    href: '/info-publico/statistics',
   },
   {
     label: 'Transparency',
-    href: '/transparency',
+    href: '/info-publico/transparency',
   },
 ];
 

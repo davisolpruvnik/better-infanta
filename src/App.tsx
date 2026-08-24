@@ -8,6 +8,8 @@ import ScrollToTop from './components/ui/ScrollToTop';
 import Services from './pages/Services';
 import Document from './pages/Document';
 import Government from './pages/Government';
+import StatsPage from '../content/info-publico/statistics';
+import TransparencyPage from '../content/info-publico/transparency';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Plantao from './components/layout/plantao';
 
@@ -36,6 +38,8 @@ function App() {
               />
               <Route path="/:lang/:documentSlug" element={<Document />} />
               <Route path="/:documentSlug" element={<Document />} />
+              <Route path="/info-publico/statistics" element={<StatsPage />} />
+              <Route path="/info-publico/transparency" element={<TransparencyPage />} />
             </Routes>
             <Footer />
           </div>

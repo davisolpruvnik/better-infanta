@@ -60,8 +60,8 @@ export default function GovernmentActivitySection({
 
         {/* 1️⃣ LEFT SIDE (Desktop): Header and Subheader */}
         <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start text-left gap-3 pt-2">
-          <div className="flex items-start gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
-            {getIcon('ri:building-line', 'h-8 w-8 text-fantas-800 mt-1')}
+          <div className="flex items-center xs:items-start gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
+            {getIcon('ri:building-line', 'h-8 w-8 text-fantas-800')}
             <h2 className="leading-snug">
               {title || t('governmentActivity.title', 'Government Agencies')}
             </h2>
