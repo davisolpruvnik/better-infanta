@@ -7,6 +7,7 @@ import icoImg from '../../assets/better_infanta_ico.svg';
 import { mainNavigation } from '@/data/navigation';
 import Timekeeper from './Timekeeper-Weather';
 import { LANGUAGES } from '@/i18n/languages';
+import { Menu } from '@base-ui/react';
 
 // 💡 1. Lazy load the Iconify component (0% bundle tax on initial page load)
 const LazyIconify = lazy(() =>
@@ -127,7 +128,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile menu container */}
       <div className={`lg:hidden ${isOpen ? 'block' : 'hidden'}`}>
-        <div className="container mx-auto px-4 pt-2 pb-4 space-y-1 border-t border-gray-200 bg-white shadow-lg">
+        <div className="container mx-auto py-2 space-y-1 bg-white">
           {mainNavigation.map(item => {
             const hasChildren = Boolean(item.children && item.children.length > 0);
             const isSubmenuOpen = activeMenu === item.label;
@@ -190,23 +191,45 @@ const Navbar: React.FC = () => {
             );
           })}
 
-          {/* Language Selector */}
           <div className="px-4 py-3 mt-2 border-t border-gray-200">
-            <div className="flex items-center">
-              {renderIcon('lucide:globe', 'h-5 w-5 text-gray-800 mr-2')}
-              <select
-                value={i18n.language}
-                onChange={e => changeLanguage(e.target.value as LanguageType)}
-                className="text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-700 hover:border-fantas-600 focus:outline-none focus:ring-1 focus:ring-fantas-600 focus:border-fantas-600 font-axis-navbar-focus"
-              >
-                {Object.entries(LANGUAGES).map(([code, lang]) => (
-                  <option key={code} value={code}>
-                    {lang.nativeName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+                      <div className="flex items-center">
+                        {renderIcon('heroicons:globe-alt', 'h-6 w-6 text-gray-800 mr-2 shrink-0')}
+
+                        {/* 💡 Base UI Language Selector Menu */}
+                        <Menu.Root>
+                          <Menu.Trigger className="flex items-center justify-between gap-2 text-sm border border-gray-300 hover:border-fantas-600 px-3 py-1 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-fantas-600 font-axis-navbar-focus tracking-wide transition-all cursor-pointer select-none">
+                            <span>
+                              {LANGUAGES[i18n.language as LanguageType]?.nativeName || 'Select language'}
+                            </span>
+                            {renderIcon('mynaui:chevron-down-solid', 'h-4 w-4 text-gray-500 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180')}
+                          </Menu.Trigger>
+
+                          <Menu.Portal>
+                            <Menu.Positioner side="bottom" align="start" sideOffset={6} className="z-50">
+                              <Menu.Popup className="z-50 min-w-[160px] p-1.5 bg-white border border-gray-200 tracking-wide font-axis-subtitular-focus text-sm origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 outline-none">
+                                {Object.entries(LANGUAGES).map(([code, lang]) => {
+                                  const isSelected = i18n.language === code;
+                                  return (
+                                    <Menu.Item
+                                      key={code}
+                                      onClick={() => changeLanguage(code as LanguageType)}
+                                      className="flex items-center justify-between gap-3 px-3 py-1.5 cursor-pointer text-gray-700 hover:bg-fantas-50 hover:text-fantas-950 data-[highlighted]:bg-fantas-50 data-[highlighted]:text-fantas-950 outline-none transition-colors select-none"
+                                    >
+                                      <span className={isSelected ? 'font-axis-navbar-focus text-fantas-950' : 'text-gray-700'}>
+                                        {lang.nativeName}
+                                      </span>
+                                      {isSelected && (
+                                        <span className="text-fantas-800 font-axis-navbar-focus text-xs">✓</span>
+                                      )}
+                                    </Menu.Item>
+                                  );
+                                })}
+                              </Menu.Popup>
+                            </Menu.Positioner>
+                          </Menu.Portal>
+                        </Menu.Root>
+                      </div>
+                    </div>
         </div>
       </div>
     </nav>
