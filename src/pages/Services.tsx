@@ -60,15 +60,9 @@ const SubcategoryCard = memo(({ categorySlug, subcategory, fallbackIcon }: Subca
         </div>
       </div>
 
-      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-800 group-hover:text-fantas-700 transition-colors duration-200 line-clamp-2 leading-snug">
+      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-800 group-hover:text-fantas-700 transition-colors duration-200 leading-snug">
         {subcategory.name}
       </h3>
-
-      {subcategory.description && (
-        <p className="mt-1 text-[10px] sm:text-xs font-axis-thin text-gray-600 line-clamp-2 leading-tight px-1">
-          {subcategory.description}
-        </p>
-      )}
     </Link>
   );
 });
@@ -183,7 +177,7 @@ const Services: React.FC = () => {
         ) : (
           <div className="w-full max-w-7xl mx-auto">
             {/* Grid de Subcategorias com componentes Memoizados */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 md:gap-8 justify-items-center items-start">
+            <div className="grid grid-cols-2 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 md:gap-8 justify-items-center items-start">
               {subcategories.map(subcategory => (
                 <SubcategoryCard
                   key={subcategory.slug}

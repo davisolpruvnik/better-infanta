@@ -1,3 +1,4 @@
+// src/data/yamlLoader.ts
 import yaml from 'js-yaml';
 
 // Type definitions for the services data
@@ -43,9 +44,9 @@ import garbageWasteDisposalIndex from '../../content/services/garbage-waste-disp
 import environmentIndex from '../../content/services/environment/index.yaml?raw';
 import disasterPreparednessIndex from '../../content/services/disaster-preparedness/index.yaml?raw';
 import housingLandUseIndex from '../../content/services/housing-land-use/index.yaml?raw';
-import governmentDepartmentsIndex from '../../content/government/departments/index.yaml?raw';
+import governmentMembersIndex from '../../content/government/lgu/municipio/index.yaml?raw';
 import tourismIndex from '../../content/services/tourism/index.yaml?raw';
-import governmentDepartmentsLegislativeIndex from '../../content/government/departments/legislative/index.yaml?raw';
+import governmentDepartmentsLegislativeIndex from '../../content/government/lgu/depts/index.yaml?raw';
 
 // Create a mapping of category slugs to their YAML content
 const categoryIndexMap: { [key: string]: string } = {
@@ -60,8 +61,8 @@ const categoryIndexMap: { [key: string]: string } = {
   'disaster-preparedness': disasterPreparednessIndex,
   'housing-land-use': housingLandUseIndex,
   tourism: tourismIndex,
-  departments: governmentDepartmentsIndex,
-  legislative: governmentDepartmentsLegislativeIndex,
+  'municipio': governmentMembersIndex,
+  'depts': governmentDepartmentsLegislativeIndex,
 };
 
 // Parse the YAML content
@@ -85,9 +86,31 @@ export async function loadCategoryIndex(
   categorySlug: string
 ): Promise<CategoryIndex> {
   const yamlContent = categoryIndexMap[categorySlug];
+
   if (!yamlContent) {
+    // 💡 SMART FALLBACK: If no dedicated index.yaml exists (like for "lgu"),
+    // dynamically extract the subcategories defined directly in your main government.yaml/services.yaml
+    const serviceCat = serviceCategories.categories.find(c => c.slug === categorySlug);
+    const govCat = governmentCategories.categories.find(c => c.slug === categorySlug);
+    const foundCat = serviceCat || govCat;
+
+    if (foundCat && foundCat.subcategories) {
+      return {
+        title: foundCat.category,
+        description: foundCat.description,
+        layout: 'grid',
+        pages: foundCat.subcategories.map(sub => ({
+          name: sub.name,
+          slug: sub.slug,
+          description: sub.description || '',
+          icon: sub.icon || 'RiFileTextLine' // Default fallback icon
+        })),
+      };
+    }
+
     return { layout: 'grid', pages: [] };
   }
+
   try {
     const indexData: CategoryIndexData = yaml.load(
       yamlContent
@@ -124,5 +147,5 @@ export async function getCategorySubcategories(
 
 /** Returns true if a slug has a registered index in categoryIndexMap */
 export function isNestedCategory(slug: string): boolean {
-  return slug in categoryIndexMap;
+  return slug in categoryIndexMap || !![...serviceCategories.categories, ...governmentCategories.categories].find(c => c.slug === slug)?.subcategories;
 }

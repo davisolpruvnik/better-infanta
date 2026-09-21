@@ -1,46 +1,60 @@
 # Local Government Activity Data
-# This file contains all the local government activity data for the local government portal
-# Non-technical users can easily edit this file to add, remove, or modify local government activity
+# This file contains all the local government activity data for the Better Infanta portal
+# Non-technical users can easily edit this file to add, remove, or modify local government activities
+#
+# To add a new category:
+# 1. Add a new category block under 'categories'
+# 2. Provide a unique slug, title, description, and icon
+# 3. Add subcategories if needed
+
 title: Government Agencies
-description:
+description: Explore the structure, services, and transparency documents of the Infanta Local Government Unit.
+
 categories:
-  - category: 'Departments'
-    slug: 'departments'
-    description: 'Explore local government departments, agencies, and offices with their mandates, services, and contact details.'
-    icon: 'RiGovernmentFill'
+  - category: "About the Local Government"
+    slug: "lgu"
+    description: "Explore local government departments, agencies, and offices with their mandates, services, and contact details."
+    icon: "RiGovernmentFill"
     subcategories:
-      - name: 'Executive Department'
-        slug: 'executive'
-      - name: 'Legislative Department'
-        slug: 'legislative'
-      - name: 'Department of Education'
-        slug: 'department-of-education'
-      - name: 'Department of Health'
-        slug: 'department-of-health'
-      - name: 'Department of Transportation'
-        slug: 'department-of-transportation'
-  - category: 'Reports and Statistics'
-    slug: 'reports-and-statistics'
-    description: 'Access local government reports, statistical data, and performance metrics.'
-    icon: 'MdReportGantt'
+      - name: "The Municipal Council"
+        slug: "municipio"
+        icon: "RiGovernmentFill"
+      - name: "Departments"
+        slug: "depts"
+        icon: "heroicons:building-office-2-20-solid"
+      - name: "Barangays"
+        slug: "brgys"
+        icon: "carbon:map-boundary"
+
+  - category: "Statistics"
+    slug: "statistics"
+    description: "Access local government statistics, demographic data, and performance metrics."
+    icon: "MdReportGantt"
+
+  - category: "Transparency Documents"
+    slug: "transparency"
+    description: "Freedom of Information releases, bidding documents, and accountability records."
+    icon: "PiFilesFill"
     subcategories:
-      - name: 'Reports'
-        slug: 'reports'
-      - name: 'Statistics'
-        slug: 'statistics'
-  - category: 'Transparency Documents'
-    slug: 'transparency-documents'
-    description: 'Freedom of information releases, bidding, transparency documents for local government accountability.'
-    icon: 'PiFilesFill'
+      - name: "Citizen's Charter"
+        slug: "citizens-charter"
+      - name: "Budget & Financial Documents"
+        slug: "budget-finance"
+      - name: "Bids & Awards"
+        slug: "bids-awards"
+      - name: "FOI Releases"
+        slug: "foi-releases"
+      - name: "Audit Reports"
+        slug: "audit-reports"
+
+  - category: "Task Force Disiplina"
+    slug: "tf-disiplina"
+    description: "View information, statistics, and ordinances related to road safety, public order, and discipline."
+    icon: "PiSirenFill"
     subcategories:
-      - name: 'Transparency Documents'
-        slug: 'transparency-documents'
-  - category: 'Task Force Disiplina'
-    slug: 'tf-disiplina'
-    description: 'View information, statistics, and ordinances related to road and public safety.'
-    icon: 'PiSirenFill'
-    subcategories:
-      - name: 'Violations Statistics'
-        slug: 'violation-stats'
-      - name: 'Ordinances'
-        slug: 'ordinances'
+      - name: "Violations Statistics"
+        slug: "violation-stats"
+      - name: "Ordinances"
+        slug: "ordinances"
+      - name: "Reports"
+        slug: "reports"

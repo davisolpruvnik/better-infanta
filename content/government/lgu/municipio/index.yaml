@@ -1,0 +1,77 @@
+# Municipal Council (Sangguniang Bayan)
+# Infanta, Quezon
+# Contains Mayor, Vice Mayor, 8 Councilors, and 2 Ex-Officio Members
+
+council:
+  mayor:
+    name: "L.A. Ruanto"
+    slug: "mayor-la"
+    term: "1st term"
+    year_elected: 2025
+    year_debut: 2010
+    reelected: false
+
+  vice_mayor:
+    name: "Mannie America"
+    slug: "vice-mannie"
+    term: "1st term"
+    year_elected: 2025
+    year_debut: 2010
+    reelected: false
+
+  councilors:
+    - name: "Tim Juntereal"
+      slug: "cons-tim"
+      term: "1st term"
+      year_elected: 2025
+      year_debut: 2025
+      reelected: false
+
+    - name: "Sherwin Avellano"
+      slug: "cons-sherwin"
+      term: "3rd term"
+      year_elected: 2025
+      year_debut: 2019
+      reelected: true
+
+    - name: "Owie Cuento"
+      slug: "cons-owie"
+      term: "2nd term"
+      year_elected: 2025
+      year_debut: 2022
+      reelected: true
+
+    - name: "Laiza Ramos"
+      slug: "cons-laiza"
+      term: "1st term"
+      year_elected: 2025
+      year_debut: 2025
+      reelected: false
+
+    - name: "Cherry Macasaet"
+      slug: "cons-cherry"
+      term: "3rd term"
+      year_elected: 2025
+      year_debut: 2019
+      reelected: true
+
+    - name: "Jun-Jun Mortiz"
+      slug: "cons-junjun"
+      term: "1st term"
+      year_elected: 2025
+      year_debut: 2004
+      reelected: false
+
+    - name: "Anlo Cuento"
+      slug: "cons-anlo"
+      term: "2nd term"
+      year_elected: 2025
+      year_debut: 2022
+      reelected: true
+
+    - name: "Taoyu Yu"
+      slug: "cons-taoyu"
+      term: "1st term"
+      year_elected: 2025
+      year_debut: 2025
+      reelected: false

@@ -2,8 +2,8 @@
 # This file contains all the pages/governments available under the Department
 
 pages:
-  - name: 'Executive'
-    slug: 'executive'
+  - name: 'Municipal Council'
+    slug: 'municipio'
     description: "Find out about your Mayor and Vice Mayor, including upcoming events, the Mayor's Community Assistance Program, mayoral history, and information about other historic roles in the local government unit."
   - name: 'Legislative'
     slug: 'legislative'

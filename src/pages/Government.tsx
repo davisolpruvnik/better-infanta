@@ -23,7 +23,7 @@ const ServiceIcon = memo(({ iconName, className = 'h-6 w-6' }: { iconName?: stri
   return (
     <Suspense
       fallback={
-        <div className={`${className} rounded-full bg-purple-200/40 animate-pulse shrink-0`} />
+        <div className={`${className} rounded-full bg-fantas-200/40 animate-pulse shrink-0`} />
       }
     >
       <LazyIconify
@@ -48,8 +48,8 @@ const SubcategoryCard = memo(({ categorySlug, subcategory, fallbackIcon }: Subca
       to={`/government/${categorySlug}/${subcategory.slug}`}
       className="group flex flex-col items-center text-center w-full max-w-[130px] sm:max-w-[160px] md:max-w-[180px] focus:outline-none transition-transform duration-300 py-2"
     >
-      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full border border-gray-300 group-hover:border-purple-600 bg-linear-to-b from-purple-50/40 to-purple-100/20 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300 overflow-hidden">
-        <div className="text-purple-600 group-hover:text-purple-800 transition-colors">
+      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full border border-gray-300 group-hover:border-fantas-700 bg-linear-to-b from-fantas-50/40 to-fantas-100/20 flex items-center justify-center group-hover:scale-105 transition-all duration-300 overflow-hidden">
+        <div className="text-fantas-600 group-hover:text-fantas-800 transition-colors">
           <ServiceIcon
             iconName={subcategory.icon || fallbackIcon || 'RiFileTextLine'}
             className="h-9 w-9 sm:h-14 sm:w-14 md:h-16 md:w-16"
@@ -57,7 +57,7 @@ const SubcategoryCard = memo(({ categorySlug, subcategory, fallbackIcon }: Subca
         </div>
       </div>
 
-      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-900 group-hover:text-purple-700 transition-colors duration-200 line-clamp-2 leading-snug">
+      <h3 className="mt-2.5 sm:mt-4 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wide text-gray-900 group-hover:text-fantas-700 transition-colors duration-200 line-clamp-2 leading-snug">
         {subcategory.name}
       </h3>
     </Link>
