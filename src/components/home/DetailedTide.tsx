@@ -15,52 +15,102 @@ interface TidePoint {
   timeStr: string;
 }
 
+// src/components/home/TideCard.tsx
+
+// 💡 1. Coastal waters off Infanta / Lamon Bay (Water grid cell)
 const MARINE_COORDS = {
-  lat: 14.664,
-  lon: 121.6041,
+  lat: 14.745,
+  lon: 121.685,
   station: "Infanta / Lamon Bay Coast",
 };
 
-export default function TideCard() {
+export default function TideCard({ className = '' }: { className?: string }) {
   const [hourlyData, setHourlyData] = useState<{ times: string[]; heights: number[] } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLive, setIsLive] = useState(false); // 💡 Tracks if data is live from API
 
   useEffect(() => {
-    async function fetchTides() {
-      try {
-        const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${MARINE_COORDS.lat}&longitude=${MARINE_COORDS.lon}&hourly=sea_level_height_msl&timezone=Asia%2FManila&forecast_days=2`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Marine API fetch failed");
-        const data = await res.json();
-
-        // 💡 Capture a 26-hour cycle starting from today's midnight
+      async function fetchTides() {
+        // 💡 1. Calculate current Philippine Time (Asia/Manila)
         const now = new Date();
-        const times: string[] = data.hourly.time;
-        const heights: number[] = data.hourly.sea_level_height_msl;
-
-        const todayDateStr = now.toISOString().split('T')[0];
-        let startIdx = times.findIndex(t => t.startsWith(todayDateStr));
-        if (startIdx === -1) startIdx = 0;
-
-        const endIdx = Math.min(startIdx + 26, heights.length);
-
-        setHourlyData({
-          times: times.slice(startIdx, endIdx),
-          heights: heights.slice(startIdx, endIdx),
+        const manilaTimeStr = now.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Manila',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
         });
-      } catch (err) {
-        console.warn("Using offline fallback tidal data for Infanta", err);
-        const today = new Date().toISOString().split('T')[0];
-        const mockHeights = [0.15, 0.45, 0.85, 1.25, 1.42, 1.22, 0.75, 0.25, -0.25, -0.45, -0.35, 0.05, 0.55, 0.95, 1.28, 1.36, 1.10, 0.65, 0.15, -0.22, -0.40, -0.30, 0.02, 0.35, 0.75, 1.15];
-        const mockTimes = Array.from({ length: 26 }, (_, i) => `${today}T${String(i % 24).padStart(2, '0')}:00`);
-        setHourlyData({ times: mockTimes, heights: mockHeights });
-      } finally {
-        setLoading(false);
-      }
-    }
+        const [hourStr, minStr] = manilaTimeStr.split(':');
+        const currentHour = parseInt(hourStr, 10);
+        const currentMinute = parseInt(minStr, 10);
 
-    fetchTides();
-  }, []);
+        // 💡 2. Round-off system: if 30 mins or more, start next hour; otherwise current hour
+        const startHourOffset = currentMinute >= 30 ? currentHour + 1 : currentHour;
+
+        try {
+          // 💡 3. forecast_days=3 gives 72 hours, ensuring 26 rolling hours are ALWAYS available from any time of day
+          const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${MARINE_COORDS.lat}&longitude=${MARINE_COORDS.lon}&hourly=sea_level_height_msl&cell_selection=sea&timezone=Asia%2FManila&forecast_days=3`;
+
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`Marine API responded with status ${res.status}`);
+          const data = await res.json();
+
+          if (!data?.hourly?.time || !data?.hourly?.sea_level_height_msl) {
+            throw new Error("Invalid API payload structure");
+          }
+
+          const rawHeights: (number | null)[] = data.hourly.sea_level_height_msl;
+          const rawTimes: string[] = data.hourly.time;
+
+          const validValuesCount = rawHeights.filter(v => v !== null).length;
+          if (validValuesCount === 0) {
+            throw new Error("API returned null for sea_level_height_msl at this coordinate");
+          }
+
+          // 💡 4. Rolling Window: Starts from current rounded hour for the next 26 hours
+          const startIdx = Math.max(0, startHourOffset);
+          const endIdx = startIdx + 26;
+
+          const cleanTimes = rawTimes.slice(startIdx, endIdx);
+          const cleanHeights = rawHeights.slice(startIdx, endIdx).map((h, i, arr) => {
+            if (h !== null && typeof h === 'number') return h;
+            return (arr[i - 1] as number) ?? (arr[i + 1] as number) ?? 0;
+          });
+
+          console.log(`🌊 Live Marine tide data loaded starting from hour ${startHourOffset}:00!`);
+          setIsLive(true);
+          setHourlyData({ times: cleanTimes, heights: cleanHeights });
+        } catch (err) {
+          console.warn("⚠️ Marine API failed. Using rolling offline fallback for Infanta.", err);
+          setIsLive(false);
+
+          // Base 24-hour wave cycle
+          const baseHeights = [
+            0.15, 0.45, 0.85, 1.25, 1.42, 1.22, 0.75, 0.25,
+            -0.25, -0.45, -0.35, 0.05, 0.55, 0.95, 1.28, 1.36,
+            1.10, 0.65, 0.15, -0.22, -0.40, -0.30, 0.02, 0.35
+          ];
+
+          // Shift mock curve to start from the current rounded hour
+          const mockHeights: number[] = [];
+          const mockTimes: string[] = [];
+
+          for (let i = 0; i < 26; i++) {
+            const hIdx = (startHourOffset + i) % 24;
+            mockHeights.push(baseHeights[hIdx]);
+
+            const d = new Date(now);
+            d.setHours(startHourOffset + i, 0, 0, 0);
+            mockTimes.push(d.toISOString());
+          }
+
+          setHourlyData({ times: mockTimes, heights: mockHeights });
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      fetchTides();
+    }, []);
 
   // 💡 1. Calculate Tidal Extrema (Two Peaks + Two Troughs)
   const { extrema, highPeaks } = useMemo(() => {
@@ -350,8 +400,17 @@ export default function TideCard() {
       </div>
 
       {/* 🏷️ Broadsheet Footer */}
-      <div className="border-t border-fantas-900/90 pt-2 mt-3 flex justify-between items-center text-[11px] font-axis-subtitular-focus uppercase tracking-wider text-fantas-900/80">
-        <span>Coastline, station code | 660/024</span>
+      <div className="border-t border-fantas-900 pt-1.5 mt-2 flex justify-between items-center text-[10px] font-axis-subtitular-focus uppercase tracking-wider text-fantas-950/80">
+              <span>Coastline, station code | 660/024</span>
+              <span className="flex items-center gap-1 font-axis-subtitular-focus text-[10px]">
+                <span className={`size-1.5 rounded-full ${isLive ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                {isLive ? 'Live Marine Model / Open-Meteo' : 'Cached Model'}
+        </span>
+      </div>
+      <div className="text-center mt-1">
+        <span className='text-xs font-axis-subtitular-focus tracking-wide text-fantas-950/70'>
+          Model estimate at ~8 km resolution. Local river-mouth conditions may vary. Not for navigation.
+        </span>
       </div>
     </div>
   );

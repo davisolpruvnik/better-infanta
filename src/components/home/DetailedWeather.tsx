@@ -252,7 +252,7 @@ export default function WeatherCardDetail() {
           </h2>
         </div>
         <span className="text-xs font-axis-navbar-focus tracking-wider text-fantas-800/70 uppercase">
-          12-Hr Wave & 4-Day Outlook
+          12-Hr Forecast & 4-Day Outlook
         </span>
       </div>
 
