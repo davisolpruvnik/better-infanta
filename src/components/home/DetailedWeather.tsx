@@ -101,82 +101,122 @@ function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
     return { x, y, temp: item.temp, time: item.time };
   });
 
-  const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
-  const polygonPoints = points.length
-    ? `0,100 0,${points[0].y} ${polylinePoints} 500,${points[points.length - 1].y} 500,100`
-    : '';
+  // 💡 Pure math cubic spline interpolation (Zero bundle size, silky smooth curves)
+  const getSmoothCurve = (pts: typeof points) => {
+    if (!pts || pts.length < 2) return { linePath: '', areaPath: '' };
+
+      let d = `M ${pts[0].x} ${pts[0].y}`;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i === 0 ? i : i - 1];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[i + 2] || p2;
+
+        // Catmull-Rom to Cubic Bezier control points
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+        d += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+      }
+
+      const areaPath = `${d} L ${pts[pts.length - 1].x} 100 L ${pts[0].x} 100 Z`;
+      return { linePath: d, areaPath };
+    };
+
+  const { linePath, areaPath } = getSmoothCurve(points);
 
   return (
-    <div className="w-full pt-4 px-6 sm:px-8 flex flex-col">
-      <div className="relative h-24 sm:h-28 w-full">
-        <svg
-          className="w-full h-full overflow-visible"
-          viewBox="0 0 500 100"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            <linearGradient id="weatherChartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#884c02" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="#884c02" stopOpacity="0.65" />
-            </linearGradient>
-          </defs>
+      <div className="w-full pt-6 pb-3 px-6 sm:px-8 flex flex-col select-none">
+        {/* 💡 Container has ample vertical room for text and nodes */}
+        <div className="relative h-24 sm:h-28 w-full">
+          <svg
+            className="w-full h-full overflow-visible"
+            viewBox="0 0 500 100"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              {/* Radiant atmospheric gradient fade */}
+              <linearGradient id="weatherChartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#553001" stopOpacity="1" />
+                <stop offset="50%" stopColor="#553001" stopOpacity="0.72" />
+                <stop offset="100%" stopColor="#553001" stopOpacity="0.5" />
+              </linearGradient>
+            </defs>
 
-          {polygonPoints && (
-            <polygon points={polygonPoints} fill="url(#weatherChartGrad)" />
-          )}
-          {polylinePoints && (
-            <polyline
-              points={polylinePoints}
-              fill="none"
-              stroke="#884c02"
-              strokeWidth="2.5"
-            />
-          )}
+            {/* Dotted vertical drop-guides */}
+            {points.map((p, idx) => (
+              <line
+                key={`guide-${idx}`}
+                x1={p.x}
+                y1={p.y}
+                x2={p.x}
+                y2={100}
+                stroke="#d97706"
+                strokeOpacity="0.2"
+                strokeWidth="1"
+                strokeDasharray="2 3"
+              />
+            ))}
 
-          {/* --- ADD CIRCLE POINTS HERE --- */}
-          {points.map((p, idx) => (
-            <circle
-              key={idx}
-              cx={p.x}
-              cy={p.y}
-              r="3"
-              fill="#884c02"
-              stroke="#884c02"
-              strokeWidth="2.5"
-            />
-          ))}
-        </svg>
+            {/* Smooth Curved Area Fill */}
+            {areaPath && (
+              <path d={areaPath} fill="url(#weatherChartGrad)" />
+            )}
 
-        <div className="absolute inset-0 pointer-events-none text-sm tracking-wide font-axis-sng-indlab-value text-fantas-800">
+            {/* Smooth Curved Line */}
+            {linePath && (
+              <path
+                d={linePath}
+                fill="none"
+                stroke="#b45309"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            )}
+          </svg>
+
+          {/* 💡 HTML Overlay: Markers + Text (Zero geometric distortion & consistent spacing) */}
+          <div className="absolute inset-0 pointer-events-none">
+            {points.map((p, idx) => (
+              <div
+                key={`node-anchor-${idx}`}
+                className="absolute"
+                style={{
+                  left: `${(p.x / 500) * 100}%`,
+                  top: `${(p.y / 100) * 100}%`,
+                }}
+              >
+                {/* Temperature text: elevated with comfortable breathing room */}
+                <span className="absolute -translate-x-1/2 bottom-2 text-[12px] sm:text-sm font-axis-sng-indlab-value tracking-wide text-fantas-950 whitespace-nowrap drop-shadow-2xs">
+                  {p.temp}°
+                </span>
+
+                {/* Undistorted CSS dual-ring marker (stays a circle on all screen sizes) */}
+                <div className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                  <span className="size-2.5 rounded-full bg-white border-2 border-amber-700 " />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Timeline Axis Labels */}
+        <div className="relative w-full h-5 text-[10px] sm:text-[11px] mt-2 border-t border-fantas-800/10 pt-1">
           {points.map((p, idx) => (
             <div
-              key={idx}
-              className="absolute -translate-x-1/2"
-              style={{
-                left: `${(p.x / 500) * 100}%`,
-                top: `${Math.max(p.y - 20, 2)}px`, // Note: removed 'xs:' prefix which is invalid in inline styles
-              }}
+              key={`time-${idx}`}
+              className="absolute -translate-x-1/2 flex justify-center"
+              style={{ left: `${(p.x / 500) * 100}%` }}
             >
-              <span>{p.temp}°</span>
+              <span className="font-axis-navbar-focus uppercase tracking-wider text-fantas-900/60 whitespace-nowrap">
+                {p.time}
+              </span>
             </div>
           ))}
         </div>
       </div>
-
-      <div className="relative w-full h-6 text-[10px] sm:text-xs text-[#0f384d] mt-1">
-        {points.map((p, idx) => (
-          <div
-            key={idx}
-            className="absolute -translate-x-1/2 flex justify-center"
-            style={{ left: `${(p.x / 500) * 100}%` }}
-          >
-            <span className="font-axis-navbar-focus tracking-wider text-fantas-800/80">
-              {p.time}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -199,7 +239,7 @@ export default function WeatherCardDetail() {
   );
 
   return (
-    <Section className="flex flex-col justify-center items-center w-full">
+    <Section className="flex flex-col justify-center items-center w-full bg-white">
       {/* SECTION HEADER */}
       <div className="w-full max-w-4xl flex items-center justify-between pb-2 mb-6 border-b border-fantas-900/20">
         <div className="flex items-center gap-2">
@@ -293,7 +333,7 @@ export default function WeatherCardDetail() {
                       - Mobile, Tablet & Half-Screen: Stacked vertically (Max on top in Red, Min below in Blue)
                       - Full Wide Screen (xl:): Side-by-side with divider line */}
                   <div className="w-full flex flex-col-reverse xl:flex-row justify-center items-center xl:divide-x xl:divide-gray-500/50 gap-0.5 xl:gap-0">
-                    <span className="text-sm sm:text-base xl:text-xl font-axis-sng-indlab-value tracking-wider text-kapwa-brand-500 xl:pr-2 leading-none">
+                    <span className="text-sm sm:text-base xl:text-xl font-axis-sng-indlab-value tracking-wider text-accent-700 xl:pr-2 leading-none">
                       {item.tempMin}°
                     </span>
                     <span className="text-base sm:text-lg xl:text-xl font-axis-sng-indlab-value tracking-wider text-flamengo-600 xl:pl-2 leading-none">

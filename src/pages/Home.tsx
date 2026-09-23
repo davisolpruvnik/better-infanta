@@ -3,6 +3,7 @@ import GovernmentActivitySection from '../components/home/GovernmentActivitySect
 import SEO from '../components/SEO';
 import LandingSite from '../components/home/Landing';
 import WeatherCardDetail from '@/components/home/DetailedWeather';
+import TideCard from '@/components/home/DetailedTide';
 
 const Home: React.FC = () => {
   return (
@@ -16,7 +17,17 @@ const Home: React.FC = () => {
         <LandingSite />
         <ServicesSection />
         <GovernmentActivitySection />
-        <WeatherCardDetail />
+        <div className="container mx-auto px-4 py-8">
+              {/* Pair Weather + Editorial Tide Table */}
+              <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6">
+                <div className="flex-1 bg-white">
+                  <WeatherCardDetail />
+                </div>
+                <div className="flex shrink-0">
+                  <TideCard />
+                </div>
+              </div>
+            </div>
       </main>
     </>
   );
