@@ -22,6 +22,16 @@ const MARINE_COORDS = {
   station: "Infanta / Lamon Bay Coast",
 };
 
+// 💡 Helper to parse Open-Meteo unzoned timestamps strictly in Asia/Manila (UTC+8)
+const parseManilaTimeMs = (isoStr: string): number => {
+  if (!isoStr) return 0;
+  if (isoStr.includes('+') || isoStr.endsWith('Z')) {
+    return new Date(isoStr).getTime();
+  }
+  // Append +08:00 so all devices globally parse it as exact Philippine Standard Time
+  return new Date(`${isoStr}:00+08:00`).getTime();
+};
+
 export default function TideCard({ className = '' }: { className?: string }) {
   const [hourlyData, setHourlyData] = useState<{ times: string[]; heights: number[] } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,18 +47,15 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
   useEffect(() => {
     async function fetchTides() {
+      // 💡 Always start from the current hour so "NOW" is GUARANTEED to be inside the visible wave
       const now = new Date();
       const manilaTimeStr = now.toLocaleTimeString('en-US', {
         timeZone: 'Asia/Manila',
         hour12: false,
         hour: '2-digit',
-        minute: '2-digit',
       });
-      const [hourStr, minStr] = manilaTimeStr.split(':');
-      const currentHour = parseInt(hourStr, 10);
-      const currentMinute = parseInt(minStr, 10);
-
-      const startHourOffset = currentMinute >= 30 ? currentHour + 1 : currentHour;
+      const currentHour = parseInt(manilaTimeStr, 10);
+      const startHourOffset = currentHour;
 
       try {
         const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${MARINE_COORDS.lat}&longitude=${MARINE_COORDS.lon}&hourly=sea_level_height_msl&cell_selection=sea&timezone=Asia%2FManila&forecast_days=3`;
@@ -131,12 +138,17 @@ export default function TideCard({ className = '' }: { className?: string }) {
         const delta = denom !== 0 ? (prev - next) / (2 * denom) : 0;
         const exactHeight = denom !== 0 ? curr - ((prev - next) ** 2) / (8 * denom) : curr;
 
-        const baseDate = new Date(times[i]);
+        const baseDate = new Date(parseManilaTimeMs(times[i]));
         baseDate.setMinutes(baseDate.getMinutes() + Math.round(delta * 60));
 
         allEvents.push({
           type: 'HIGH',
-          timeStr: baseDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+          timeStr: baseDate.toLocaleTimeString('en-US', {
+            timeZone: 'Asia/Manila',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }),
           height: Number(exactHeight.toFixed(2)),
           idx: i,
         });
@@ -145,12 +157,17 @@ export default function TideCard({ className = '' }: { className?: string }) {
         const delta = denom !== 0 ? (prev - next) / (2 * denom) : 0;
         const exactHeight = denom !== 0 ? curr - ((prev - next) ** 2) / (8 * denom) : curr;
 
-        const baseDate = new Date(times[i]);
+        const baseDate = new Date(parseManilaTimeMs(times[i]));
         baseDate.setMinutes(baseDate.getMinutes() + Math.round(delta * 60));
 
         allEvents.push({
           type: 'LOW',
-          timeStr: baseDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+          timeStr: baseDate.toLocaleTimeString('en-US', {
+            timeZone: 'Asia/Manila',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }),
           height: Number(exactHeight.toFixed(2)),
           idx: i,
         });
@@ -183,8 +200,13 @@ export default function TideCard({ className = '' }: { className?: string }) {
     const calculatedPoints: TidePoint[] = heights.map((h, idx) => {
       const x = (idx / (heights.length - 1)) * 500;
       const y = scaleY(h);
-      const date = new Date(times[idx]);
-      const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false });
+      const date = new Date(parseManilaTimeMs(times[idx]));
+      const timeStr = date.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Manila',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      });
       return { x, y, height: h, timeStr };
     });
 
@@ -225,16 +247,17 @@ export default function TideCard({ className = '' }: { className?: string }) {
         };
       });
 
-    // 💡 3. Dynamic Current Time Interpolation
+    // 💡 3. Dynamic Current Time Interpolation (Now immune to timezone differences & always visible)
     let computedLiveMarker = null;
-    const startTimeMs = new Date(times[0]).getTime();
-    const endTimeMs = new Date(times[times.length - 1]).getTime();
+    const startTimeMs = parseManilaTimeMs(times[0]);
+    const endTimeMs = parseManilaTimeMs(times[times.length - 1]);
     const currTimeMs = currentTime.getTime();
 
-    if (currTimeMs >= startTimeMs && currTimeMs <= endTimeMs) {
+    // Small 5-minute grace buffer on left to protect against minor client-server clock drift
+    if (currTimeMs >= (startTimeMs - 300000) && currTimeMs <= endTimeMs) {
       const totalDuration = endTimeMs - startTimeMs;
-      const elapsed = currTimeMs - startTimeMs;
-      const fraction = elapsed / totalDuration;
+      const elapsed = Math.max(0, currTimeMs - startTimeMs);
+      const fraction = Math.min(Math.max(elapsed / totalDuration, 0), 1);
       const liveX = fraction * 500;
 
       const totalSegments = heights.length - 1;
@@ -243,7 +266,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
       const segFraction = indexFloat - segIndex;
 
       const h1 = heights[segIndex];
-      const h2 = heights[segIndex + 1];
+      const h2 = heights[segIndex + 1] ?? h1;
       const interpolatedHeight = h1 + (h2 - h1) * segFraction;
       const liveY = scaleY(interpolatedHeight);
 
@@ -251,7 +274,13 @@ export default function TideCard({ className = '' }: { className?: string }) {
         x: Math.min(Math.max(liveX, 0), 500),
         y: liveY,
         height: interpolatedHeight,
-        timeStr: currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+        timeStr: currentTime.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Manila',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        }),
       };
     }
 
@@ -282,16 +311,15 @@ export default function TideCard({ className = '' }: { className?: string }) {
           <span className="text-[11px] sm:text-xs uppercase tracking-wider font-axis-plantao-num-focus">
             Tidal Bulletin
           </span>
-
         </div>
-        <h3 className="text-base sm:text-xl lg:text-2xl font-axis-titular-focus uppercase tracking-wide mt-0.5">
+        <h3 className="text-base sm:text-xl lg:text-2xl font-axis-titular-focus uppercase tracking-wide mt-1">
           {MARINE_COORDS.station}
         </h3>
-        <span className='mt-0.5'>
+        <span className="mt-0.5">
           <span className="text-[10px] sm:text-xs uppercase tracking-wide font-axis-navbar-focus">
-            Nearest Reference Point: {' '}
+            Nearest Reference Point:{' '}
           </span>
-          <span className='text-[10px] sm:text-xs uppercase tracking-wide font-axis-subtitular-focus'>
+          <span className="text-[10px] sm:text-xs uppercase tracking-wide font-axis-subtitular-focus">
              Port of Real station 660/024
           </span>
         </span>
@@ -378,7 +406,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
               </div>
             ))}
 
-            {/* Live Changing Current Time Node */}
+            {/* 💡 LIVE NOW MARKER: Real-time position on wave curve */}
             {liveMarker && (
               <div
                 className="absolute transition-all duration-300 ease-linear"
@@ -388,10 +416,10 @@ export default function TideCard({ className = '' }: { className?: string }) {
                 }}
               >
                 <div className="absolute -translate-x-1/2 top-3 flex flex-col items-center whitespace-nowrap leading-tight">
-                  <span className="text-[10px] font-bold font-axis-navbar-focus bg-flamengo-600 text-white px-1.5 py-0.5 uppercase tracking-wider">
+                  <span className="text-[10px] font-axis-plantao-num-focus bg-flamengo-600 text-white px-1.5 py-0.5 tracking-wider shadow-2xs">
                     NOW {liveMarker.height > 0 ? `+${liveMarker.height.toFixed(2)}m` : `${liveMarker.height.toFixed(2)}m`}
                   </span>
-                  <span className="text-[9px] font-axis-plantao-num-focus text-flamengo-600/90 mt-0.5 font-bold">
+                  <span className="text-[10px] font-axis-plantao-num-focus text-flamengo-600/90 mt-0.5 proportional-nums">
                     {liveMarker.timeStr}
                   </span>
                 </div>
@@ -433,7 +461,6 @@ export default function TideCard({ className = '' }: { className?: string }) {
                 <span className="text-[8px] sm:text-[9px]">
                   {tide.type === 'HIGH' ? '▲' : '▼'}
                 </span>
-                {/* Displays "High Tide" or "Low Tide" instead of "Peak 1 / Peak 2" */}
                 {tide.type === 'HIGH' ? 'High Tide' : 'Low Tide'}
               </span>
               <span className="text-center proportional-nums text-[12px]">
@@ -449,8 +476,8 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
       {/* 🏷️ Broadsheet Footer */}
       <div className="border-t border-fantas-900 pt-1.5 mt-2 flex justify-between items-center text-[10px] font-axis-subtitular-focus uppercase tracking-wider text-fantas-950/80">
-        <div className='flex flex-col justify-between'>
-          <span>Figures for <span className='font-axis-navbar-focus'>Port of Real</span></span>
+        <div className="flex flex-col justify-between">
+          <span>Figures for <span className="font-axis-navbar-focus">Port of Real</span></span>
           <span>Coastline and station code 660/024</span>
         </div>
         <span className="flex items-center gap-1 font-axis-subtitular-focus text-[10px]">
@@ -459,7 +486,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
         </span>
       </div>
       <div className="text-center mt-1">
-        <span className='text-xs font-axis-subtitular-focus tracking-wide text-fantas-950/70'>
+        <span className="text-xs font-axis-subtitular-focus tracking-wide text-fantas-950/70">
           Model estimate at ~8 km resolution. Local river-mouth conditions may vary. Not for navigation.
         </span>
       </div>
