@@ -105,12 +105,12 @@ const Government: React.FC = () => {
       <>
         <SEO
           title="Government"
-          description={`All services and offices provided by the ${import.meta.env.VITE_GOVERNMENT_NAME} government. Find what you need for citizenship, business, education, and more.`}
+          description={`All services and offices provided by the municipal government of Infanta. Find what you need for citizenship, business, education, and more.`}
           keywords="government services, public services, local government, civic services"
         />
         <GovernmentActivitySection
           title={`All local government agencies`}
-          description={`All services and offices provided by the ${import.meta.env.VITE_GOVERNMENT_NAME} government. Find what you need for citizenship, business, education, and more.`}
+          description={`All services and offices provided by the municipal government of Infanta. Find what you need for citizenship, business, education, and more.`}
           previewLimit={999}
         />
       </>

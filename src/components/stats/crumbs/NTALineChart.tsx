@@ -84,8 +84,7 @@ export default function NTALineChart({ dataset, selectedLguName }: NTALineChartP
       {/* Header & Legend */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-100 gap-2">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-fantas-700" />
-          <h3 className="text-lg font-axis-titular-focus uppercase tracking-wide text-slate-900 leading-tight">
+          <h3 className="text-md font-axis-wide-header uppercase tracking-wide text-slate-900 leading-tight">
             NTA Dependency Trajectory
           </h3>
         </div>

@@ -16,13 +16,18 @@ const PRIMARY_COLORS = [
   '#16a34a', // 3rd: Emerald Green
   '#e11d48', // 4th: Rose Red
   '#4f46e5', // 5th: Indigo
+  '#0891b2', // 6th: Cyan (deeper than sky, distinct family)
+  '#ea580c', // 7th: Orange (redder than amber, warmer than rose)
+  '#9333ea', // 8th: Purple (red-violet, distinct from indigo's blue-violet)
+  '#65a30d', // 9th: Olive (yellow-green, distinct from emerald)
+  '#db2777', // 10th: Pink (magenta, distinct from rose's red)
 ];
-const OTHER_COLOR = '#94a3b8'; // Slate-400 for aggregated remainder (all other barangays)
+const OTHER_COLOR = '#94a3b8'; // Slate-400 for aggregated remainder
 
 export default function Town100PeopleChart({
   barangays = INFANTA_BARANGAYS,
   initialYear = CENSUS_YEAR_END,
-  topCount = 5,
+  topCount = 10,
 }: Town100PeopleChartProps) {
   // Extract all available census years from history
   const availableYears = useMemo(() => {
@@ -141,8 +146,8 @@ export default function Town100PeopleChart({
       <div className="flex flex-col gap-4 pb-4 border-b border-slate-100">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
           <div className="flex flex-col items-center sm:items-start min-w-0 w-full sm:w-auto">
-            <h4 className="text-lg font-axis-titular-focus uppercase tracking-wide text-slate-900 leading-tight">
-              If Infanta Were a Town of 100 People ({selectedYear})
+            <h4 className="text-md font-axis-wide-header uppercase tracking-wide text-slate-900 leading-tight">
+              If Infanta Were a Town of 100 People in {selectedYear}
             </h4>
             <p className="text-sm font-axis-subtitular-focus uppercase tracking-wide text-slate-500 leading-tight mt-1 xs:mt-2">
               Each person icon represents 1% of the population (~{Math.round(totalPopulation / 100).toLocaleString()} residents)
@@ -276,7 +281,7 @@ export default function Town100PeopleChart({
           </div>
 
           {/* Space-Optimized Legend Pills Inside the Box */}
-          <div className="flex flex-wrap items-center gap-1.5 w-full">
+          <div className="flex flex-wrap items-center gap-1.5 w-full pb-2">
             {slices.map((slice, idx) => {
               const isHovered = activeHighlight === slice.name;
               const isFaded = activeHighlight && activeHighlight !== slice.name;
@@ -305,6 +310,10 @@ export default function Town100PeopleChart({
                 </button>
               );
             })}
+          </div>
+
+          <div className='text-xs text-slate-700 border-t pt-4'>
+            Starting in 2000, more than half of Infanta's residents live in the <span className='font-axis-bold'>top 10 barangays.</span>
           </div>
 
         </div>

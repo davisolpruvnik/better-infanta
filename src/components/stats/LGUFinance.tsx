@@ -86,7 +86,7 @@ export default function BLGFFinanceTab({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-2 border-b border-slate-100">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-axis-titular-focus uppercase tracking-wide text-slate-900">
+            <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
               {targetRecord.LGU_NAME} Public Finance & NTA Reliance
             </h2>
             <span className="px-2 py-0.5 text-[12px] text-center font-axis-navbar-focus uppercase bg-fantas-50 text-fantas-800 border border-fantas-200 leading-tight">
@@ -102,53 +102,53 @@ export default function BLGFFinanceTab({
       {/* 4-Item KPI Metrics */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="flex flex-col bg-white p-4 border border-slate-200">
-          <div className="flex items-center gap-1.5 text-fantas-700 mb-1">
+          <div className="flex items-center gap-1.5 text-fantas-900 mb-1">
             <Percent className="w-4 h-4" />
             <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">NTA Reliance</span>
           </div>
-          <span className="text-2xl sm:text-3xl text-fantas-800 font-axis-sng-indlab-value">
+          <span className="text-2xl sm:text-3xl text-fantas-900 font-axis-sng-indlab-value">
             {targetNTADep.toFixed(1)}%
           </span>
-          <span className="text-[10px] font-axis-subtitular-focus text-slate-400 mt-1 uppercase tracking-wide">
+          <span className="text-[10px] font-axis-subtitular-focus text-slate-600 mt-1 uppercase tracking-wide">
             Share of Operating Income
           </span>
         </div>
 
         <div className="flex flex-col bg-white p-4 border border-slate-200">
-          <div className="flex items-center gap-1.5 text-blue-700 mb-1">
+          <div className="flex items-center gap-1.5 text-fantas-900 mb-1">
             <Wallet className="w-4 h-4" />
             <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">Total Income</span>
           </div>
-          <span className="text-2xl sm:text-3xl text-blue-900 font-axis-sng-indlab-value">
+          <span className="text-2xl sm:text-3xl text-fantas-900 font-axis-sng-indlab-value">
             ₱{(targetRecord.TOTAL_OPERATING_INCOME / 1_000_000).toFixed(1)}M
           </span>
-          <span className="text-[10px] font-axis-subtitular-focus text-slate-400 mt-1 uppercase tracking-wide">
+          <span className="text-[10px] font-axis-subtitular-focus text-slate-600 mt-1 uppercase tracking-wide">
             FY {activeYear} Receipts
           </span>
         </div>
 
         <div className="flex flex-col bg-white p-4 border border-slate-200">
-          <div className="flex items-center gap-1.5 text-emerald-700 mb-1">
+          <div className="flex items-center gap-1.5 text-fantas-900 mb-1">
             <Building2 className="w-4 h-4" />
             <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">Local Sources</span>
           </div>
-          <span className="text-2xl sm:text-3xl text-emerald-800 font-axis-sng-indlab-value">
+          <span className="text-2xl sm:text-3xl text-fantas-900 font-axis-sng-indlab-value">
             ₱{(targetLocalRev / 1_000_000).toFixed(1)}M
           </span>
-          <span className="text-[10px] font-axis-subtitular-focus text-slate-400 mt-1 uppercase tracking-wide">
+          <span className="text-[10px] font-axis-subtitular-focus text-slate-600 mt-1 uppercase tracking-wide">
             RPT, Biz Tax & Fees
           </span>
         </div>
 
         <div className="flex flex-col bg-white p-4 border border-slate-200">
-          <div className="flex items-center gap-1.5 text-purple-700 mb-1">
+          <div className="flex items-center gap-1.5 text-fantas-900 mb-1">
             <PieChart className="w-4 h-4" />
             <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">NTA Share</span>
           </div>
-          <span className="text-2xl sm:text-3xl text-purple-900 font-axis-sng-indlab-value">
+          <span className="text-2xl sm:text-3xl text-fantas-900 font-axis-sng-indlab-value">
             ₱{(targetRecord.REV_NTA_IRA / 1_000_000).toFixed(1)}M
           </span>
-          <span className="text-[10px] font-axis-subtitular-focus text-slate-400 mt-1 uppercase tracking-wide">
+          <span className="text-[10px] font-axis-subtitular-focus text-slate-600 mt-1 uppercase tracking-wide">
             National Allotment
           </span>
         </div>

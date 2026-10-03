@@ -1,5 +1,6 @@
 // src/components/home/TideCard.tsx
 import { useState, useEffect, useMemo } from 'react';
+import Section from '../ui/Section';
 
 interface ExtremaEvent {
   type: 'HIGH' | 'LOW';
@@ -49,7 +50,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
     async function fetchTides() {
       // 💡 Always start from the current hour so "NOW" is GUARANTEED to be inside the visible wave
       const now = new Date();
-      const manilaTimeStr = now.toLocaleTimeString('en-US', {
+      const manilaTimeStr = now.toLocaleTimeString('en-PH', {
         timeZone: 'Asia/Manila',
         hour12: false,
         hour: '2-digit',
@@ -58,7 +59,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
       const startHourOffset = currentHour;
 
       try {
-        const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${MARINE_COORDS.lat}&longitude=${MARINE_COORDS.lon}&hourly=sea_level_height_msl&cell_selection=sea&timezone=Asia%2FManila&forecast_days=3`;
+        const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${MARINE_COORDS.lat}&longitude=${MARINE_COORDS.lon}&hourly=sea_level_height_msl&timezone=auto&forecast_days=7`;
 
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Marine API responded with status ${res.status}`);
@@ -77,7 +78,8 @@ export default function TideCard({ className = '' }: { className?: string }) {
         }
 
         const startIdx = Math.max(0, startHourOffset);
-        const endIdx = startIdx + 26;
+        // Fetch 48 hours so you always capture multiple tidal cycles
+        const endIdx = startIdx + 36;
 
         const cleanTimes = rawTimes.slice(startIdx, endIdx);
         const cleanHeights = rawHeights.slice(startIdx, endIdx).map((h, i, arr) => {
@@ -121,9 +123,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
   // 💡 1. Calculate Tidal Extrema
   const extrema = useMemo(() => {
-    if (!hourlyData || hourlyData.heights.length < 3) {
-      return [];
-    }
+    if (!hourlyData || hourlyData.heights.length < 3) return [];
 
     const { heights, times } = hourlyData;
     const allEvents: { type: 'HIGH' | 'LOW'; timeStr: string; height: number; idx: number }[] = [];
@@ -143,7 +143,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
         allEvents.push({
           type: 'HIGH',
-          timeStr: baseDate.toLocaleTimeString('en-US', {
+          timeStr: baseDate.toLocaleTimeString('en-PH', {
             timeZone: 'Asia/Manila',
             hour: '2-digit',
             minute: '2-digit',
@@ -162,7 +162,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
         allEvents.push({
           type: 'LOW',
-          timeStr: baseDate.toLocaleTimeString('en-US', {
+          timeStr: baseDate.toLocaleTimeString('en-PH', {
             timeZone: 'Asia/Manila',
             hour: '2-digit',
             minute: '2-digit',
@@ -175,13 +175,13 @@ export default function TideCard({ className = '' }: { className?: string }) {
     }
 
     let peakCount = 0;
-    return allEvents.map(e => {
+    return allEvents.map((e) => {
       if (e.type === 'HIGH') {
         peakCount++;
-        return { ...e, label: `Peak ${peakCount}` };
+        return { ...e, label: `High Tide ${peakCount}` };
       }
       return { ...e, label: 'Low Tide' };
-    }).slice(0, 4);
+    }).slice(0, 4); // Always guarantees the next 4 tidal events (highs & lows)
   }, [hourlyData]);
 
   // 💡 2. Smooth Wave Path & Geometry
@@ -201,7 +201,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
       const x = (idx / (heights.length - 1)) * 500;
       const y = scaleY(h);
       const date = new Date(parseManilaTimeMs(times[idx]));
-      const timeStr = date.toLocaleTimeString('en-US', {
+      const timeStr = date.toLocaleTimeString('en-PH', {
         timeZone: 'Asia/Manila',
         hour: 'numeric',
         minute: 'numeric',
@@ -274,7 +274,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
         x: Math.min(Math.max(liveX, 0), 500),
         y: liveY,
         height: interpolatedHeight,
-        timeStr: currentTime.toLocaleTimeString('en-US', {
+        timeStr: currentTime.toLocaleTimeString('en-PH', {
           timeZone: 'Asia/Manila',
           hour: '2-digit',
           minute: '2-digit',
@@ -304,192 +304,186 @@ export default function TideCard({ className = '' }: { className?: string }) {
   }
 
   return (
-    <div className={`w-full lg:flex-1 border-t-2 border-b-2 border-fantas-900/90 py-4 px-2 flex flex-col justify-between select-none bg-transparent text-fantas-900/90 ${className}`}>
-      {/* 📰 Broadsheet Masthead Header */}
-      <div className="border-b border-fantas-900/90 pb-2.5 text-start">
-        <div className="flex items-baseline justify-between">
-          <span className="text-[11px] sm:text-xs uppercase tracking-wider font-axis-plantao-num-focus">
-            Tidal Bulletin
-          </span>
-        </div>
-        <h3 className="text-base sm:text-xl lg:text-2xl font-axis-titular-focus uppercase tracking-wide mt-1">
-          {MARINE_COORDS.station}
-        </h3>
-        <span className="mt-0.5">
-          <span className="text-[10px] sm:text-xs uppercase tracking-wide font-axis-navbar-focus">
-            Nearest Reference Point:{' '}
-          </span>
-          <span className="text-[10px] sm:text-xs uppercase tracking-wide font-axis-subtitular-focus">
-             Port of Real station 660/024
-          </span>
-        </span>
-      </div>
-
-      {/* 📈 RESPONSIVE WAVE STAGE */}
-      <div className="py-4 relative w-full my-2 sm:my-3">
-        <div className="relative h-24 sm:h-28 w-full">
-          <svg
-            className="w-full h-full overflow-visible"
-            viewBox="0 0 500 100"
-            preserveAspectRatio="none"
-          >
-            {/* 0.00m Mean Sea Level Reference Rule */}
-            <line
-              x1="0"
-              y1={zeroY}
-              x2="500"
-              y2={zeroY}
-              stroke="#a3a3a3"
-              strokeWidth="1"
-              strokeDasharray="3 3"
-              vectorEffect="non-scaling-stroke"
-            />
-            <text
-              x="500"
-              y={zeroY - 4}
-              textAnchor="end"
-              className="fill-fantas-900/60 text-[9px] font-axis-subtitular-focus tracking-wide uppercase select-none"
-            >
-              0.0m MSL
-            </text>
-
-            {/* Dotted vertical drop guides at each peak */}
-            {peakPoints.map((item, idx) => (
-              <line
-                key={`guide-${idx}`}
-                x1={item.x}
-                y1={item.y}
-                x2={item.x}
-                y2={zeroY}
-                stroke="#171717"
-                strokeOpacity="0.25"
-                strokeWidth="1"
-                strokeDasharray="2 3"
-              />
-            ))}
-
-            {/* Smooth Curved Line */}
-            {linePath && (
-              <path
-                d={linePath}
-                fill="none"
-                stroke="#553001"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-            )}
-          </svg>
-
-          {/* HTML Overlay: Peak Markers + Elevation Tags */}
-          <div className="absolute inset-0 pointer-events-none">
-            {peakPoints.map((item, idx) => (
-              <div
-                key={`peak-node-${idx}`}
-                className="absolute"
-                style={{
-                  left: `${(item.x / 500) * 100}%`,
-                  top: `${(item.y / 100) * 100}%`,
-                }}
-              >
-                <div className="absolute -translate-x-1/2 bottom-2.5 flex flex-col items-center whitespace-nowrap leading-tight">
-                  <span className="text-[14px] font-axis-plantao-num-focus text-fantas-900/90 tracking-wide proportional-nums">
-                    {item.height > 0 ? `+${item.height.toFixed(2)}m` : `${item.height.toFixed(2)}m`}
-                  </span>
-                  <span className="text-[11px] font-axis-navbar-focus uppercase tracking-wide text-fantas-900/70 mt-0.25">
-                    Est. time: <span className="text-fantas-900/90 font-axis-plantao-num-focus">{item.timeStr}</span>
-                  </span>
-                </div>
-
-                <div className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-                  <span className="size-2.5 rounded-full bg-white border-2 border-neutral-900" />
-                </div>
-              </div>
-            ))}
-
-            {/* 💡 LIVE NOW MARKER: Real-time position on wave curve */}
-            {liveMarker && (
-              <div
-                className="absolute transition-all duration-300 ease-linear"
-                style={{
-                  left: `${(liveMarker.x / 500) * 100}%`,
-                  top: `${(liveMarker.y / 100) * 100}%`,
-                }}
-              >
-                <div className="absolute -translate-x-1/2 top-3 flex flex-col items-center whitespace-nowrap leading-tight">
-                  <span className="text-[10px] font-axis-plantao-num-focus bg-flamengo-600 text-white px-1.5 py-0.5 tracking-wider shadow-2xs">
-                    NOW {liveMarker.height > 0 ? `+${liveMarker.height.toFixed(2)}m` : `${liveMarker.height.toFixed(2)}m`}
-                  </span>
-                  <span className="text-[10px] font-axis-plantao-num-focus text-flamengo-600/90 mt-0.5 proportional-nums">
-                    {liveMarker.timeStr}
-                  </span>
-                </div>
-
-                <div className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-                  <span className="absolute size-4 rounded-full bg-flamengo-500/40 animate-ping" />
-                  <span className="size-2.5 rounded-full bg-flamengo-600 border-2 border-white shadow-xs" />
-                </div>
-              </div>
-            )}
+    <Section className="flex flex-col justify-center items-center w-full bg-white">
+      <div className={`w-full lg:flex-1 border-t border-b border-fantas-900/90 py-4 px-2 flex flex-col justify-between select-none bg-transparent text-fantas-900/90 ${className}`}>
+        {/* 📰 Broadsheet Masthead Header */}
+        <div className="border-b border-fantas-900/90 pb-2 text-start">
+          <div className="flex flex-col items-center justify-center pb-2">
+            <span className="text-xl sm:text-lg uppercase tracking-wider font-axis-wide-header">
+              Tide Forecast
+            </span>
+            <span className="text-[10px] sm:text-xs font-axis-wide-subheader uppercase tracking-wide">
+              {MARINE_COORDS.station}
+            </span>
           </div>
         </div>
 
-        {/* 6-Hour Timeline Legend below wave */}
-        <div className="w-full flex justify-between text-[11px] text-fantas-900/70 px-1 mt-3 border-t border-fantas-800/10 pt-1 font-axis-navbar-focus tracking-wide">
-          {points.filter((_, idx) => idx % 6 === 0).map((p, idx) => (
-            <span key={idx} className="proportional-nums">{p.timeStr}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* 📋 Daily Extrema Table */}
-      <div className="pt-3 border-t border-fantas-900/40 mt-4">
-        <div className="grid grid-cols-3 text-[12px] sm:text-[12px] uppercase tracking-wider text-fantas-900/80 border-b border-fantas-900/90 pb-1 mb-1 text-start font-axis-navbar-focus">
-          <span>Event</span>
-          <span className="text-center">Est. Time</span>
-          <span className="text-right">Water Level</span>
-        </div>
-
-        <div className="divide-y divide-fantas-900/30 text-xs sm:text-sm font-axis-plantao-num-focus">
-          {extrema.map((tide, i) => (
-            <div
-              key={i}
-              className={`grid grid-cols-3 items-center py-1.5 text-start tracking-wide uppercase ${
-                tide.type === 'HIGH' ? 'font-bold text-fantas-900/90' : 'text-fantas-900/60'
-              }`}
+        {/* 📈 RESPONSIVE WAVE STAGE */}
+        <div className="py-4 relative w-full my-2 sm:my-3">
+          <div className="relative h-24 sm:h-28 w-full">
+            <svg
+              className="w-full h-full overflow-visible"
+              viewBox="0 0 500 100"
+              preserveAspectRatio="none"
             >
-              <span className="flex items-center gap-1 text-[12px]">
-                <span className="text-[8px] sm:text-[9px]">
-                  {tide.type === 'HIGH' ? '▲' : '▼'}
-                </span>
-                {tide.type === 'HIGH' ? 'High Tide' : 'Low Tide'}
-              </span>
-              <span className="text-center proportional-nums text-[12px]">
-                {tide.timeStr}
-              </span>
-              <span className="text-right proportional-nums text-[12px]">
-                {tide.height > 0 ? `+${tide.height.toFixed(2)}` : tide.height.toFixed(2)} m
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+              {/* 0.00m Mean Sea Level Reference Rule */}
+              <line
+                x1="0"
+                y1={zeroY}
+                x2="500"
+                y2={zeroY}
+                stroke="#a3a3a3"
+                strokeWidth="1"
+                strokeDasharray="3 3"
+                vectorEffect="non-scaling-stroke"
+              />
+              <text
+                x="500"
+                y={zeroY - 4}
+                textAnchor="end"
+                className="fill-fantas-900/60 text-[9px] font-axis-subtitular-focus tracking-wide uppercase select-none"
+              >
+                0.0m MSL
+              </text>
 
-      {/* 🏷️ Broadsheet Footer */}
-      <div className="border-t border-fantas-900 pt-1.5 mt-2 flex justify-between items-center text-[10px] font-axis-subtitular-focus uppercase tracking-wider text-fantas-950/80">
-        <div className="flex flex-col justify-between">
-          <span>Figures for <span className="font-axis-navbar-focus">Port of Real</span></span>
-          <span>Coastline and station code 660/024</span>
+              {/* Dotted vertical drop guides at each peak */}
+              {peakPoints.map((item, idx) => (
+                <line
+                  key={`guide-${idx}`}
+                  x1={item.x}
+                  y1={item.y}
+                  x2={item.x}
+                  y2={zeroY}
+                  stroke="#171717"
+                  strokeOpacity="0.25"
+                  strokeWidth="1"
+                  strokeDasharray="2 3"
+                />
+              ))}
+
+              {/* Smooth Curved Line */}
+              {linePath && (
+                <path
+                  d={linePath}
+                  fill="none"
+                  stroke="#553001"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+              )}
+            </svg>
+
+            {/* HTML Overlay: Peak Markers + Elevation Tags */}
+            <div className="absolute inset-0 pointer-events-none">
+              {peakPoints.map((item, idx) => (
+                <div
+                  key={`peak-node-${idx}`}
+                  className="absolute"
+                  style={{
+                    left: `${(item.x / 500) * 100}%`,
+                    top: `${(item.y / 100) * 100}%`,
+                  }}
+                >
+                  <div className="absolute -translate-x-1/2 bottom-2.5 flex flex-col items-center whitespace-nowrap leading-tight">
+                    <span className="text-[14px] font-axis-plantao-num-focus text-fantas-900/90 tracking-wide proportional-nums">
+                      {item.height > 0 ? `+${item.height.toFixed(2)}m` : `${item.height.toFixed(2)}m`}
+                    </span>
+                    <span className="text-[11px] font-axis-navbar-focus uppercase tracking-wide text-fantas-900/70 mt-0.25">
+                      Est. time: <span className="text-fantas-900/90 font-axis-plantao-num-focus">{item.timeStr}</span>
+                    </span>
+                  </div>
+
+                  <div className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                    <span className="size-2.5 rounded-full bg-white border-2 border-neutral-900" />
+                  </div>
+                </div>
+              ))}
+
+              {/* 💡 LIVE NOW MARKER: Real-time position on wave curve */}
+              {liveMarker && (
+                <div
+                  className="absolute transition-all duration-300 ease-linear"
+                  style={{
+                    left: `${(liveMarker.x / 500) * 100}%`,
+                    top: `${(liveMarker.y / 100) * 100}%`,
+                  }}
+                >
+                  <div className="absolute -translate-x-1/2 top-3 flex flex-col items-center whitespace-nowrap leading-tight">
+                    <span className="text-[10px] font-axis-plantao-num-focus bg-flamengo-600 text-white px-1.5 py-0.5 tracking-wider shadow-2xs">
+                      NOW {liveMarker.height > 0 ? `+${liveMarker.height.toFixed(2)}m` : `${liveMarker.height.toFixed(2)}m`}
+                    </span>
+                    <span className="text-[10px] font-axis-plantao-num-focus text-flamengo-600/90 mt-0.5 proportional-nums">
+                      {liveMarker.timeStr}
+                    </span>
+                  </div>
+
+                  <div className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                    <span className="absolute size-4 rounded-full bg-flamengo-500/40 animate-ping" />
+                    <span className="size-2.5 rounded-full bg-flamengo-600 border-2 border-white shadow-xs" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 6-Hour Timeline Legend below wave */}
+          <div className="w-full flex justify-between text-[11px] text-fantas-900/70 px-1 mt-3 border-t border-fantas-800/10 pt-1 font-axis-navbar-focus tracking-wide">
+            {points.filter((_, idx) => idx % 6 === 0).map((p, idx) => (
+              <span key={idx} className="proportional-nums">{p.timeStr}</span>
+            ))}
+          </div>
         </div>
-        <span className="flex items-center gap-1 font-axis-subtitular-focus text-[10px]">
-          <span className={`size-1.5 rounded-full ${isLive ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-          {isLive ? 'Live Marine Model / Open-Meteo' : 'Cached Model'}
-        </span>
+
+        {/* 📋 Daily Extrema Table */}
+        <div className="pt-3 border-t border-fantas-900/40 mt-4">
+          <div className="grid grid-cols-3 text-[12px] sm:text-[12px] uppercase tracking-wider text-fantas-900/80 border-b border-fantas-900/90 pb-1 mb-1 text-start font-axis-navbar-focus">
+            <span>Event</span>
+            <span className="text-center">Est. Time</span>
+            <span className="text-right">Water Level</span>
+          </div>
+
+          <div className="divide-y divide-fantas-900/30 text-xs sm:text-sm font-axis-plantao-num-focus">
+            {extrema.map((tide, i) => (
+              <div
+                key={i}
+                className={`grid grid-cols-3 items-center py-1.5 text-start tracking-wide uppercase ${
+                  tide.type === 'HIGH' ? 'font-bold text-fantas-900/90' : 'text-fantas-900/60'
+                }`}
+              >
+                <span className="flex items-center gap-1 text-[12px]">
+                  <span className="text-[8px] sm:text-[9px]">
+                    {tide.type === 'HIGH' ? '▲' : '▼'}
+                  </span>
+                  {tide.type === 'HIGH' ? 'High Tide' : 'Low Tide'}
+                </span>
+                <span className="text-center proportional-nums text-[12px]">
+                  {tide.timeStr}
+                </span>
+                <span className="text-right proportional-nums text-[12px]">
+                  {tide.height > 0 ? `+${tide.height.toFixed(2)}` : tide.height.toFixed(2)} m
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 🏷️ Broadsheet Footer */}
+        <div className="border-t border-fantas-900 pt-1.5 mt-2 flex justify-between items-center text-[10px] font-axis-subtitular-focus uppercase tracking-wider text-fantas-950/80">
+          <div className="flex flex-col justify-between">
+            <span>Figures for <span className="font-axis-navbar-focus">Port of Real</span></span>
+            <span>Coastline and station code 660/024</span>
+          </div>
+          <span className="flex items-center gap-1 font-axis-subtitular-focus text-[10px]">
+            <span className={`size-1.5 rounded-full ${isLive ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+            {isLive ? 'Live Marine Model / Open-Meteo' : 'Cached Model'}
+          </span>
+        </div>
+        <div className="text-center mt-1">
+          <span className="text-xs font-axis-subtitular-focus tracking-wide text-fantas-950/70">
+            Model estimate at ~8 km resolution. Local river-mouth conditions may vary. Not for navigation.
+          </span>
+        </div>
       </div>
-      <div className="text-center mt-1">
-        <span className="text-xs font-axis-subtitular-focus tracking-wide text-fantas-950/70">
-          Model estimate at ~8 km resolution. Local river-mouth conditions may vary. Not for navigation.
-        </span>
-      </div>
-    </div>
+    </Section>
   );
 }

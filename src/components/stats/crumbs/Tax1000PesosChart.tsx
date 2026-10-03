@@ -191,11 +191,11 @@ export default function BanknoteTreemap({ record }: BanknoteTreemapProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-100 gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-axis-titular-focus text-slate-900 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5">
+            <h3 className="text-md font-axis-wide-header text-slate-900 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5">
               {mode === 'revenue' ? 'Where Every ₱1,000 Comes From' : 'Where Every ₱1,000 Goes'}
             </h3>
           </div>
-          <p className="text-sm font-axis-subtitular-focus text-slate-500 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start">
+          <p className="text-xs font-axis-subtitular-focus text-slate-500 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start">
             {record.LGU_NAME} • FY {record.YEAR}{' '}
             {mode === 'revenue' ? 'Receipts & Income' : 'Expenditure Statement'} (BLGF SRE)
           </p>
@@ -253,7 +253,7 @@ export default function BanknoteTreemap({ record }: BanknoteTreemapProps) {
           </span>
         </div>
         <div className="absolute bottom-2.5 right-3.5 z-10 pointer-events-none opacity-20">
-          <span className="text-3xl font-black font-mono text-sky-950 tracking-tighter">1000</span>
+          <span className="text-3xl font-axis-chunky text-sky-950 tracking-tighter">1000</span>
         </div>
 
         {/* Morphing Treemap Canvas */}
@@ -340,7 +340,7 @@ export default function BanknoteTreemap({ record }: BanknoteTreemapProps) {
                       y={ty + th / 2 + 12}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      className="fill-white/95 font-axis-sng-indlab-value text-md pointer-events-none select-none"
+                      className="fill-white/95 font-axis-sng-indlab-value tracking-wide text-md pointer-events-none select-none"
                       style={{
                         transition:
                           'x 0.55s cubic-bezier(0.16, 1, 0.3, 1), ' +

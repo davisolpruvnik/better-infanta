@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-40">
       {/* Main navigation */}
-      <div className="container mx-auto px-8 sm:px-12">
+      <div className="container mx-auto px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
             <Link to="/" className="flex items-center" onClick={closeMenu}>

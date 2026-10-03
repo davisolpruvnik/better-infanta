@@ -301,7 +301,7 @@ export default function Timekeeper() {
             </div>
 
             {/* B. Localized Multi-Town Weather Carousel */}
-            <div className="flex items-center justify-end min-w-0">
+            <div className="flex items-center justify-start min-w-0">
               {loadingWeather ? (
                 <Suspense
                   fallback={

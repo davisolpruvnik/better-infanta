@@ -56,27 +56,24 @@ export default function ServicesSection({
   return (
     <Section>
       {/* 📐 Main Container: Prevents Overflow and Adapts to Screen Sizes */}
-      <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 my-4 py-4 overflow-x-hidden mx-auto">
+      <div className="w-full flex flex-col items-start justify-between gap-6 lg:gap-8 py-4 overflow-x-hidden mx-auto">
 
-        {/* 1️⃣ LEFT SIDE: Services and Information Header */}
-        <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start gap-3 pt-2">
-          <div className="flex items-center xs:items-start gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
-            {getIcon('ri:apps-line', 'h-8 w-8 text-fantas-800')}
-            <h2 className="leading-snug">
-              {title || t('services.title') || 'Services and Information'}
+        {/* 1️⃣ TOP SIDE (Desktop): Header and Subheader */}
+        <div className="w-full shrink-0 flex flex-col justify-center items-center gap-3 pt-2">
+          <div className="flex items-center justify-center gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl tracking-wide">
+            <h2 className="leading-snug justify-center font-axis-wide-header">
+              Municipal Gov't Services
             </h2>
           </div>
 
-          <p className="text-fantas-900/70 font-axis-thin text-sm leading-snug">
-            {description ||
-              t('services.description') ||
-              'Explore available digital services tailored for your profile.'}
+          <p className="text-fantas-900/70 font-axis-wide-subheader uppercase text-sm leading-snug tracking-wider">
+              Find services offered by the local government of Infanta.
           </p>
         </div>
 
         {/* 2️⃣ VERTICAL DIVIDER BAR ( | ) */}
         <div
-          className="hidden lg:block w-[1.5px] bg-gray-200 self-stretch my-1 mx-2"
+          className="hidden lg:block h-[2px] bg-fantas-800/10 self-stretch my-1 mx-2"
           aria-hidden="true"
         />
 
@@ -98,7 +95,7 @@ export default function ServicesSection({
               </div>
 
               {/* Badge Label */}
-              <h3 className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-axis-navbar-focus font-bold uppercase tracking-wider text-gray-800 group-hover:text-fantas-700 transition-colors line-clamp-2 text-pretty leading-snug">
+              <h3 className="mt-2.5 sm:mt-3 text-sm font-axis-navbar-focus uppercase tracking-wider text-gray-800 group-hover:text-fantas-700 transition-colors line-clamp-2 text-pretty leading-snug">
                 {category.category}
               </h3>
             </Link>

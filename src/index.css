@@ -268,6 +268,16 @@
   font-variation-settings: 'wght' 600;
 }
 
+.font-axis-wide-header {
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 700, 'wdth' 125, 'opsz' 54;
+}
+
+.font-axis-wide-subheader {
+  font-family: var(--font-kapwa-sans);
+  font-variation-settings: 'wght' 400, 'wdth' 125, 'opsz' 54;
+}
+
 /* Checklist styling */
 .task-list-item {
   @apply text-base text-gray-700 leading-relaxed relative flex items-start gap-3 font-sans rounded-md mb-5 transition-all duration-200 border border-transparent cursor-pointer items-center;

@@ -31,7 +31,7 @@ interface GovernmentActivitySectionProps {
 export default function GovernmentActivitySection({
   title,
   description,
-  previewLimit = 3,
+  previewLimit = 5,
 }: GovernmentActivitySectionProps) {
   const { t } = useTranslation();
 
@@ -55,32 +55,30 @@ export default function GovernmentActivitySection({
 
   return (
     <Section id="#government">
-      {/* 📐 Flex Container: Header on the LEFT (desktop), Circles on the RIGHT */}
-      <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-8 my-4 py-4 overflow-x-hidden mx-auto">
+      {/* 📐 Flex Container: Header on the TOP (desktop), Circles on the BOTTOM */}
+      <div className="w-full flex flex-col items-start justify-between gap-6 lg:gap-8 py-4 overflow-x-hidden mx-auto">
 
-        {/* 1️⃣ LEFT SIDE (Desktop): Header and Subheader */}
-        <div className="w-full lg:w-1/4 shrink-0 flex flex-col items-start text-left gap-3 pt-2">
-          <div className="flex items-center xs:items-start gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl font-bold tracking-wide">
-            {getIcon('ri:building-line', 'h-8 w-8 text-fantas-800')}
-            <h2 className="leading-snug">
-              {title || t('governmentActivity.title', 'Government Agencies')}
+        {/* 1️⃣ TOP SIDE (Desktop): Header and Subheader */}
+        <div className="w-full shrink-0 flex flex-col justify-center items-center gap-3 pt-2">
+          <div className="flex items-center justify-center gap-2.5 text-fantas-800 font-axis-sng-indlab-value uppercase text-2xl sm:text-3xl tracking-wide">
+            <h2 className="leading-snug justify-center font-axis-wide-header">
+              About the Government
             </h2>
           </div>
 
-          <p className="text-fantas-900/70 font-axis-thin text-sm leading-snug">
-            {description ||
-              t('governmentActivity.description', 'Find government offices, agencies, and public services.')}
+          <p className="text-fantas-900/70 font-axis-wide-subheader uppercase text-sm leading-snug tracking-wider">
+            Stay updated with the latest government activities and announcements.
           </p>
         </div>
 
         {/* 2️⃣ VERTICAL DIVIDER BAR ( | ) */}
         <div
-          className="hidden lg:block w-[1.5px] bg-gray-200 self-stretch my-1 mx-2"
+          className="hidden lg:block h-[2px] bg-fantas-800/10 self-stretch my-1 mx-2"
           aria-hidden="true"
         />
 
-        {/* 3️⃣ RIGHT SIDE (Desktop): Circles & "View All" Button */}
-        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 justify-items-center items-start py-2 p-1">
+        {/* 3️⃣ BOTTOM SIDE (Desktop): Circles & "View All" Button */}
+        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 justify-items-center py-2 p-1">
 
           {/* Service Circles */}
           {displayedCategories.map(category => (

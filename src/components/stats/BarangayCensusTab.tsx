@@ -16,7 +16,6 @@ import {
   TrendingUp,
   Award,
   Search,
-  BarChart3,
 } from 'lucide-react';
 import LazyIcon from '../ui/Lazying';
 
@@ -69,10 +68,10 @@ export default function BarangayCensusTab() {
       {/* Header & Municipal Switcher */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-axis-titular-focus uppercase tracking-wide text-slate-900">
+          <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
             Barangay Census & Population
           </h2>
-          <p className="text-sm font-axis-navbar-focus tracking-wide text-slate-500">
+          <p className="text-md font-axis-subtitular-focus tracking-wide text-slate-500">
             Select a barangay to analyze localized demographics, growth trends ({CENSUS_YEAR_START}–{CENSUS_YEAR_END}), and land ratios.
           </p>
         </div>
@@ -105,8 +104,8 @@ export default function BarangayCensusTab() {
             />
           </div>
 
-          <span className="text-[11px] font-axis-navbar-focus uppercase tracking-wide text-slate-400 mb-2 px-1">
-            {filteredBarangays.length} Barangays Listed
+          <span className="text-[14px] font-axis-wide-header text-center uppercase tracking-wide text-black-700 mb-2 px-1">
+            Barangays
           </span>
 
           <div className="space-y-2.5 overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-x-4 gap-y-1">
@@ -157,7 +156,7 @@ export default function BarangayCensusTab() {
           <div className="bg-white border border-slate-200 p-6 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between xs:justify-center items-center pb-4 border-b border-slate-100 gap-2">
               <div>
-                <h3 className="text-lg font-axis-titular-focus text-slate-900 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5">
+                <h3 className="text-md font-axis-wide-header text-slate-900 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5">
                   {activeCensusData.title}
                 </h3>
                 <p className="text-sm font-axis-subtitular-focus text-slate-500 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start">
@@ -169,56 +168,55 @@ export default function BarangayCensusTab() {
             {/* 4-Item KPI Metrics */}
             <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 mb-4">
               <div className="flex flex-col bg-gradient-to-br from-slate-50 to-white p-4 border border-slate-200/80">
-                <div className="flex items-start gap-2 text-fantas-700 mb-1">
-                  <Users className="w-4 h-4 text-fantas-700" />
+                <div className="flex items-start gap-2 text-fantas-900 mb-1">
+                  <Users className="w-4 h-4 text-fantas-900" />
                   <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">Population</span>
                 </div>
-                <span className="text-3xl text-fantas-700 font-axis-sng-indlab-value tracking-wide">
+                <span className="text-3xl text-fantas-900 font-axis-sng-indlab-value tracking-wide">
                   {activeCensusData.population.toLocaleString()}
                 </span>
               </div>
 
               <div className="flex flex-col bg-gradient-to-br from-slate-50 to-white p-4 border border-slate-200/80">
-                <div className="flex items-start gap-2 text-blue-700 mb-1">
-                  <Home className="w-4 h-4 text-blue-700" />
+                <div className="flex items-start gap-2 text-fantas-900 mb-1">
+                  <Home className="w-4 h-4 text-fantas-900" />
                   <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">Households</span>
                 </div>
-                <span className="text-3xl text-blue-700 font-axis-sng-indlab-value tracking-wide">
+                <span className="text-3xl text-fantas-900 font-axis-sng-indlab-value tracking-wide">
                   {activeCensusData.households.toLocaleString()}
                 </span>
               </div>
 
               <div className="flex flex-col bg-gradient-to-br from-slate-50 to-white p-4 border border-slate-200/80">
-                <div className="flex items-start gap-2 text-emerald-600 mb-1">
-                  <TrendingUp className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-start gap-2 text-fantas-900 mb-1">
+                  <TrendingUp className="w-4 h-4 text-fantas-900" />
                   <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">5-Yr Growth*</span>
                 </div>
-                <span className="text-3xl font-axis-sng-indlab-value tracking-wide text-emerald-600 mb-1">
+                <span className="text-3xl font-axis-sng-indlab-value tracking-wide text-fantas-900 mb-1">
                   {activeCensusData.relativeGrowth}%
                 </span>
               </div>
 
               <div className="flex flex-col bg-gradient-to-br from-slate-50 to-white p-4 border border-slate-200/80">
-                <div className="flex items-start gap-2 text-purple-600 mb-1">
-                  <Award className="w-4 h-4 text-purple-600" />
+                <div className="flex items-start gap-2 text-fantas-900 mb-1">
+                  <Award className="w-4 h-4 text-fantas-900" />
                   <span className="text-xs font-axis-navbar-focus uppercase tracking-wider">Yearly Growth*</span>
                 </div>
-                <span className="text-3xl font-axis-sng-indlab-value text-purple-600">
+                <span className="text-3xl font-axis-sng-indlab-value text-fantas-900">
                   {activeCensusData.cagr}%
                 </span>
               </div>
             </div>
 
-            <div className="font-axis-subtitular-focus text-xs uppercase tracking-wide text-slate-500">
+            <div className="font-axis-book text-xs tracking-tight text-slate-500">
               * Note: From 2020 to 2024.
             </div>
 
             {/* RECHARTS HISTORICAL CENSUS BAR CHART */}
             <div className="pt-5 border-t border-slate-100">
-              <div className="flex flex-col sm:flex-row justify-start items-center mb-3 gap-2">
+              <div className="flex flex-col sm:flex-row justify-center items-center mb-3 gap-2">
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-fantas-600" />
-                  <h4 className="text-lg font-axis-titular-focus uppercase tracking-wide text-slate-900">
+                  <h4 className="text-md font-axis-wide-header uppercase tracking-wide text-slate-900">
                     Historical Population
                   </h4>
                 </div>
@@ -304,11 +302,11 @@ export default function BarangayCensusTab() {
               <div className="mt-3 flex flex-row justify-between items-center text-xs text-slate-500 gap-2">
                 {overallGrowth !== null && (
                   <span className="text-emerald-600 font-axis-subtitular-focus uppercase tracking-wide bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    <span className="font-axis-titular-focus">+{overallGrowth}%</span> Overall Growth
+                    <span className="font-axis-plantao-num-focus">{overallGrowth}%</span> Overall Growth
                   </span>
                 )}
                 <span className="text-xs font-axis-subtitular-focus uppercase tracking-wide text-slate-400 ml-auto">
-                  Scope: <strong className="text-fantas-700 font-axis-navbar-focus uppercase">{activeCensusData.name}</strong>
+                  Scope: <strong className="text-fantas-900 font-axis-navbar-focus uppercase">{activeCensusData.name}</strong>
                 </span>
               </div>
             </div>

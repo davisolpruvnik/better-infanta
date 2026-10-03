@@ -225,7 +225,7 @@ export default function WeatherCardDetail() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-4xl h-80 bg-fantas-900/80 flex items-center justify-center text-sky-400 mx-auto my-4">
+      <div className="w-full max-w-4xl h-80 bg-fantas-900/80 flex items-center justify-center text-sky-400 mx-auto">
         <LazyIcon name='line-md:loading-twotone-loop' />
       </div>
     );
@@ -241,17 +241,17 @@ export default function WeatherCardDetail() {
   return (
     <Section className="flex flex-col justify-center items-center w-full bg-white">
       {/* SECTION HEADER */}
-      <div className="w-full max-w-4xl flex items-center justify-between pb-2 mb-6 border-b border-fantas-900/20">
+      <div className="w-full max-w-4xl flex flex-col items-center justify-center py-4 mb-6 border-b border-t border-fantas-900">
         <div className="flex items-center gap-2">
           <LazyIcon
             name="streamline-ultimate:weather-sun-cloud"
-            className="h-5 w-5 text-fantas-800"
+            className="h-5 w-5 text-fantas-900"
           />
-          <h2 className="text-base sm:text-lg font-axis-sng-indlab-value tracking-wide uppercase text-fantas-800">
+          <span className="text-xl sm:text-lg font-axis-wide-header tracking-wide uppercase text-fantas-900">
             Weather Forecast
-          </h2>
+          </span>
         </div>
-        <span className="text-xs font-axis-navbar-focus tracking-wider text-fantas-800/70 uppercase">
+        <span className="text-xs font-axis-wide-subheader tracking-widest text-fantas-900/70 uppercase">
           12-Hr Forecast & 4-Day Outlook
         </span>
       </div>
@@ -259,7 +259,7 @@ export default function WeatherCardDetail() {
       {/* ROOT CONTAINER */}
       <div className="flex flex-col lg:flex-row w-full max-w-4xl mx-auto overflow-hidden font-sans select-none border border-slate-700/20">
         {/* LEFT PANEL */}
-        <div className="w-full lg:w-[38%] bg-fantas-900/90 text-white pt-6 pb-5 px-6 flex flex-col justify-between">
+        <div className="w-full lg:w-[38%] bg-fantas-900 text-white pt-6 pb-5 px-6 flex flex-col justify-between">
           <div>
             <div className="w-full flex flex-row justify-between items-start">
               <div className="flex flex-col gap-1">
@@ -269,6 +269,14 @@ export default function WeatherCardDetail() {
                 <span className="text-5xl sm:text-6xl lg:text-7xl font-axis-sng-indlab-value tracking-wide text-white block mt-1">
                   {weather.temp}°C
                 </span>
+                <div className='flex flex-row items-start gap-2 pt-2'>
+                  <span className='text-md font-axis-navbar-focus uppercase tracking-wider text-fantas-100/90 leading-none'>
+                    Feels like
+                  </span>
+                  <span className='text-2xl font-axis-sng-indlab-value uppercase tracking-wider text-fantas-100/90 leading-none'>
+                    {weather.feelsLike}°
+                  </span>
+                </div>
               </div>
 
               <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
@@ -317,7 +325,7 @@ export default function WeatherCardDetail() {
                   className="flex flex-col items-center justify-between px-1 sm:px-2 pt-1 gap-1.5 min-w-0"
                 >
                   {/* Day Header */}
-                  <span className="text-[11px] sm:text-xs font-axis-navbar-focus text-fantas-800 tracking-wider truncate block uppercase">
+                  <span className="text-[11px] sm:text-xs font-axis-navbar-focus text-fantas-900 tracking-wider truncate block uppercase">
                     {item.dayName}
                   </span>
 
@@ -344,7 +352,7 @@ export default function WeatherCardDetail() {
                   {/* Rain Badge:
                       - Mobile, Tablet & Half-Screen: Stacked vertically (Umbrella + % on top, MM below)
                       - Full Wide Screen (xl:): Horizontal row */}
-                  <div className="w-full max-w-[70px] sm:max-w-[80px] xl:max-w-none flex flex-col xl:flex-row items-center justify-center gap-0.5 xl:gap-1.5 mt-1 px-1 sm:px-1.5 py-1 bg-fantas-900/15 text-center">
+                  <div className="w-full max-w-fit flex flex-col xl:flex-row items-center justify-center gap-0.5 xl:gap-1.5 mt-1 px-2 py-1 bg-fantas-900/15 text-center">
                     <div className="flex items-center gap-1 font-axis-navbar-focus leading-none">
                       <LazyIcon
                         name="streamline-ultimate:rain-umbrella-1-bold"
@@ -354,9 +362,6 @@ export default function WeatherCardDetail() {
                         {item.precipitationProb}%
                       </span>
                     </div>
-                    <span className="text-[10px] sm:text-[11px] text-fantas-900/70 font-axis-navbar-focus tracking-wide leading-none">
-                      ({item.precipitationSum} MM)
-                    </span>
                   </div>
                 </div>
               );

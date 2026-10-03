@@ -75,9 +75,9 @@ function CustomVerticalReferenceLineLabel(props: any) {
         x={x}
         y={y}
         textAnchor="middle"
-        className="font-axis-subtitular-focus uppercase text-[10px] tracking-wide fill-fantas-700 font-bold select-none"
+        className="font-axis-subtitular-focus uppercase text-[10px] tracking-wide fill-fantas-900 font-bold select-none"
       >
-        Typical Quezon LGU: <tspan className="font-axis-titular-focus text-fantas-700 text-[12px] tracking-wide">{value}%</tspan>
+        Typical Quezon LGU: <tspan className="font-axis-titular-focus text-fantas-900 text-[12px] tracking-wide">{value}%</tspan>
       </text>
     </g>
   );
@@ -131,11 +131,11 @@ export default function NTABarChart({
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-100 gap-2">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-axis-titular-focus text-slate-900 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5">
+              <h3 className="text-md font-axis-wide-header text-slate-900 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5">
                 NTA Reliance vs. Key Economic Hubs ({year})
               </h3>
             </div>
-            <p className="text-sm font-axis-subtitular-focus text-slate-500 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start">
+            <p className="text-xs font-axis-subtitular-focus text-slate-500 uppercase tracking-wide leading-snug text-center md:text-start lg:text-start">
               Comparing Infanta against Quezon's top commercial and district centers
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function NTABarChart({
           {/* Legend */}
           <div className="flex items-center gap-3 text-xs font-axis-subtitular-focus uppercase tracking-wide">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 bg-fantas-700  inline-block" />
+              <span className="w-3 h-3 bg-fantas-900 inline-block" />
               <strong className="text-slate-800">{targetLguName}</strong>
             </span>
             <span className="flex items-center gap-1.5">

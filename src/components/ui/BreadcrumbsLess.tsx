@@ -68,10 +68,10 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
 
   return (
     <nav
-      className={`flex items-center text-xs sm:text-sm text-fantas-800/70 max-w-full ${className}`}
+      className={`flex justify-center items-center text-xs sm:text-sm text-fantas-800/70 max-w-full ${className}`}
       aria-label="Breadcrumb"
     >
-      <ol className="flex items-center flex-wrap sm:flex-nowrap gap-1 max-w-full">
+      <ol className="flex justify-center items-center flex-wrap sm:flex-nowrap gap-1 max-w-full">
         {shouldCollapse ? (
           <>
             {/* First Item (Home) */}

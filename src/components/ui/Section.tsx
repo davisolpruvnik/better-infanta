@@ -10,7 +10,7 @@ export default function Section({
 }) {
   return (
     <section className={cn('bg-fantas-50/40 py-8', className)} id={id}>
-      <div className={cn('container mx-auto px-8 sm:px-12', className)}>{children}</div>
+      <div className={cn('container mx-auto px-8', className)}>{children}</div>
     </section>
   );
 }

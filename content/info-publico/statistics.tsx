@@ -63,10 +63,10 @@ export default function StatsPage() {
       <div className="text-fantas-50 py-12 bg-fantas-900 md:py-16">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="max-w-2xl animate-fade-in">
-            <h1 className="text-3xl md:text-5xl font-axis-sng-indlab-value mt-2 tracking-wide uppercase">
+            <h1 className="text-3xl md:text-5xl font-axis-wide-header mt-2 tracking-wide uppercase">
               {t('stats.title', 'Infanta by Numbers')}
             </h1>
-            <p className="mt-4 text-fantas-100 text-sm md:text-base leading-relaxed">
+            <p className="mt-4 text-fantas-100 tracking-wide font-axis-thin text-sm md:text-base leading-relaxed">
               {t(
                 'stats.subtitle',
                 'Explore real-time demographic census, DTI competitiveness metrics, 1992–2026 BLGF financial records, and sectoral LGU public data.'
@@ -78,11 +78,11 @@ export default function StatsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center">
             <div className="bg-white/10 border border-white/15 p-4">
               <div className="flex justify-center items-center gap-3">
-                <span className="text-sm uppercase font-axis-navbar-focus tracking-wider text-fantas-200">
+                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
                   Total Population
                 </span>
               </div>
-              <p className="text-4xl font-axis-sng-indlab-value tracking-wide mt-1">
+              <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 {totalPop.toLocaleString()}
               </p>
               <p className="text-[11px] tracking-wide text-fantas-200 leading-snug mt-1.5">
@@ -92,11 +92,11 @@ export default function StatsPage() {
 
             <div className="bg-white/10 border border-white/15 p-4">
               <div className="flex justify-center items-center gap-3">
-                <span className="text-sm uppercase font-axis-navbar-focus tracking-wider text-fantas-200">
+                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
                   Barangays
                 </span>
               </div>
-              <p className="text-4xl font-axis-sng-indlab-value tracking-wide mt-1">
+              <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 {INFANTA_BARANGAYS.length}
               </p>
               <p className="text-[11px] text-fantas-200 tracking-wide leading-snug mt-1.5">
@@ -106,27 +106,25 @@ export default function StatsPage() {
 
             <div className="bg-white/10 border border-white/15 p-4">
               <div className="flex justify-center items-center gap-3">
-                <span className="text-sm uppercase font-axis-navbar-focus tracking-wider text-fantas-200">
+                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
                   {latestFinance ? `FY ${latestFinance.YEAR} Total Annual Revenue` : 'Annual Budget'}
                 </span>
               </div>
-              <p className="text-4xl font-axis-sng-indlab-value tracking-wide mt-1">
+              <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 {formattedBudget}
               </p>
               <p className="text-[11px] text-fantas-200 tracking-wide leading-snug mt-1.5">
-                {latestFinance
-                            ? `NTA (${((latestFinance.REV_NTA_IRA / latestFinance.TOTAL_OPERATING_INCOME) * 100).toFixed(0)}%) + Local Sources`
-                            : 'NTA + Local Revenues'}
+                National Tax + Local Revenues
               </p>
             </div>
 
             <div className="bg-white/10 border border-white/15 p-4">
               <div className="flex justify-center items-center gap-3">
-                <span className="text-sm uppercase font-axis-navbar-focus tracking-wider text-fantas-200">
+                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
                   Income Class
                 </span>
               </div>
-              <p className="text-4xl font-axis-sng-indlab-value tracking-wide mt-1">
+              <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 1st Class
               </p>
               <p className="text-[11px] text-fantas-200 tracking-wide leading-snug mt-1.5">

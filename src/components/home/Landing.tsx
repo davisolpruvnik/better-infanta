@@ -169,7 +169,7 @@ export default function LandingSite() {
       <div className="absolute top-0 -left-20 w-64 sm:w-96 h-64 sm:h-96 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-orange-100/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="container mx-auto px-8 sm:px-12 relative z-10 flex flex-col gap-8 sm:gap-10 md:gap-14">
+      <div className="container mx-auto px-8 relative z-10 flex flex-col gap-8 sm:gap-10 md:gap-14">
 
         {/* ========================================================= */}
         {/* 1. TOP SECTION: LOGO + BETTER INFANTA HEADER (2-PART)     */}
@@ -208,8 +208,7 @@ export default function LandingSite() {
           {/* 1️⃣ COLUMN 1 (LEFT): Quick Search */}
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-fantas-900">
-                {getIcon('lucide:sparkles', 'h-4 w-4')}
+              <div className="flex items-center justify-center gap-2 text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-900">
                 <span>Quick Search</span>
               </div>
 
@@ -289,13 +288,12 @@ export default function LandingSite() {
           {/* 2️⃣ COLUMN 2 (MIDDLE): Compact Weather Graphic */}
           <div className="flex flex-col justify-between h-full gap-3 lg:border-l lg:border-stone-200 lg:pl-8 pt-6 lg:pt-0 border-t border-stone-200 lg:border-t-0">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-fantas-900">
-                {getIcon('lucide:cloud-sun', 'h-4 w-4')}
+              <div className="flex items-center justify-center gap-2 text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-900">
                 <span>Local Weather</span>
               </div>
 
               {/* 📺 COMPACT WEATHER CARD */}
-              <div className="w-full max-w-lg mx-auto lg:max-w-none lg:mx-0 flex flex-col bg-fantas-200/50 overflow-hidden">
+              <div className="w-full max-w-lg mx-auto lg:max-w-none lg:mx-0 mt-1 flex flex-col bg-fantas-200/50 overflow-hidden">
 
                 {/* 1. Town Name & AQI Badge */}
                 <div className="py-2.5 px-3 sm:px-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
@@ -310,7 +308,7 @@ export default function LandingSite() {
                   </div>
 
                   {/* RIGHT SIDE: Sunrise & Sunset */}
-                  <div className="flex flex-col items-center gap-1 text-[12px] sm:text-[14px] font-axis-navbar-focus text-fantas-900 uppercase tracking-wider">
+                  <div className="flex flex-col items-center gap-0.25 text-[12px] sm:text-[14px] font-axis-navbar-focus text-fantas-900 uppercase tracking-wider">
                     {/* Sunrise */}
                     <div className="flex items-center gap-1" title="Sunrise">
                       {getIcon('tabler:sunrise-filled', 'h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600')}
@@ -414,13 +412,12 @@ export default function LandingSite() {
 
           {/* 3️⃣ COLUMN 3 (RIGHT): Statistics */}
           <div className="flex flex-col justify-start h-full gap-4 lg:border-l lg:border-stone-200 lg:pl-8 pt-6 lg:pt-0 border-t border-stone-200 lg:border-t-0">
-            <div className="flex justify-center items-center gap-2 text-md font-axis-navbar-focus uppercase tracking-widest text-fantas-900">
-              {getIcon('lucide:bar-chart-3', 'h-4 w-4')}
+            <div className="flex justify-center items-center gap-2 text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-900">
               <span>Municipal Impact & Stats</span>
             </div>
 
             {/* Stats list */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-4 sm:gap-6 pt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-4 sm:gap-6 mt-1">
               {statsData.map((stat, idx) => (
                 <div key={idx} className="flex flex-col justify-center gap-1">
                   <div className="flex items-center gap-2">

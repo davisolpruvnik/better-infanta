@@ -91,7 +91,7 @@ export default function BLGFTechnicalTable({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-axis-titular-focus uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5 text-slate-900">
+            <h3 className="text-md font-axis-wide-header uppercase tracking-wide leading-snug text-center md:text-start lg:text-start pb-0.5 text-slate-900">
               {targetLguName} Historical SRE Timeseries ({yearRange})
             </h3>
           </div>
