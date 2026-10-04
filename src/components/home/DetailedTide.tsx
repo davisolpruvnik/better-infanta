@@ -2,13 +2,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Section from '../ui/Section';
 
-interface ExtremaEvent {
-  type: 'HIGH' | 'LOW';
-  timeStr: string;
-  height: number;
-  label: string; // e.g. "Peak 1", "Peak 2"
-}
-
 interface TidePoint {
   x: number;
   y: number;
@@ -23,14 +16,18 @@ const MARINE_COORDS = {
   station: "Infanta / Lamon Bay Coast",
 };
 
+// 💡 36 Hours span = 37 hourly points (0, 6, 12, 18, 24, 30, 36)
+const FORECAST_HOURS = 36;
+const TOTAL_POINTS = FORECAST_HOURS + 1;
+
 // 💡 Helper to parse Open-Meteo unzoned timestamps strictly in Asia/Manila (UTC+8)
 const parseManilaTimeMs = (isoStr: string): number => {
   if (!isoStr) return 0;
   if (isoStr.includes('+') || isoStr.endsWith('Z')) {
     return new Date(isoStr).getTime();
   }
-  // Append +08:00 so all devices globally parse it as exact Philippine Standard Time
-  return new Date(`${isoStr}:00+08:00`).getTime();
+  const clean = isoStr.length === 16 ? `${isoStr}:00` : isoStr;
+  return new Date(`${clean}+08:00`).getTime();
 };
 
 export default function TideCard({ className = '' }: { className?: string }) {
@@ -48,15 +45,8 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
   useEffect(() => {
     async function fetchTides() {
-      // 💡 Always start from the current hour so "NOW" is GUARANTEED to be inside the visible wave
       const now = new Date();
-      const manilaTimeStr = now.toLocaleTimeString('en-PH', {
-        timeZone: 'Asia/Manila',
-        hour12: false,
-        hour: '2-digit',
-      });
-      const currentHour = parseInt(manilaTimeStr, 10);
-      const startHourOffset = currentHour;
+      const nowMs = now.getTime();
 
       try {
         const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${MARINE_COORDS.lat}&longitude=${MARINE_COORDS.lon}&hourly=sea_level_height_msl&timezone=auto&forecast_days=7`;
@@ -77,17 +67,21 @@ export default function TideCard({ className = '' }: { className?: string }) {
           throw new Error("API returned null for sea_level_height_msl at this coordinate");
         }
 
-        const startIdx = Math.max(0, startHourOffset);
-        // Fetch 48 hours so you always capture multiple tidal cycles
-        const endIdx = startIdx + 36;
+        // 💡 Find the exact hour index matching the current time
+        let startIdx = rawTimes.findIndex((t) => parseManilaTimeMs(t) >= nowMs);
+        if (startIdx > 0 && parseManilaTimeMs(rawTimes[startIdx]) > nowMs) {
+          startIdx -= 1; // Anchor to the start of the current hour
+        }
+        if (startIdx < 0) startIdx = 0;
 
+        const endIdx = startIdx + TOTAL_POINTS;
         const cleanTimes = rawTimes.slice(startIdx, endIdx);
         const cleanHeights = rawHeights.slice(startIdx, endIdx).map((h, i, arr) => {
           if (h !== null && typeof h === 'number') return h;
           return (arr[i - 1] as number) ?? (arr[i + 1] as number) ?? 0;
         });
 
-        console.log(`🌊 Live Marine tide data loaded starting from hour ${startHourOffset}:00!`);
+        console.log(`🌊 Live Marine tide data loaded starting from index ${startIdx}!`);
         setIsLive(true);
         setHourlyData({ times: cleanTimes, heights: cleanHeights });
       } catch (err) {
@@ -102,13 +96,15 @@ export default function TideCard({ className = '' }: { className?: string }) {
 
         const mockHeights: number[] = [];
         const mockTimes: string[] = [];
+        const startBaseDate = new Date(now);
+        startBaseDate.setMinutes(0, 0, 0);
 
-        for (let i = 0; i < 26; i++) {
-          const hIdx = (startHourOffset + i) % 24;
+        for (let i = 0; i < TOTAL_POINTS; i++) {
+          const hIdx = (startBaseDate.getHours() + i) % 24;
           mockHeights.push(baseHeights[hIdx]);
 
-          const d = new Date(now);
-          d.setHours(startHourOffset + i, 0, 0, 0);
+          const d = new Date(startBaseDate);
+          d.setHours(startBaseDate.getHours() + i);
           mockTimes.push(d.toISOString());
         }
 
@@ -181,7 +177,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
         return { ...e, label: `High Tide ${peakCount}` };
       }
       return { ...e, label: 'Low Tide' };
-    }).slice(0, 4); // Always guarantees the next 4 tidal events (highs & lows)
+    }).slice(0, 4);
   }, [hourlyData]);
 
   // 💡 2. Smooth Wave Path & Geometry
@@ -203,8 +199,8 @@ export default function TideCard({ className = '' }: { className?: string }) {
       const date = new Date(parseManilaTimeMs(times[idx]));
       const timeStr = date.toLocaleTimeString('en-PH', {
         timeZone: 'Asia/Manila',
-        hour: 'numeric',
-        minute: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
         hour12: false,
       });
       return { x, y, height: h, timeStr };
@@ -247,13 +243,12 @@ export default function TideCard({ className = '' }: { className?: string }) {
         };
       });
 
-    // 💡 3. Dynamic Current Time Interpolation (Now immune to timezone differences & always visible)
+    // 💡 3. Dynamic Current Time Interpolation
     let computedLiveMarker = null;
     const startTimeMs = parseManilaTimeMs(times[0]);
     const endTimeMs = parseManilaTimeMs(times[times.length - 1]);
     const currTimeMs = currentTime.getTime();
 
-    // Small 5-minute grace buffer on left to protect against minor client-server clock drift
     if (currTimeMs >= (startTimeMs - 300000) && currTimeMs <= endTimeMs) {
       const totalDuration = endTimeMs - startTimeMs;
       const elapsed = Math.max(0, currTimeMs - startTimeMs);
@@ -426,11 +421,29 @@ export default function TideCard({ className = '' }: { className?: string }) {
             </div>
           </div>
 
-          {/* 6-Hour Timeline Legend below wave */}
-          <div className="w-full flex justify-between text-[11px] text-fantas-900/70 px-1 mt-3 border-t border-fantas-800/10 pt-1 font-axis-navbar-focus tracking-wide">
-            {points.filter((_, idx) => idx % 6 === 0).map((p, idx) => (
-              <span key={idx} className="proportional-nums">{p.timeStr}</span>
-            ))}
+          {/* 💡 6-Hour Timeline Legend strictly aligned to wave X coordinates */}
+          <div className="relative w-full h-5 mt-3 border-t border-fantas-800/10 pt-1 font-axis-navbar-focus text-[11px] text-fantas-900/70 select-none">
+            {points
+              .filter((_, idx) => idx % 6 === 0)
+              .map((p, idx, arr) => {
+                const pct = (p.x / 500) * 100;
+                const alignClass =
+                  idx === 0
+                    ? 'left-0 text-left'
+                    : idx === arr.length - 1
+                      ? 'right-0 text-right'
+                      : '-translate-x-1/2 text-center';
+
+                return (
+                  <span
+                    key={idx}
+                    className={`absolute proportional-nums whitespace-nowrap ${alignClass}`}
+                    style={idx !== 0 && idx !== arr.length - 1 ? { left: `${pct}%` } : undefined}
+                  >
+                    {p.timeStr}
+                  </span>
+                );
+              })}
           </div>
         </div>
 

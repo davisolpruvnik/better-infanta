@@ -5,53 +5,35 @@ import { INFANTA_BARANGAYS } from '@/data/censusDataInfanta';
 import CmciAnalyticsSection from '@/components/stats/crumbs/CmciAnalytics';
 import BLGFFinanceTab from '@/components/stats/LGUFinance';
 import { useBLGFParquet } from '@/hooks/useBLGFData';
-
-// BLGF records (1992 - 2026)
-const MOCK_BLGF_YEARS = Array.from({ length: 2026 - 1992 + 1 }, (_, i) => {
-  const year = 1992 + i;
-  return {
-    year,
-    iraNta: (15 + i * 8.5).toFixed(2),
-    locallySourced: (5 + i * 4.2).toFixed(2),
-    totalRevenue: (20 + i * 12.7).toFixed(2),
-    totalExpenditure: (18 + i * 11.9).toFixed(2),
-    dependencyRate: Math.max(40, 85 - i * 0.8).toFixed(1) + '%',
-  };
-}).reverse();
+import SolarBulletinTab from '@/components/stats/SolarBulletinTab';
 
 export default function StatsPage() {
   const { t } = useTranslation();
 
-  // 1. Added 'cmci' to the activeTab state union
-  const [activeTab, setActiveTab] = useState<'census' | 'cmci' | 'blgf' | 'local'>('census');
-  const [selectedBlgfYear, setSelectedBlgfYear] = useState(2026);
+  const [activeTab, setActiveTab] = useState<'census' | 'cmci' | 'blgf' | 'solar'>('census');
 
-  const activeBlgfRecord = useMemo(() => {
-    return MOCK_BLGF_YEARS.find((b) => b.year === Number(selectedBlgfYear)) || MOCK_BLGF_YEARS[0];
-  }, [selectedBlgfYear]);
+  const { data: blgfDataset } = useBLGFParquet();
 
-  const { data: blgfDataset, loading: financeLoading } = useBLGFParquet();
+  // Dynamically extract the latest available financial record for Infanta
+  const latestFinance = useMemo(() => {
+    if (!blgfDataset || blgfDataset.length === 0) return null;
 
-    // 2. Dynamically extract the latest available financial record for Infanta
-    const latestFinance = useMemo(() => {
-      if (!blgfDataset || blgfDataset.length === 0) return null;
+    const infantaRows = blgfDataset
+      .filter((d) => d.LGU_NAME.toLowerCase().includes('infanta'))
+      .sort((a, b) => b.YEAR - a.YEAR);
 
-      const infantaRows = blgfDataset
-        .filter((d) => d.LGU_NAME.toLowerCase().includes('infanta'))
-        .sort((a, b) => b.YEAR - a.YEAR);
+    return infantaRows[0] || null;
+  }, [blgfDataset]);
 
-      return infantaRows[0] || null;
-    }, [blgfDataset]);
-
-    // Helper to format currency (e.g. ₱451.8M or ₱451.8 million)
-    const formattedBudget = useMemo(() => {
-      if (!latestFinance) return '₱451.8M';
-      const amount = latestFinance.TOTAL_OPERATING_INCOME;
-      if (amount >= 1_000_000_000) {
-        return `₱${(amount / 1_000_000_000).toFixed(2)}B`;
-      }
-      return `₱${(amount / 1_000_000).toFixed(1)}M`;
-    }, [latestFinance]);
+  // Helper to format currency (e.g. ₱451.8M or ₱1.20B)
+  const formattedBudget = useMemo(() => {
+    if (!latestFinance) return '₱451.8M';
+    const amount = latestFinance.TOTAL_OPERATING_INCOME;
+    if (amount >= 1_000_000_000) {
+      return `₱${(amount / 1_000_000_000).toFixed(2)}B`;
+    }
+    return `₱${(amount / 1_000_000).toFixed(1)}M`;
+  }, [latestFinance]);
 
   const totalPop = useMemo(() => {
     return INFANTA_BARANGAYS.reduce((acc, b) => acc + b.population, 0);
@@ -69,7 +51,7 @@ export default function StatsPage() {
             <p className="mt-4 text-fantas-100 tracking-wide font-axis-thin text-sm md:text-base leading-relaxed">
               {t(
                 'stats.subtitle',
-                'Explore real-time demographic census, DTI competitiveness metrics, 1992–2026 BLGF financial records, and sectoral LGU public data.'
+                'Explore real-time demographic census, DTI competitiveness metrics, BLGF financial records, and daily municipal solar yield models.'
               )}
             </p>
           </div>
@@ -77,11 +59,9 @@ export default function StatsPage() {
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center">
             <div className="bg-white/10 border border-white/15 p-4">
-              <div className="flex justify-center items-center gap-3">
-                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
-                  Total Population
-                </span>
-              </div>
+              <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200 block">
+                Total Population
+              </span>
               <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 {totalPop.toLocaleString()}
               </p>
@@ -91,11 +71,9 @@ export default function StatsPage() {
             </div>
 
             <div className="bg-white/10 border border-white/15 p-4">
-              <div className="flex justify-center items-center gap-3">
-                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
-                  Barangays
-                </span>
-              </div>
+              <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200 block">
+                Barangays
+              </span>
               <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 {INFANTA_BARANGAYS.length}
               </p>
@@ -105,11 +83,9 @@ export default function StatsPage() {
             </div>
 
             <div className="bg-white/10 border border-white/15 p-4">
-              <div className="flex justify-center items-center gap-3">
-                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
-                  {latestFinance ? `FY ${latestFinance.YEAR} Total Annual Revenue` : 'Annual Budget'}
-                </span>
-              </div>
+              <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200 block">
+                {latestFinance ? `FY ${latestFinance.YEAR} Operating Income` : 'Annual Budget'}
+              </span>
               <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 {formattedBudget}
               </p>
@@ -119,11 +95,9 @@ export default function StatsPage() {
             </div>
 
             <div className="bg-white/10 border border-white/15 p-4">
-              <div className="flex justify-center items-center gap-3">
-                <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200">
-                  Income Class
-                </span>
-              </div>
+              <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200 block">
+                Income Class
+              </span>
               <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
                 1st Class
               </p>
@@ -137,8 +111,9 @@ export default function StatsPage() {
 
       {/* 2. TAB CONTROLS */}
       <div className="border-b border-slate-200 bg-white sticky top-0 z-20 shadow-sm">
-        <div className="container mx-auto px-6 max-w-7xl flex gap-2 overflow-x-auto py-2">
+        <div className="container mx-auto px-6 max-w-7xl flex gap-2 overflow-x-auto py-2 scrollbar-none">
           <button
+            type="button"
             onClick={() => setActiveTab('census')}
             className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors whitespace-nowrap ${
               activeTab === 'census'
@@ -149,8 +124,8 @@ export default function StatsPage() {
             Barangay Census
           </button>
 
-          {/* NEW: CMCI TAB BUTTON */}
           <button
+            type="button"
             onClick={() => setActiveTab('cmci')}
             className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors whitespace-nowrap ${
               activeTab === 'cmci'
@@ -162,6 +137,7 @@ export default function StatsPage() {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('blgf')}
             className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors whitespace-nowrap ${
               activeTab === 'blgf'
@@ -171,19 +147,29 @@ export default function StatsPage() {
           >
             BLGF Financials (1992–2026)
           </button>
+
+          {/* SOLAR TAB BUTTON */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('solar')}
+            className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors whitespace-nowrap ${
+              activeTab === 'solar'
+                ? 'bg-[#7c0902] text-white shadow-sm' // Uses Dugo red accent when active
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
+            Solar Potential Bulletin
+          </button>
         </div>
       </div>
 
       {/* 3. MAIN CONTENT BODY */}
       <main className="container mx-auto px-6 max-w-7xl py-8">
-        {/* TAB 1: CENSUS COMPONENT */}
         {activeTab === 'census' && <BarangayCensusTab />}
-
-        {/* TAB 2: CMCI COMPETITIVENESS (STEP LINE & STACKED SCORES) */}
         {activeTab === 'cmci' && <CmciAnalyticsSection />}
-
-        {/* TAB 3: BLGF FINANCIAL STATS (1992 - 2026) */}
         {activeTab === 'blgf' && <BLGFFinanceTab />}
+        {activeTab === 'solar' && <SolarBulletinTab />}
       </main>
     </div>
   );
