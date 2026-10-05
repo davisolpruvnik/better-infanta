@@ -4,6 +4,7 @@ import SEO from '../components/SEO';
 import LandingSite from '../components/home/Landing';
 import WeatherCardDetail from '@/components/home/DetailedWeather';
 import TideCard from '@/components/home/DetailedTide';
+import QuickActions from '@/components/home/IWantTo';
 
 const Home: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Home: React.FC = () => {
       />
       <main className="flex-grow">
         <LandingSite />
+        <QuickActions />
         <ServicesSection />
         <GovernmentActivitySection />
         <div className="container mx-auto py-8">

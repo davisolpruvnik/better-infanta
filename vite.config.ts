@@ -3,6 +3,19 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { execSync } from 'child_process';
+
+// 💡 Helper to get commit hash (Cloudflare Pages or local git fallback)
+const getCommitHash = () => {
+  if (process.env.CF_PAGES_COMMIT_SHA) {
+    return process.env.CF_PAGES_COMMIT_SHA.slice(0, 7);
+  }
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'dev';
+  }
+};
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,6 +29,10 @@ export default defineConfig({
       brotliSize: true,
     }),
   ],
+  // 💡 Injects the commit hash into import.meta.env.VITE_COMMIT_HASH
+  define: {
+    'import.meta.env.VITE_COMMIT_HASH': JSON.stringify(getCommitHash()),
+  },
   assetsInclude: ['**/*.md'],
   resolve: {
     alias: {
@@ -25,5 +42,5 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-  }
+  },
 });

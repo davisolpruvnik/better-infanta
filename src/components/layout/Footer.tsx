@@ -21,6 +21,8 @@ const SOCIAL_ICONS: Record<string, string> = {
   GitHub: 'ri:github-fill',
 };
 
+const commitHash = import.meta.env.VITE_COMMIT_HASH || 'dev';
+
 const Footer: React.FC = () => {
   const { t } = useTranslation('common');
 
@@ -48,7 +50,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-8 pt-12 pb-8">
         <Disclaimer />
         <div className="grid grid-cols-1 xs:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-12">
-          <div className='pb-8'>
+          <div className="pb-8">
             <div className="flex items-center mb-4">
               {/* 💡 Checkmark Portal Logo (Lazy Loaded with pulse placeholder) */}
               <Suspense
@@ -82,12 +84,15 @@ const Footer: React.FC = () => {
             </div>
 
             <p className="font-axis-footer-focus text-fantas-50/90 tracking-wider text-sm mb-4 wrap-break-word">
-              A community portal providing Infantahins, visitors, and businesses with information and services.
+              A community portal providing Infantahins, visitors, and businesses
+              with information and services.
             </p>
 
             {/* Social Links Row */}
             <div className="flex space-x-4 justify-center md:justify-start lg:justify-start">
-              <span className='uppercase font-axis-subtitular-focus tracking-wider text-sm text-fantas-50/90'>Profile</span>
+              <span className="uppercase font-axis-subtitular-focus tracking-wider text-sm text-fantas-50/90">
+                Profile
+              </span>
               {footerNavigation.socialLinks.map(link => (
                 <Link
                   key={link.label}
@@ -101,40 +106,53 @@ const Footer: React.FC = () => {
                 </Link>
               ))}
             </div>
-            <div className='pt-8 flex flex-col gap-4'>
+            <div className="pt-8 flex flex-col gap-4">
               {/* Cost to create website */}
-              <div className='flex flex-row items-center justify-between gap-2'>
-                <span className='uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty'>
+              <div className="flex flex-row items-center justify-between gap-2">
+                <span className="uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty">
                   Cost to create this website
                 </span>
-                <div className='min-w-[130px] bg-flamengo-500/75 px-2.5 py-1.5 ml-auto shrink-0 flex items-baseline justify-end gap-1.5'>
-                  <span className='text-xs font-axis-navbar-focus tracking-wider opacity-90 text-fantas-50'>PHP</span>
-                  <span className='uppercase font-axis-sng-indlab-value tracking-wider text-4xl text-fantas-50'>650</span>
+                <div className="min-w-[130px] bg-flamengo-500/75 px-2.5 py-1.5 ml-auto shrink-0 flex items-baseline justify-end gap-1.5">
+                  <span className="text-xs font-axis-navbar-focus tracking-wider opacity-90 text-fantas-50">
+                    PHP
+                  </span>
+                  <span className="uppercase font-axis-sng-indlab-value tracking-wider text-4xl text-fantas-50">
+                    650
+                  </span>
                 </div>
               </div>
 
               {/* Cost for every Infantahin */}
-              <div className='flex flex-row items-center justify-between gap-2'>
-                <span className='uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty'>
+              <div className="flex flex-row items-center justify-between gap-2">
+                <span className="uppercase font-axis-navbar-focus text-sm text-fantas-50 tracking-wider leading-snug line-clamp-2 text-pretty">
                   Cost for every Infantahin
                 </span>
-                <div className='min-w-[130px] bg-arvore-600/80 px-2.5 py-1.5 ml-auto shrink-0 flex items-baseline justify-end gap-1.5'>
-                  <span className='text-xs font-axis-navbar-focus tracking-wider opacity-90 text-fantas-50'>PHP</span>
-                  <span className='uppercase font-axis-sng-indlab-value tracking-wider text-4xl text-fantas-50'>0</span>
+                <div className="min-w-[130px] bg-arvore-600/80 px-2.5 py-1.5 ml-auto shrink-0 flex items-baseline justify-end gap-1.5">
+                  <span className="text-xs font-axis-navbar-focus tracking-wider opacity-90 text-fantas-50">
+                    PHP
+                  </span>
+                  <span className="uppercase font-axis-sng-indlab-value tracking-wider text-4xl text-fantas-50">
+                    0
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-
           {/* Navigation Links Columns */}
           {footerNavigation.mainSections.map((section, index) => (
             <div
               key={section.title}
-              className={index === 2 ? 'xs:col-start-2 md:col-start-2 lg:col-start-auto' : ''}
+              className={
+                index === 2
+                  ? 'xs:col-start-2 md:col-start-2 lg:col-start-auto'
+                  : ''
+              }
             >
               <h3 className="text-lg text-fantas-900 font-axis-navbar-focus uppercase tracking-wider mb-4">
-                <span className='bg-fantas-50 px-1.5 py-0.5'>{section.title}</span>
+                <span className="bg-fantas-50 px-1.5 py-0.5">
+                  {section.title}
+                </span>
               </h3>
               <ul className="space-y-2">
                 {section.links.map(link => (
@@ -154,29 +172,63 @@ const Footer: React.FC = () => {
 
         {/* Bottom Bar: Copyright & Standard Footer Links */}
         <div className="border-t border-fantas-50/30 border-dotted mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-fantas-50/90 text-center text-xs font-axis-footer-focus uppercase tracking-wider mb-4 md:mb-0 text-pretty">
-              {t('footer.copyright')}
-            </p>
-            <div className="flex space-x-6 font-axis-footer-focus tracking-wider uppercase">
-              <Link
-                to="https://github.com/bettergovph/bettergov"
-                className="text-fantas-50/90 hover:text-white text-xs transition-colors"
-              >
-                Contribute
-              </Link>
-              <Link
-                to="/sitemap"
-                className="text-fantas-50/90 hover:text-white text-xs transition-colors"
-              >
-                Sitemap
-              </Link>
-              <a
-                href="/accessibility"
-                className="text-fantas-50/90 hover:text-white text-xs transition-colors"
-              >
-                Accessibility
-              </a>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            {/* 💡 Left Side: Copyright + Visitor Counter */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+              <p className="text-fantas-50/90 text-xs font-axis-footer-focus uppercase tracking-wider text-pretty">
+                {t('footer.copyright')}
+              </p>
+            </div>
+
+            {/* Right Side: Links */}
+            <div className="flex flex-row space-x-4 items-center font-axis-footer-focus tracking-wide uppercase">
+              <div className="flex flex-row gap-4">
+                <VisitorCounter />
+                <span
+                  className="hidden sm:inline text-fantas-50/30"
+                  aria-hidden="true"
+                >
+                  ·
+                </span>
+
+                {/* 💡 Git Commit Version Badge */}
+                <a
+                  href={`https://github.com/davisolpruvnik/betterinfanta/commit/${commitHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="View latest commit on GitHub"
+                  className="font-axis-navbar-focus tracking-wider text-xs text-fantas-50/70 hover:text-white transition-colors flex items-center gap-1 shrink-0"
+                >
+                  <LazyIconify icon='ph:git-commit' className='text-xs'/>
+                  <span>{commitHash}</span>
+                </a>
+                <span
+                  className="hidden sm:inline text-fantas-50/30"
+                  aria-hidden="true"
+                >
+                  ·
+                </span>
+              </div>
+              <div className="flex flex-row gap-4 tracking-wide">
+                <Link
+                  to="https://github.com/bettergovph/bettergov"
+                  className="text-fantas-50/90 hover:text-white text-xs transition-colors"
+                >
+                  Contribute
+                </Link>
+                <Link
+                  to="/sitemap"
+                  className="text-fantas-50/90 hover:text-white text-xs transition-colors"
+                >
+                  Sitemap
+                </Link>
+                <a
+                  href="/accessibility"
+                  className="text-fantas-50/90 hover:text-white text-xs transition-colors"
+                >
+                  Accessibility
+                </a>
+              </div>
             </div>
           </div>
         </div>
