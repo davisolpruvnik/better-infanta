@@ -68,7 +68,7 @@ export default function QuickActions() {
       </div>
 
       {/* 🚀 Quick Action Chips Grid */}
-      <div className="grid grid-cols-3 xs:grid-cols-2 items-center gap-2 sm:gap-2.5">
+      <div className="grid grid-cols-2 items-start gap-2 sm:gap-2.5">
         {COMMON_ACTIONS.map((action, i) => (
           <Link
             key={i}

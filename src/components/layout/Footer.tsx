@@ -181,11 +181,13 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Right Side: Links */}
-            <div className="flex flex-row space-x-4 items-center font-axis-footer-focus tracking-wide uppercase">
-              <div className="flex flex-row gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 font-axis-footer-focus tracking-wide uppercase">
+
+              {/* Top Row on Mobile / Left Group on Desktop */}
+              <div className="flex flex-row items-center gap-3 sm:gap-4">
                 <VisitorCounter />
                 <span
-                  className="hidden sm:inline text-fantas-50/30"
+                  className="text-fantas-50/30"
                   aria-hidden="true"
                 >
                   ·
@@ -199,9 +201,11 @@ const Footer: React.FC = () => {
                   title="View latest commit on GitHub"
                   className="font-axis-navbar-focus tracking-wider text-xs text-fantas-50/70 hover:text-white transition-colors flex items-center gap-1 shrink-0"
                 >
-                  <LazyIconify icon='ph:git-commit' className='text-xs'/>
+                  <LazyIconify icon="ph:git-commit" className="text-xs" />
                   <span>{commitHash}</span>
                 </a>
+
+                {/* Hidden on mobile to avoid trailing dot; shown on desktop to separate groups */}
                 <span
                   className="hidden sm:inline text-fantas-50/30"
                   aria-hidden="true"
@@ -209,7 +213,9 @@ const Footer: React.FC = () => {
                   ·
                 </span>
               </div>
-              <div className="flex flex-row gap-4 tracking-wide">
+
+              {/* Bottom Row on Mobile / Right Group on Desktop */}
+              <div className="flex flex-row items-center gap-4 tracking-wide">
                 <Link
                   to="https://github.com/bettergovph/bettergov"
                   className="text-fantas-50/90 hover:text-white text-xs transition-colors"
@@ -229,6 +235,7 @@ const Footer: React.FC = () => {
                   Accessibility
                 </a>
               </div>
+
             </div>
           </div>
         </div>
