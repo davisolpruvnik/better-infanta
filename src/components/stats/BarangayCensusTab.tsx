@@ -302,7 +302,7 @@ export default function BarangayCensusTab() {
               <div className="mt-3 flex flex-row justify-between items-center text-xs text-slate-500 gap-2">
                 {overallGrowth !== null && (
                   <span className="text-emerald-600 font-axis-subtitular-focus uppercase tracking-wide bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    <span className="font-axis-plantao-num-focus">{overallGrowth}%</span> Overall Growth
+                    <span className="font-axis-number-focus">{overallGrowth}%</span> Overall Growth
                   </span>
                 )}
                 <span className="text-xs font-axis-subtitular-focus uppercase tracking-wide text-slate-400 ml-auto">

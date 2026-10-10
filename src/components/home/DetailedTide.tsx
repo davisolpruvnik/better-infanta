@@ -380,11 +380,11 @@ export default function TideCard({ className = '' }: { className?: string }) {
                   }}
                 >
                   <div className="absolute -translate-x-1/2 bottom-2.5 flex flex-col items-center whitespace-nowrap leading-tight">
-                    <span className="text-[14px] font-axis-plantao-num-focus text-fantas-900/90 tracking-wide proportional-nums">
+                    <span className="text-[14px] font-axis-number-focus text-fantas-900/90 tracking-wide proportional-nums">
                       {item.height > 0 ? `+${item.height.toFixed(2)}m` : `${item.height.toFixed(2)}m`}
                     </span>
                     <span className="text-[11px] font-axis-navbar-focus uppercase tracking-wide text-fantas-900/70 mt-0.25">
-                      Est. time: <span className="text-fantas-900/90 font-axis-plantao-num-focus">{item.timeStr}</span>
+                      Est. time: <span className="text-fantas-900/90 font-axis-number-focus">{item.timeStr}</span>
                     </span>
                   </div>
 
@@ -404,10 +404,10 @@ export default function TideCard({ className = '' }: { className?: string }) {
                   }}
                 >
                   <div className="absolute -translate-x-1/2 top-3 flex flex-col items-center whitespace-nowrap leading-tight">
-                    <span className="text-[10px] font-axis-plantao-num-focus bg-flamengo-600 text-white px-1.5 py-0.5 tracking-wider shadow-2xs">
+                    <span className="text-[10px] font-axis-number-focus bg-flamengo-600 text-white px-1.5 py-0.5 tracking-wider shadow-2xs">
                       NOW {liveMarker.height > 0 ? `+${liveMarker.height.toFixed(2)}m` : `${liveMarker.height.toFixed(2)}m`}
                     </span>
-                    <span className="text-[10px] font-axis-plantao-num-focus text-flamengo-600/90 mt-0.5 proportional-nums">
+                    <span className="text-[10px] font-axis-number-focus text-flamengo-600/90 mt-0.5 proportional-nums">
                       {liveMarker.timeStr}
                     </span>
                   </div>
@@ -455,7 +455,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
             <span className="text-right">Water Level</span>
           </div>
 
-          <div className="divide-y divide-fantas-900/30 text-xs sm:text-sm font-axis-plantao-num-focus">
+          <div className="divide-y divide-fantas-900/30 text-xs sm:text-sm font-axis-number-focus">
             {extrema.map((tide, i) => (
               <div
                 key={i}

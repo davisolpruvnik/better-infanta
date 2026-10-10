@@ -291,7 +291,7 @@ export default function Timekeeper() {
                   <span className="font-axis-plantao-text-focus text-fantas-900/80 text-[10px] sm:text-[12px]">
                     {activeCurrency.code}
                   </span>
-                  <span className="font-axis-plantao-num-focus text-fantas-800 proportional-nums text-[10px] sm:text-[12px]">
+                  <span className="font-axis-number-focus text-fantas-800 proportional-nums text-[10px] sm:text-[12px]">
                     ₱{activeCurrency.rateInPhp.toFixed(2)}
                   </span>
                 </div>
@@ -338,7 +338,7 @@ export default function Timekeeper() {
                         className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${weatherDetails?.iconClass}`}
                       />
                     </Suspense>
-                    <span className="font-axis-plantao-num-focus text-fantas-800 text-[11px] sm:text-[12px] proportional-nums">
+                    <span className="font-axis-number-focus text-fantas-800 text-[11px] sm:text-[12px] proportional-nums">
                       {activeWeather.temp}°C
                     </span>
                   </div>

@@ -615,7 +615,7 @@ export default function Barangays() {
                     </span>
                     {growthRate && (
                       <span
-                        className={`text-[10px] px-1.5 py-0.5 font-axis-plantao-num-focus ${
+                        className={`text-[10px] px-1.5 py-0.5 font-axis-number-focus ${
                           growthRate.isPositive
                             ? 'bg-arvore-50 text-arvore-800 border border-arvore-800/20'
                             : 'bg-rose-50 text-rose-700'

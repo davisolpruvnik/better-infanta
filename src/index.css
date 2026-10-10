@@ -257,15 +257,11 @@
   font-stretch: 75%;
   font-variation-settings: 'wght' 400, 'wdth' 75, 'opsz' 18;
 }
-.font-axis-plantao-num-focus {
+
+.font-axis-number-focus {
   font-family: var(--font-kapwa-sans);
   font-stretch: 75%;
   font-variation-settings: 'wght' 700, 'wdth' 75, 'opsz' 18;
-}
-
-.font-axis-number-focus {
-  font-family: var(--font-kapwa-mono);
-  font-variation-settings: 'wght' 600;
 }
 
 .font-axis-wide-header {
