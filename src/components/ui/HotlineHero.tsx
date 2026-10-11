@@ -4,6 +4,7 @@ import Section from './Section';
 
 interface HotlineItem {
   agency: string;
+  subline: string;
   number: string;
   callNumber: string;
   icon: string;
@@ -12,24 +13,28 @@ interface HotlineItem {
 const LOCAL_EMERGENCY_QUADRANTS: HotlineItem[] = [
   {
     agency: "Infanta MDRRMO",
+    subline: "Rescue/Disaster",
     number: "0918 395 3839",
     callNumber: "09183953839",
     icon: "mingcute:vest-fill",
   },
   {
     agency: "Infanta BFP Fire Station",
+    subline: "Fire/Safety",
     number: "(042) 535 2700",
     callNumber: "0425352700",
     icon: "roentgen:fire-hydrant",
   },
   {
     agency: "Infanta PNP Police",
+    subline: "Public Safety/Security",
     number: "0998 598 5754",
     callNumber: "09985985754",
     icon: "game-icons:police-badge",
   },
   {
     agency: "Rural Health Unit (RHU)",
+    subline: "Health",
     number: "(042) 535 2151",
     callNumber: "0425352151",
     icon: "ic:round-health-and-safety",
@@ -91,25 +96,29 @@ export default function HotlineHero() {
             <a
               key={idx}
               href={`tel:${item.callNumber}`}
-              className="group relative overflow-hidden text-white py-5 sm:py-6 border bg-flamengo-700 hover:bg-flamengo-800 border-flamengo-800/40 transition-all duration-300 flex flex-col justify-between gap-4 cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
+              className="group relative overflow-hidden text-white py-5 sm:py-6 border bg-flamengo-700 hover:bg-flamengo-800 border-flamengo-800/40 transition-all duration-300 flex flex-col justify-between gap-2 cursor-pointer"
               title={`Tap to call ${item.agency}`}
             >
               {/* Top row: Icon + Agency Titles */}
               <div className="flex flex-col items-center justify-between gap-3">
-                <div className="size-10 sm:size-11 bg-white/15 flex items-center justify-center shrink-0 text-white group-hover:scale-105 transition-transform">
+                <div className="size-10 sm:size-11 bg-white/15 flex items-center justify-center shrink-0 text-white">
                   <LazyIcon name={item.icon} className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-md sm:text-lg font-axis-navbar-focus uppercase tracking-wider text-white leading-tight">
-                    {item.agency}
-                  </h3>
-                </div>
+                <div className="text-center">
+                    <h3 className="text-sm sm:text-md font-axis-navbar-focus uppercase tracking-wider text-white leading-tight">
+                      {item.agency}
+                    </h3>
+                    {/* Use block instead of items-center / justify-center */}
+                    <span className="block text-xs sm:text-sm font-axis-subtitular-focus uppercase tracking-wider text-white leading-snug">
+                      {item.subline}
+                    </span>
+                  </div>
               </div>
 
               {/* Bottom row: Direct Phone Number + Call Trigger */}
               <div className="flex items-baseline justify-center gap-4">
                 <div className="flex flex-row">
-                  <span className="text-xl sm:text-3xl font-axis-sng-indlab-value text-amber-200 tracking-wider">
+                  <span className="text-2xl font-axis-sng-indlab-value text-amber-200 tracking-wider">
                     {item.number}
                   </span>
                 </div>

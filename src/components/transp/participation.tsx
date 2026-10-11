@@ -125,7 +125,7 @@ export default function ParticipationTab() {
     if (colorblindMode) {
       return ['#fde725', '#5ec962', '#21918c', '#3b528b', '#440154'];
     }
-    return ['#d1fae5', '#6ee7b7', '#10b981', '#047857', '#064e3b'];
+    return ['#feebd2', '#fdbf72', '#fb9618', '#b56603', '#553001'];
   }, [colorblindMode]);
 
   // 💡 Compute dynamic Jenks natural break thresholds from all precinct tiles
@@ -421,53 +421,64 @@ export default function ParticipationTab() {
     <div className="space-y-8 animate-fade-in text-start select-none">
 
       {/* 🔍 Search Input */}
-      <div className="max-w-xl mx-auto mb-2 relative">
-        <div className="flex items-center gap-2.5 px-4 py-2 bg-white border border-slate-300 shadow-2xs focus-within:border-slate-900 transition-all">
-          <LazyIcon name="lucide:search" className="h-4 w-4 text-slate-400 shrink-0" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search barangay for turnout analysis..."
-            className="w-full text-xs sm:text-sm font-axis-navbar-focus text-slate-800 placeholder-slate-400 bg-transparent outline-none"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="text-xs text-slate-400 hover:text-slate-700 cursor-pointer">
-              ×
-            </button>
+      <div className='flex flex-row xs:flex-col justify-between'>
+        <div>
+          <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
+            How did People Vote
+          </h2>
+          <p className="text-md font-axis-subtitular-focus tracking-wide text-slate-500">
+            Explore the voting turnouts of Infantahins and the results from 2010 to 2025.
+          </p>
+        </div>
+        <div className="max-w-xl mb-2 relative">
+          <div className="flex flex-row gap-2.5 px-4 py-2 bg-white border border-slate-300 focus-within:border-slate-900 transition-all">
+            <LazyIcon name="lucide:search" className="h-4 w-4 text-slate-400 shrink-0" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search barangay for turnout analysis..."
+              className="w-full text-xs sm:text-sm font-axis-navbar-focus text-slate-800 placeholder-slate-400 bg-transparent outline-none"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="text-xs text-slate-400 hover:text-slate-700 cursor-pointer">
+                ×
+              </button>
+            )}
+          </div>
+
+          {searchResults.length > 0 && (
+            <div className="absolute top-full left-0 w-full mt-1.5 bg-white border border-slate-200 z-50 overflow-hidden divide-y divide-slate-100">
+              {searchResults.map(b => (
+                <button
+                  key={b.barangay}
+                  onClick={() => {
+                    zoomToBarangay(b.barangay);
+                    const firstTile = projectedHexes.find(h => normalizeName(h.props.barangay) === normalizeName(b.barangay));
+                    if (firstTile) setSelectedFeature(firstTile.props);
+                    setSearchQuery('');
+                  }}
+                  className="w-full px-4 py-2.5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs font-axis-navbar-focus cursor-pointer"
+                >
+                  <span className="font-semibold text-slate-900">{b.barangay}</span>
+                  <span className="text-slate-500 font-mono">{b.turnoutPct}% Turnout</span>
+                </button>
+              ))}
+            </div>
           )}
         </div>
-
-        {searchResults.length > 0 && (
-          <div className="absolute top-full left-0 w-full mt-1.5 bg-white border border-slate-200 shadow-xl z-50 overflow-hidden divide-y divide-slate-100">
-            {searchResults.map(b => (
-              <button
-                key={b.barangay}
-                onClick={() => {
-                  zoomToBarangay(b.barangay);
-                  const firstTile = projectedHexes.find(h => normalizeName(h.props.barangay) === normalizeName(b.barangay));
-                  if (firstTile) setSelectedFeature(firstTile.props);
-                  setSearchQuery('');
-                }}
-                className="w-full px-4 py-2.5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs font-axis-navbar-focus cursor-pointer"
-              >
-                <span className="font-semibold text-slate-900">{b.barangay}</span>
-                <span className="text-slate-500 font-mono">{b.turnoutPct}% Turnout</span>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
+
 
       {/* 🗺️ Main 2-Column Cartogram Stage */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-7xl mx-auto">
 
         {/* LEFT 8 COLS: Movable Hexagram Canvas */}
-        <div className="lg:col-span-8 w-full bg-white border border-slate-200 shadow-2xs flex flex-col p-4 relative select-none">
+        <div className="lg:col-span-8 w-full bg-white border border-slate-200 flex flex-col p-4 relative select-none">
 
           {/* Top-Left Pill Badge */}
           <div className="absolute top-6 left-6 z-20 pointer-events-none">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0f172a] text-white text-[10px] font-mono uppercase tracking-widest shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2 py-1.5 bg-[#0f172a] text-white text-[12px] font-axis-navbar-focus uppercase tracking-wider">
               <span>⬡</span> 1 Hex = 1 Clustered Precinct
             </span>
           </div>
@@ -476,14 +487,14 @@ export default function ParticipationTab() {
           <div className="absolute top-6 right-6 z-20 flex flex-col gap-1.5">
             <button
               onClick={() => handleZoom(1.35)}
-              className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold shadow-xs transition-colors cursor-pointer"
+              className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer"
               aria-label="Zoom in"
             >
               +
             </button>
             <button
               onClick={() => handleZoom(0.74)}
-              className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold shadow-xs transition-colors cursor-pointer"
+              className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer"
               aria-label="Zoom out"
             >
               −
@@ -491,7 +502,7 @@ export default function ParticipationTab() {
             {(transform.k !== 1 || transform.x !== 0 || transform.y !== 0) && (
               <button
                 onClick={handleResetView}
-                className="size-8 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold shadow-xs transition-colors cursor-pointer mt-1"
+                className="size-8 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer mt-1"
                 title="Reset view"
               >
                 <LazyIcon name="lucide:rotate-ccw" className="h-3.5 w-3.5" />
@@ -543,7 +554,7 @@ export default function ParticipationTab() {
                       }}
                       fill={getTurnoutColor(props.turnout_pct)}
                       stroke={isSelected ? '#000000' : isHovered ? '#0f172a' : isSameBrgy ? '#334155' : '#ffffff'}
-                      strokeWidth={isSelected ? 2.5 : isHovered ? 2 : isSameBrgy ? 1.2 : 0.6}
+                      strokeWidth={isSelected ? 2.5 : isHovered ? 2.5 : isSameBrgy ? 1.5 : 1}
                       className="transition-colors duration-150 cursor-pointer outline-none"
                     >
                       <title>{`Brgy. ${props.barangay} | Precinct ${props.precinct_id} (${props.turnout_pct}%)`}</title>
@@ -554,7 +565,7 @@ export default function ParticipationTab() {
             </svg>
           </div>
 
-          <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-[10px] font-mono text-slate-400">
+          <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-[12px] tracking-wider font-axis-footer-focus uppercase text-slate-400">
             <span>Infanta Electoral Return Cartogram</span>
             <span>Drag map to pan • Click any hex tile to inspect precinct</span>
           </div>
@@ -565,7 +576,7 @@ export default function ParticipationTab() {
 
           {selectedFeature ? (
             /* STATE 1: PRECINCT SELECTED */
-            <div className="bg-white border border-slate-200 p-6 shadow-2xs relative animate-fade-in text-start">
+            <div className="bg-white border border-slate-200 p-6 relative animate-fade-in text-start">
               <button
                 onClick={handleResetView}
                 className="absolute right-4 top-4 size-7 bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
@@ -575,61 +586,61 @@ export default function ParticipationTab() {
               </button>
 
               <div className="border-b border-slate-100 pb-4 mb-4 pr-8">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+                <span className="text-xs font-axis-navbar-focus uppercase tracking-wider text-slate-400">
                   Clustered Precinct
                 </span>
-                <h3 className="text-xl font-axis-wide-header uppercase text-slate-900 mt-1">
+                <h3 className="text-lg font-axis-wide-header uppercase text-slate-900 mt-1">
                   Precinct {selectedFeature.precinct_id}
                 </h3>
-                <span className="text-xs text-emerald-800 font-semibold block mt-0.5">
-                  Brgy. {selectedFeature.barangay}
+                <span className="text-sm uppercase tracking-wider text-fantas-50 bg-fantas-800 font-axis-navbar-focus px-2 py-1">
+                  BRGY. {selectedFeature.barangay}
                 </span>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div>
-                  <span className="text-[10px] uppercase font-axis-navbar-focus text-slate-400 block">
-                    Precinct Turnout
-                  </span>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-2xl font-mono font-bold text-slate-900">
-                      {selectedFeature.turnout_pct}%
+                  <div className='flex flex-row items-baseline gap-2'>
+                    <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">
+                      Precinct Turnout
                     </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
-                      {selectedFeature.turnout_pct >= 85 ? 'High' : 'Moderate'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl tracking-wide font-axis-sng-indlab-value text-slate-900">
+                        {selectedFeature.turnout_pct}%
+                      </span>
+                    </div>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100 text-xs font-mono">
-                  <div>
-                    <span className="text-[10px] uppercase text-slate-400 block">Actual Ballots</span>
-                    <span className="text-base font-bold text-slate-900">
-                      {selectedFeature.actual_voters.toLocaleString()}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] uppercase text-slate-400 block">Registered</span>
-                    <span className="text-base font-bold text-slate-900">
-                      {selectedFeature.registered_voters.toLocaleString()}
-                    </span>
+                <div>
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 text-xs">
+                    <div className='flex flex-row items-baseline gap-2'>
+                      <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Actual Ballots</span>
+                      <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">
+                        {selectedFeature.actual_voters.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className='flex flex-row items-baseline gap-2'>
+                      <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Registered</span>
+                      <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">
+                        {selectedFeature.registered_voters.toLocaleString()}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Overall Barangay Summary Context */}
                 {activeBrgySummary && (
                   <div className="pt-3 border-t border-slate-100 text-xs">
-                    <span className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
+                    <div className="text-xs uppercase font-axis-navbar-focus tracking-wider text-fantas-800 mb-2">
                       Barangay Total Context
-                    </span>
-                    <div className="bg-slate-50 p-2.5 border border-slate-200 text-[11px] font-mono space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Total Precincts:</span>
-                        <span className="font-bold text-slate-800">{activeBrgySummary.totalPrecincts} Hexes</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-1 sm:gap-4 pt-1 max-w-3xl">
+                      <div className="flex flex-row items-baseline gap-2">
+                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">{activeBrgySummary.barangay} Precincts</span>
+                        <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.totalPrecincts}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Barangay Turnout:</span>
-                        <span className="font-bold text-slate-800">{activeBrgySummary.turnoutPct}%</span>
+                      <div className="flex flex-row items-baseline gap-2">
+                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Brgy Turnout</span>
+                        <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.turnoutPct}%</span>
                       </div>
                     </div>
                   </div>
@@ -645,25 +656,22 @@ export default function ParticipationTab() {
             </div>
           ) : (
             /* STATE 2: GENERAL LEGEND */
-            <div className="bg-white border border-slate-200 p-6 shadow-2xs text-start space-y-6">
+            <div className="bg-white border border-slate-200 p-6 text-start space-y-6">
               <div className="border-b border-slate-100 pb-3">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-                  Electoral Scale
-                </span>
-                <h3 className="text-base font-axis-wide-header uppercase text-slate-900 mt-1">
+                <h3 className="text-xl md:text-xl lg:text-xl sm:text-2xl font-axis-wide-header uppercase text-slate-900">
                   Turnout Intensity
                 </h3>
               </div>
 
               {/* 💡 HORIZONTAL COLOR BAR LEGEND (Jenks Natural Breaks) */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <div>
+                <div className="flex items-center justify-between text-[12px] font-axis-subtitular-focus uppercase tracking-wider text-slate-500 pb-2">
                   <span>Lower Turnout</span>
                   <span>Higher Turnout</span>
                 </div>
 
                 {/* 5-Segment Horizontal Gradient/Bar */}
-                <div className="grid grid-cols-5 w-full h-4 border border-slate-300 overflow-hidden shadow-2xs">
+                <div className="grid grid-cols-5 w-full h-4 overflow-hidden">
                   {colorRamp.map((color, idx) => (
                     <div
                       key={idx}
@@ -674,17 +682,17 @@ export default function ParticipationTab() {
                 </div>
 
                 {/* Boundary Threshold Ticks */}
-                <div className="flex justify-between text-[9px] font-mono text-slate-600 px-0.5 tabular-nums">
-                  <span>{jenksBreaks[0]?.toFixed(1)}%</span>
-                  <span>{jenksBreaks[1]?.toFixed(1)}%</span>
-                  <span>{jenksBreaks[2]?.toFixed(1)}%</span>
-                  <span>{jenksBreaks[3]?.toFixed(1)}%</span>
-                  <span>{jenksBreaks[4]?.toFixed(1)}%</span>
-                  <span>{jenksBreaks[5]?.toFixed(1)}%</span>
+                <div className="flex justify-between items-center text-[12px] font-axis-navbar-focus text-slate-600 pt-1.5ç proportional-nums">
+                  <span>{jenksBreaks[0]?.toFixed(0)}%</span>
+                  <span>{jenksBreaks[1]?.toFixed(0)}%</span>
+                  <span>{jenksBreaks[2]?.toFixed(0)}%</span>
+                  <span>{jenksBreaks[3]?.toFixed(0)}%</span>
+                  <span>{jenksBreaks[4]?.toFixed(0)}%</span>
+                  <span>{jenksBreaks[5]?.toFixed(0)}%</span>
                 </div>
 
-                <span className="text-[9px] font-mono text-slate-400 block pt-1">
-                  Classified via Fisher-Jenks Natural Breaks (5 bins)
+                <span className="text-[10px] uppercase tracking-wide font-axis-subtitular-focus text-slate-400 block pt-1">
+                  Classification through Fisher-Jenks Natural Breaks Method (5 bins)
                 </span>
               </div>
 
@@ -736,7 +744,7 @@ export default function ParticipationTab() {
                 sortKey === 'registeredVoters' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700'
               }`}
             >
-              Voter Volume
+              Numbers
             </button>
           </div>
         </div>
@@ -753,7 +761,7 @@ export default function ParticipationTab() {
                 <th className="py-2.5 px-4 min-w-[180px]">Turnout Percentage</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-mono">
+            <tbody className="divide-y divide-slate-100 font-axis-navbar-focus">
               {sortedTableData.map((row, idx) => {
                 const isSelected = selectedFeature?.barangay === row.barangay;
                 const isHovered = hoveredBrgy === row.barangay;
@@ -769,18 +777,18 @@ export default function ParticipationTab() {
                       if (tile) setSelectedFeature(tile.props);
                     }}
                     className={`cursor-pointer transition-colors ${
-                      isSelected ? 'bg-emerald-50 font-semibold' : isHovered ? 'bg-slate-50' : ''
+                      isSelected ? 'bg-emerald-50 text-sm' : isHovered ? 'bg-slate-50' : ''
                     }`}
                   >
                     <td className="py-2.5 px-4 text-slate-400">{idx + 1}</td>
-                    <td className="py-2.5 px-4 font-sans font-semibold text-slate-900">{row.barangay}</td>
-                    <td className="py-2.5 px-4 text-slate-600">{row.totalPrecincts}</td>
-                    <td className="py-2.5 px-4 text-slate-700">{row.registeredVoters.toLocaleString()}</td>
-                    <td className="py-2.5 px-4 text-slate-900">{row.actualVoters.toLocaleString()}</td>
+                    <td className="py-2.5 px-4 tracking-wide text-sm text-slate-900">{row.barangay}</td>
+                    <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-600">{row.totalPrecincts}</td>
+                    <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-700">{row.registeredVoters.toLocaleString()}</td>
+                    <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-900">{row.actualVoters.toLocaleString()}</td>
                     <td className="py-2.5 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900 min-w-[45px]">{row.turnoutPct}%</span>
-                        <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <span className="font-axis-number-focus text-sm text-slate-900 min-w-[45px]">{row.turnoutPct}%</span>
+                        <div className="flex-1 h-3 bg-slate-200 overflow-hidden">
                           <div
                             className="h-full"
                             style={{

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { INFANTA_BARANGAYS } from '@/data/censusDataInfanta';
 import InfrastructureTab from '@/components/transp/infra';
 import ParticipationTab from '@/components/transp/participation';
-import AuditsTab from '@/components/transp/audits';
 
 export default function TransparencyPage() {
   const { t } = useTranslation();
@@ -57,29 +56,6 @@ export default function TransparencyPage() {
               </p>
             </div>
 
-            <div className="bg-white/10 border border-white/15 p-4">
-              <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200 block">
-                COA Audit Opinion
-              </span>
-              <p className="text-3xl md:text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5 text-emerald-300">
-                Qualified
-              </p>
-              <p className="text-[11px] text-fantas-200 tracking-wide leading-snug mt-1.5">
-                Latest Annual Audit Report
-              </p>
-            </div>
-
-            <div className="bg-white/10 border border-white/15 p-4">
-              <span className="text-xs uppercase font-axis-wide-subheader tracking-wider text-fantas-200 block">
-                Audited Barangays
-              </span>
-              <p className="text-4xl font-axis-sng-indlab-value tracking-wider mt-1.5">
-                {totalBarangays}
-              </p>
-              <p className="text-[11px] text-fantas-200 tracking-wide leading-snug mt-1.5">
-                Full Regulatory Coverage
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -110,19 +86,6 @@ export default function TransparencyPage() {
           >
             Voter Participation by Barangay
           </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('audits')}
-            className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'audits'
-                ? 'bg-[#7c0902] text-white shadow-sm' // High-contrast audit accent
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-            COA Annual Audits
-          </button>
         </div>
       </div>
 
@@ -130,7 +93,6 @@ export default function TransparencyPage() {
       <main className="container mx-auto px-6 max-w-7xl py-8">
         {activeTab === 'infrastructure' && <InfrastructureTab />}
         {activeTab === 'participation' && <ParticipationTab />}
-        {activeTab === 'audits' && <AuditsTab />}
       </main>
     </div>
   );
