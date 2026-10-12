@@ -5,6 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 // 💡 Direct static import of your DPWH dataset
 import dpwhProjectsData from '@/data/geog/infra-map/infanta_projects.json';
+import { motion, AnimatePresence } from 'motion/react';
 
 export interface InfraProject {
   contractId: string;
@@ -50,6 +51,9 @@ export default function InfrastructureTab() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
 
+  // 💡 Ref to prevent stale popup close events from canceling new selections
+  const selectedContractIdRef = useRef<string | null>(null);
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
@@ -81,156 +85,170 @@ export default function InfrastructureTab() {
   }, [filteredProjects]);
 
   // 💡 Initialize MapLibre GL with a 100% offline-safe inline style object
-    useEffect(() => {
-      if (!mapContainerRef.current || mapRef.current) return;
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
 
-      const map = new MapLibreMap({
-        container: mapContainerRef.current,
-        // 💡 INLINE STYLE: Zero external style.json or font dependencies (Guaranteed to load)
-        style: {
-          version: 8,
-          sources: {
-            'osm-tiles': {
-              type: 'raster',
-              tiles: [
-                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              ],
-              tileSize: 256,
-              attribution: '&copy; OpenStreetMap contributors',
-            },
+    const map = new MapLibreMap({
+      container: mapContainerRef.current,
+      style: {
+        version: 8,
+        sources: {
+          'opentopo': {
+            type: 'raster',
+            tiles: [
+              'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
+              'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
+              'https://c.tile.opentopomap.org/{z}/{x}/{y}.png',
+            ],
+            tileSize: 256,
+            attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap',
           },
-          layers: [
-            {
-              id: 'osm-tiles-layer',
-              type: 'raster',
-              source: 'osm-tiles',
-              minzoom: 0,
-              maxzoom: 19,
-            },
-          ],
         },
-        center: [121.64, 14.68],
-        zoom: 9.5,
-        attributionControl: false,
+        layers: [
+          {
+            id: 'opentopo-layer',
+            type: 'raster',
+            source: 'opentopo',
+            minzoom: 0,
+            maxzoom: 20,
+          },
+        ],
+      },
+      center: [121.64, 14.68],
+      zoom: 12.5,
+      attributionControl: false,
+    });
+
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
+    mapRef.current = map;
+
+    map.on('load', () => {
+      map.resize();
+    });
+
+    const timer = setTimeout(() => {
+      map.resize();
+    }, 150);
+
+    const resizeObserver = new ResizeObserver(() => {
+      map.resize();
+    });
+    resizeObserver.observe(mapContainerRef.current);
+
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  // Synchronize Map Markers
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Clear existing markers
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current = [];
+
+    filteredProjects.forEach((proj) => {
+      if (!proj.latitude || !proj.longitude) return;
+
+      const isSelected = selectedContractId === proj.contractId;
+
+      // 💡 Stable Root Container: coordinates stay locked without transform conflicts
+      const el = document.createElement('div');
+      el.className = `cursor-pointer select-none ${isSelected ? 'z-50' : 'z-20'}`;
+
+      // 💡 Inner Pin: origin-bottom keeps anchor dot pinned while scaling on hover
+      const pinInner = document.createElement('div');
+      pinInner.className = `group relative flex flex-col items-center origin-bottom transition-all duration-300 ${
+        isSelected
+          ? '-translate-y-2.5 scale-110'
+          : 'hover:scale-105'
+      }`;
+
+      pinInner.innerHTML = `
+        <!-- 1. Elevated Pin Head -->
+        <div class="flex items-center justify-center size-6 border-2 transition-all duration-300 ${
+          isSelected
+            ? 'bg-fantas-900 border-amber-400'
+            : 'bg-white border-fantas-800 group-hover:border-fantas-950'
+        }">
+          <div class="size-2 transition-colors duration-300 ${
+            isSelected ? 'bg-amber-400' : 'bg-fantas-800'
+          }"></div>
+        </div>
+
+        <!-- 2. Pin Stem Needle connecting head to GPS anchor point -->
+        <div class="w-0.5 h-2 transition-colors duration-300 ${
+          isSelected ? 'bg-fantas-900' : 'bg-fantas-800/40 group-hover:bg-fantas-900'
+        }"></div>
+
+        <!-- 3. Ground Anchor Dot (Always fixed to true coordinates) -->
+        <div class="relative size-2 flex items-center justify-center">
+          ${isSelected ? '<span class="animate-ping absolute size-4 bg-amber-400 opacity-75 pointer-events-none"></span>' : ''}
+          <div class="size-1.5 ${isSelected ? 'bg-amber-500 ring-2 ring-white' : 'bg-fantas-900/60'}"></div>
+        </div>
+      `;
+
+      el.appendChild(pinInner);
+
+      // 💡 Popup with z-[100] so text and dialog always render above markers
+      const popup = new Popup({
+        offset: [0, isSelected ? -50 : -40],
+        closeButton: true,
+        closeOnClick: false,
+        className: 'font-sans',
+      }).setHTML(`
+        <div class="p-1 font-sans text-left max-w-[200px]">
+          <span class="text-[10px] font-axis-number-focus text-gray-400 block">${proj.contractId}</span>
+          <span class="text-xs font-axis-navbar-focus tracking-wide text-gray-900 leading-tight block mt-0.5 line-clamp-2">${proj.description}</span>
+          <span class="text-[11px] font-axis-number-focus text-emerald-700 block mt-1">₱${(proj.budget / 1_000_000).toFixed(2)}M</span>
+        </div>
+      `);
+
+      popup.on('open', () => {
+        const popupEl = popup.getElement();
+        if (popupEl) popupEl.style.zIndex = '100';
       });
 
-      map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
-      mapRef.current = map;
-
-      // 💡 Force immediate resize as soon as the DOM settles
-      map.on('load', () => {
-        map.resize();
+      // 💡 Only reset selection if the closed popup is still the currently active one
+      popup.on('close', () => {
+        if (selectedContractIdRef.current === proj.contractId) {
+          selectedContractIdRef.current = null;
+          setSelectedContractId(null);
+        }
       });
 
-      const timer = setTimeout(() => {
-        map.resize();
-      }, 150);
+      const marker = new Marker({
+        element: el,
+        anchor: 'bottom',
+      })
+        .setLngLat([proj.longitude, proj.latitude])
+        .setPopup(popup)
+        .addTo(map);
 
-      const resizeObserver = new ResizeObserver(() => {
-        map.resize();
+      // Handle marker click
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectedContractIdRef.current = proj.contractId;
+        setSelectedContractId(proj.contractId);
+        map.flyTo({ center: [proj.longitude, proj.latitude], zoom: 13, speed: 1.2 });
       });
-      resizeObserver.observe(mapContainerRef.current);
 
-      return () => {
-        clearTimeout(timer);
-        resizeObserver.disconnect();
-        map.remove();
-        mapRef.current = null;
-      };
-    }, []);
+      if (isSelected) {
+        marker.togglePopup();
+      }
 
-    // Synchronize Map Markers (With interactive lift on hover & sticking pin state on click/zoom)
-      useEffect(() => {
-        const map = mapRef.current;
-        if (!map) return;
-
-        // Clear existing markers
-        markersRef.current.forEach((m) => m.remove());
-        markersRef.current = [];
-
-        filteredProjects.forEach((proj) => {
-          if (!proj.latitude || !proj.longitude) return;
-
-          const isSelected = selectedContractId === proj.contractId;
-
-          // 💡 Physical Pin DOM structure with responsive hover lift and stuck states
-          const el = document.createElement('div');
-          el.className = `group relative flex flex-col items-center cursor-pointer select-none transition-transform duration-300 ${
-            isSelected
-              ? 'z-50 -translate-y-2.5 scale-110' // 📌 Stays stuck elevated when selected
-              : 'z-20 hover:-translate-y-2 hover:scale-105' // 🚀 Changes position on hover
-          }`;
-
-          el.innerHTML = `
-            <!-- 1. Elevated Pin Head -->
-            <div class="flex items-center justify-center size-6 border-2 transition-all duration-300 ${
-              isSelected
-                ? 'bg-fantas-900 border-amber-400 ring-4 ring-amber-400/30'
-                : 'bg-white border-fantas-800  group-hover:border-fantas-950'
-            }">
-              <div class="size-2 transition-colors duration-300 ${
-                isSelected ? 'bg-amber-400' : 'bg-fantas-800'
-              }"></div>
-            </div>
-
-            <!-- 2. Pin Stem Needle connecting head to GPS anchor point -->
-            <div class="w-0.5 h-2 transition-colors duration-300 ${
-              isSelected ? 'bg-fantas-900' : 'bg-fantas-800/40 group-hover:bg-fantas-900'
-            }"></div>
-
-            <!-- 3. Ground Anchor Dot (Always fixed to true coordinates) -->
-            <div class="relative size-2 flex items-center justify-center">
-              ${isSelected ? '<span class="animate-ping absolute size-4 bg-amber-400 opacity-75 pointer-events-none"></span>' : ''}
-              <div class="size-1.5 ${isSelected ? 'bg-amber-500 ring-2 ring-white' : 'bg-fantas-900/60'}"></div>
-            </div>
-          `;
-
-          // 💡 Popup configured with closeOnClick: false so it stays stuck open when zooming out
-          const popup = new Popup({
-            offset: [0, -32], // Floating above the elevated pin head
-            closeButton: true,
-            closeOnClick: false, // 💡 STAYS STUCK while zooming out or panning
-            className: 'font-sans shadow-lg',
-          }).setHTML(`
-            <div class="p-1 font-sans text-left max-w-[200px]">
-              <span class="text-[10px] font-axis-number-focus text-gray-400 block">${proj.contractId}</span>
-              <span class="text-xs font-axis-navbar-focus tracking-wide text-gray-900 leading-tight block mt-0.5 line-clamp-2">${proj.description}</span>
-              <span class="text-[11px] font-axis-number-focus text-emerald-700 block mt-1">₱${(proj.budget / 1_000_000).toFixed(2)}M</span>
-            </div>
-          `);
-
-          popup.on('close', () => {
-            if (selectedContractId === proj.contractId) {
-              setSelectedContractId(null);
-            }
-          });
-
-          const marker = new Marker({
-            element: el,
-            anchor: 'bottom', // Anchors the bottom ground dot to the exact coordinate
-          })
-            .setLngLat([proj.longitude, proj.latitude])
-            .setPopup(popup)
-            .addTo(map);
-
-          // Handle marker click
-          el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            setSelectedContractId(proj.contractId);
-            map.flyTo({ center: [proj.longitude, proj.latitude], zoom: 13, speed: 1.2 });
-          });
-
-          // 💡 If this project is currently selected, keep its popup stuck open
-          if (isSelected) {
-            marker.togglePopup();
-          }
-
-          markersRef.current.push(marker);
-        });
-      }, [filteredProjects, selectedContractId]);
+      markersRef.current.push(marker);
+    });
+  }, [filteredProjects, selectedContractId]);
 
   // Click row: fly map camera to project coordinates
   const handleRowClick = (proj: InfraProject) => {
+    selectedContractIdRef.current = proj.contractId;
     setSelectedContractId(proj.contractId);
     if (mapRef.current && proj.latitude && proj.longitude) {
       mapRef.current.flyTo({
@@ -258,42 +276,82 @@ export default function InfrastructureTab() {
 
       {/* 📊 SUMMARY TILES BAR */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-start">
-        <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
-          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
-            Filtered Projects
-          </span>
-          <span className="text-3xl font-axis-sng-indlab-value text-slate-900 tracking-wide mt-1">
-            {filteredProjects.length} <span className="text-xs font-axis-subtitular-focus uppercase tracking-wider text-slate-500">contracts</span>
-          </span>
-        </div>
+              {/* Filtered Projects */}
+              <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
+                <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
+                  Filtered Projects
+                </span>
+                <div className="overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.div
+                      key={filteredProjects.length}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="text-3xl font-axis-sng-indlab-value text-slate-900 tracking-wide mt-1"
+                    >
+                      {filteredProjects.length}{' '}
+                      <span className="text-xs font-axis-subtitular-focus uppercase tracking-wider text-slate-500">
+                        contracts
+                      </span>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
 
-        <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
-          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
-            Total Allocated Cost
-          </span>
-          <span className="text-3xl font-axis-sng-indlab-value text-fantas-800 tracking-wide mt-1">
-            {formatCompactCurrency(stats.totalBudget)}
-          </span>
-        </div>
+              {/* Total Allocated Cost */}
+              <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
+                <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
+                  Total Allocated Cost
+                </span>
+                <div className="overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.div
+                      key={stats.totalBudget}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="text-3xl font-axis-sng-indlab-value text-fantas-800 tracking-wide mt-1"
+                    >
+                      {formatCompactCurrency(stats.totalBudget)}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
 
-        <div className="flex flex-col justify-center bg-white border border-slate-200 py-4 px-4">
-          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
-            Average Progress
-          </span>
-          <span className="text-3xl font-axis-sng-indlab-value text-emerald-700 mt-1">
-            {stats.avgProgress}%
-          </span>
-        </div>
+              {/* Average Progress */}
+              <div className="flex flex-col justify-center bg-white border border-slate-200 py-4 px-4">
+                <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
+                  Average Progress
+                </span>
+                <div className="overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.div
+                      key={stats.avgProgress}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="text-3xl font-axis-sng-indlab-value text-emerald-700 mt-1"
+                    >
+                      {stats.avgProgress}%
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
 
-        <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
-          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
-            Auditing Agency
-          </span>
-          <span className="text-xl font-axis-sng-indlab-value tracking-wide text-slate-800 block mt-1 leading-tight font-sans">
-            Quezon 1st DEO (DPWH)
-          </span>
-        </div>
-      </div>
+              {/* Auditing Agency (Static) */}
+              <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
+                <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
+                  Auditing Agency
+                </span>
+                <span className="text-xl font-axis-sng-indlab-value tracking-wide text-slate-800 block mt-1 leading-tight font-sans">
+                  Quezon 1st DEO (DPWH)
+                </span>
+              </div>
+            </div>
 
       {/* 🗺️ MAPLIBRE GL GEOGRAPHIC STAGE */}
       <div className="w-full bg-white border border-slate-200 overflow-hidden relative ">
@@ -339,108 +397,99 @@ export default function InfrastructureTab() {
       </div>
 
       {/* 📋 THE TRANSPARENCY DATA TABLE */}
-      {/* 📋 THE TRANSPARENCY DATA TABLE */}
-            <div className="bg-white border border-slate-200 overflow-hidden ">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-axis-navbar-focus uppercase tracking-wider text-[11px]">
-                      <th className="py-3 px-4 w-32 font-semibold">Contract ID</th>
-                      <th className="py-3 px-4 min-w-[280px] font-semibold">Scope / Description</th>
-                      <th className="py-3 px-4 w-28 font-semibold">Category</th>
-                      <th className="py-3 px-4 min-w-[180px] font-semibold">Contractor (PCAB Lic.)</th>
-                      <th className="py-3 px-4 w-36 text-right font-semibold">Approved Budget</th>
-                      <th className="py-3 px-4 w-44 text-left font-semibold">Status / Progress</th>
-                      <th className="py-3 px-4 w-28 text-center font-semibold">Fund Source</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-sans">
-                    {filteredProjects.map((proj) => {
-                      const isSelected = selectedContractId === proj.contractId;
-                      const catClass =
-                        CATEGORY_COLORS[proj.categoryClean || proj.category] ||
-                        "bg-slate-50 text-slate-700 border-slate-200";
+      <div className="bg-white border border-slate-200 overflow-hidden ">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-axis-navbar-focus uppercase tracking-wider text-[11px]">
+                <th className="py-3 px-4 w-32 font-semibold">Contract ID</th>
+                <th className="py-3 px-4 min-w-[280px] font-semibold">Scope / Description</th>
+                <th className="py-3 px-4 w-28 font-semibold">Category</th>
+                <th className="py-3 px-4 min-w-[180px] font-semibold">Contractor (PCAB Lic.)</th>
+                <th className="py-3 px-4 w-36 text-right font-semibold">Approved Budget</th>
+                <th className="py-3 px-4 w-44 text-left font-semibold">Status / Progress</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-sans">
+              {filteredProjects.map((proj) => {
+                const isSelected = selectedContractId === proj.contractId;
+                const catClass =
+                  CATEGORY_COLORS[proj.categoryClean || proj.category] ||
+                  "bg-slate-50 text-slate-700 border-slate-200";
 
-                      return (
-                        <tr
-                          key={proj.contractId}
-                          onClick={() => handleRowClick(proj)}
-                          className={`group cursor-pointer transition-all duration-150 border-l-4 ${
-                            isSelected
-                              ? 'border-l-amber-500 bg-amber-50/40 '
-                              : 'border-l-transparent hover:bg-slate-50/80 hover:border-l-slate-300'
-                          }`}
-                        >
-                          {/* Contract ID */}
-                          <td className="py-3.5 px-4 align-top font-axis-number-focus text-xs text-fantas-900 whitespace-nowrap">
-                            <span className="inline-block py-0.5 px-1.5 text-slate-700 font-axis-number-focus text-[12px]">
-                              {proj.contractId}
-                            </span>
-                          </td>
+                return (
+                  <tr
+                    key={proj.contractId}
+                    onClick={() => handleRowClick(proj)}
+                    className={`group cursor-pointer transition-all duration-150 border-l-4 ${
+                      isSelected
+                        ? 'border-l-amber-500 bg-amber-50/40 '
+                        : 'border-l-transparent hover:bg-slate-50/80 hover:border-l-slate-300'
+                    }`}
+                  >
+                    {/* Contract ID */}
+                    <td className="py-3.5 px-4 align-top font-axis-number-focus text-xs text-fantas-900 whitespace-nowrap">
+                      <span className="inline-block py-0.5 px-1.5 text-slate-700 font-axis-number-focus text-[12px]">
+                        {proj.contractId}
+                      </span>
+                    </td>
 
-                          {/* Description */}
-                          <td className="py-3.5 px-4 align-top max-w-sm">
-                            <span className="font-axis-medium text-slate-900 block leading-snug">
-                              {proj.description}
-                            </span>
-                            <span className="text-[11px] text-slate-400 block mt-1 font-axis-subtitular-focus uppercase tracking-wider">
-                              FY {proj.infraYear} • {proj.programName}
-                            </span>
-                          </td>
+                    {/* Description */}
+                    <td className="py-3.5 px-4 align-top max-w-sm">
+                      <span className="font-axis-medium text-slate-900 block leading-snug">
+                        {proj.description}
+                      </span>
+                      <span className="text-[11px] text-slate-400 block mt-1 font-axis-subtitular-focus uppercase tracking-wider">
+                        FY {proj.infraYear} • {proj.programName}
+                      </span>
+                    </td>
 
-                          {/* Category Badge */}
-                          <td className="py-3.5 px-4 align-top whitespace-nowrap">
-                            <span className={`inline-block px-2 py-0.5 text-[9px] uppercase font-axis-navbar-focus tracking-wider border ${catClass}`}>
-                              {(proj.categoryClean || proj.category).split(' ')[0]}
-                            </span>
-                          </td>
+                    {/* Category Badge */}
+                    <td className="py-3.5 px-4 align-top whitespace-nowrap">
+                      <span className={`inline-block px-2 py-0.5 text-[9px] uppercase font-axis-navbar-focus tracking-wider border ${catClass}`}>
+                        {(proj.categoryClean || proj.category).split(' ')[0]}
+                      </span>
+                    </td>
 
-                          {/* Contractor */}
-                          <td className="py-3.5 px-4 align-top">
-                            <span className="font-axis-medium text-slate-800 block text-[11px] leading-snug">
-                              {proj.contractorNameClean || proj.contractor}
-                            </span>
-                            {proj.contractorLicenseId && (
-                              <span className="text-[10px] font-axis-subtitular-focus text-slate-400 uppercase tracking-wider block mt-0.5">
-                                Lic. #{proj.contractorLicenseId}
-                              </span>
-                            )}
-                          </td>
+                    {/* Contractor */}
+                    <td className="py-3.5 px-4 align-top">
+                      <span className="font-axis-medium text-slate-800 block text-[11px] leading-snug">
+                        {proj.contractorNameClean || proj.contractor}
+                      </span>
+                      {proj.contractorLicenseId && (
+                        <span className="text-[10px] font-axis-subtitular-focus text-slate-400 uppercase tracking-wider block mt-0.5">
+                          Lic. #{proj.contractorLicenseId}
+                        </span>
+                      )}
+                    </td>
 
-                          {/* Budget */}
-                          <td className="py-3.5 px-4 align-top text-right font-axis-number-focus text-slate-900 whitespace-nowrap">
-                            ₱{proj.budget.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
-                          </td>
+                    {/* Budget */}
+                    <td className="py-3.5 px-4 align-top text-right font-axis-number-focus text-slate-900 whitespace-nowrap">
+                      ₱{proj.budget.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                    </td>
 
-                          {/* Status / Progress Bar */}
-                          <td className="py-3.5 px-4 align-top min-w-40">
-                            <div className="flex items-center justify-between text-[11px] font-axis-number-focus mb-1.5">
-                              <span className="text-emerald-700 font-axis-navbar-focus text-[11px] uppercase tracking-wider font-semibold">
-                                {proj.status}
-                              </span>
-                              <span className="text-slate-600 font-axis-number-focus text-[11px]">{proj.progress}%</span>
-                            </div>
-                            <div className="w-full h-1.5 bg-slate-100 overflow-hidden border border-slate-200/50">
-                              <div
-                                className="h-full bg-emerald-600 transition-all duration-300"
-                                style={{ width: `${proj.progress}%` }}
-                              />
-                            </div>
-                          </td>
-
-                          {/* Fund Source */}
-                          <td className="py-3.5 px-4 align-top text-center font-mono text-[10px] text-slate-500 whitespace-nowrap">
-                            <span className="inline-block px-2 py-0.5 bg-slate-50 border border-slate-200/70 rounded-xs">
-                              {proj.sourceOfFunds}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                    {/* Status / Progress Bar */}
+                    <td className="py-3.5 px-4 align-top min-w-40">
+                      <div className="flex items-center justify-between text-[11px] font-axis-number-focus mb-1.5">
+                        <span className="text-emerald-700 font-axis-navbar-focus text-[11px] uppercase tracking-wider font-semibold">
+                          {proj.status}
+                        </span>
+                        <span className="text-slate-600 font-axis-number-focus text-[11px]">{proj.progress}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-slate-100 overflow-hidden border border-slate-200/50">
+                        <div
+                          className="h-full bg-emerald-600 transition-all duration-300"
+                          style={{ width: `${proj.progress}%` }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
     </div>
   );

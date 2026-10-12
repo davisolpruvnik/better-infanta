@@ -1,14 +1,12 @@
 // src/components/transparency/ParticipationTab.tsx
-import { useState, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
-
-// 💡 1. Import your exported Python GeoJSON dataset
+import { useState, useMemo, useRef, useCallback, lazy } from 'react';
 import hexCartoJson from '@/data/geog/turnout-map/infanta_hex_precincts.json';
 
 const LazyIcon = lazy(() =>
   import('@iconify/react').then(module => ({ default: module.Icon }))
 );
 
-interface PrecinctFeatureProps {
+export interface PrecinctTurnoutProps {
   barangay: string;
   precinct_id: string;
   registered_voters: number;
@@ -16,7 +14,7 @@ interface PrecinctFeatureProps {
   turnout_pct: number;
 }
 
-interface BarangaySummary {
+export interface BarangayTurnoutSummary {
   barangay: string;
   totalPrecincts: number;
   registeredVoters: number;
@@ -28,7 +26,6 @@ const normalizeName = (name: string): string => {
   return name.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
 };
 
-// 💡 Fisher-Jenks Natural Breaks optimization (minimizes variance within classes)
 function getJenksBreaks(data: number[], nClasses = 5): number[] {
   const valid = data.filter(d => typeof d === 'number' && !isNaN(d) && d > 0);
   if (valid.length === 0) return [70, 75, 80, 85, 90, 95];
@@ -37,9 +34,7 @@ function getJenksBreaks(data: number[], nClasses = 5): number[] {
   const n = sorted.length;
   if (n <= nClasses) {
     const unique = Array.from(new Set(sorted));
-    while (unique.length < nClasses + 1) {
-      unique.push(unique[unique.length - 1] + 1);
-    }
+    while (unique.length < nClasses + 1) unique.push(unique[unique.length - 1] + 1);
     return unique;
   }
 
@@ -54,9 +49,7 @@ function getJenksBreaks(data: number[], nClasses = 5): number[] {
 
   let v = 0;
   for (let l = 2; l <= n; l++) {
-    let s1 = 0;
-    let s2 = 0;
-    let w = 0;
+    let s1 = 0, s2 = 0, w = 0;
     for (let m = 1; m <= l; m++) {
       const i3 = l - m + 1;
       const val = sorted[i3 - 1];
@@ -80,8 +73,7 @@ function getJenksBreaks(data: number[], nClasses = 5): number[] {
 
   const kclass: number[] = Array(nClasses + 1).fill(0);
   kclass[nClasses] = sorted[n - 1];
-  let count = nClasses;
-  let cur = n;
+  let count = nClasses, cur = n;
   while (count >= 2) {
     const id = mat1[cur][count] - 2;
     kclass[count - 1] = sorted[id];
@@ -95,58 +87,44 @@ function getJenksBreaks(data: number[], nClasses = 5): number[] {
 export default function ParticipationTab() {
   const geoJson = hexCartoJson as any;
 
-  // Selected precinct or barangay
-  const [selectedFeature, setSelectedFeature] = useState<PrecinctFeatureProps | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<PrecinctTurnoutProps | null>(null);
   const [hoveredPrecinctId, setHoveredPrecinctId] = useState<string | null>(null);
   const [hoveredBrgy, setHoveredBrgy] = useState<string | null>(null);
 
-  // Search & Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [colorblindMode, setColorblindMode] = useState(false);
   const [sortKey, setSortKey] = useState<'turnoutPct' | 'registeredVoters'>('turnoutPct');
 
-  // Pan & Zoom State
   const [transform, setTransform] = useState<{ x: number; y: number; k: number }>({ x: 0, y: 0, k: 1 });
   const [isPanning, setIsPanning] = useState(false);
 
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef<{ clientX: number; clientY: number; initX: number; initY: number; moved: boolean }>({
-    clientX: 0,
-    clientY: 0,
-    initX: 0,
-    initY: 0,
-    moved: false,
+    clientX: 0, clientY: 0, initX: 0, initY: 0, moved: false,
   });
-
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  // 💡 5-step color ramps (Fantas emerald vs. Accessible Viridis)
-  const colorRamp = useMemo(() => {
-    if (colorblindMode) {
-      return ['#fde725', '#5ec962', '#21918c', '#3b528b', '#440154'];
-    }
+  const turnoutColorRamp = useMemo(() => {
+    if (colorblindMode) return ['#fde725', '#5ec962', '#21918c', '#3b528b', '#440154'];
     return ['#feebd2', '#fdbf72', '#fb9618', '#b56603', '#553001'];
   }, [colorblindMode]);
 
-  // 💡 Compute dynamic Jenks natural break thresholds from all precinct tiles
   const jenksBreaks = useMemo(() => {
     if (!geoJson?.features) return [70, 75, 80, 85, 90, 95];
     const turnouts = geoJson.features.map((f: any) => Number(f.properties?.turnout_pct) || 0);
     return getJenksBreaks(turnouts, 5);
   }, [geoJson]);
 
-  // 💡 Dynamic color resolver based on Jenks intervals
   const getTurnoutColor = useCallback((pct: number) => {
-    if (pct <= jenksBreaks[1]) return colorRamp[0];
-    if (pct <= jenksBreaks[2]) return colorRamp[1];
-    if (pct <= jenksBreaks[3]) return colorRamp[2];
-    if (pct <= jenksBreaks[4]) return colorRamp[3];
-    return colorRamp[4];
-  }, [jenksBreaks, colorRamp]);
+    if (pct <= jenksBreaks[1]) return turnoutColorRamp[0];
+    if (pct <= jenksBreaks[2]) return turnoutColorRamp[1];
+    if (pct <= jenksBreaks[3]) return turnoutColorRamp[2];
+    if (pct <= jenksBreaks[4]) return turnoutColorRamp[3];
+    return turnoutColorRamp[4];
+  }, [jenksBreaks, turnoutColorRamp]);
 
-  // Compute Barangay-level aggregated summaries for table and cards
   const barangaySummaries = useMemo(() => {
-    const map = new Map<string, BarangaySummary>();
+    const map = new Map<string, BarangayTurnoutSummary>();
 
     geoJson.features.forEach((f: any) => {
       const p = f.properties || {};
@@ -181,13 +159,10 @@ export default function ParticipationTab() {
     return Array.from(map.values());
   }, [geoJson]);
 
-  // Mathematical Coordinate Projection Engine for Hexagons (800x600 canvas)
   const { projectedHexes } = useMemo(() => {
-    const width = 800;
-    const height = 600;
-    const padding = 45;
-
+    const width = 800, height = 600, padding = 45;
     const allCoords: [number, number][] = [];
+
     const extractCoords = (coords: any) => {
       if (!Array.isArray(coords)) return;
       if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
@@ -203,9 +178,7 @@ export default function ParticipationTab() {
 
     if (allCoords.length === 0) return { projectedHexes: [] };
 
-    let minX = Infinity, maxX = -Infinity;
-    let minY = Infinity, maxY = -Infinity;
-
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     allCoords.forEach(([x, y]) => {
       if (x < minX) minX = x;
       if (x > maxX) maxX = x;
@@ -215,25 +188,20 @@ export default function ParticipationTab() {
 
     const xDiff = maxX - minX || 1;
     const yDiff = maxY - minY || 1;
-
-    const availableWidth = width - padding * 2;
-    const availableHeight = height - padding * 2;
-    const scale = Math.min(availableWidth / xDiff, availableHeight / yDiff);
+    const scale = Math.min((width - padding * 2) / xDiff, (height - padding * 2) / yDiff);
 
     const pixelWidth = xDiff * scale;
     const pixelHeight = yDiff * scale;
-
     const offsetX = (width - pixelWidth) / 2;
     const offsetY = (height - pixelHeight) / 2;
 
-    const project = (x: number, y: number) => {
-      const px = offsetX + (x - minX) * scale;
-      const py = height - offsetY - (y - minY) * scale;
-      return [px, py];
-    };
+    const project = (x: number, y: number) => [
+      offsetX + (x - minX) * scale,
+      height - offsetY - (y - minY) * scale,
+    ];
 
     const hexes = geoJson.features.map((feature: any, idx: number) => {
-      const props: PrecinctFeatureProps = {
+      const props: PrecinctTurnoutProps = {
         barangay: feature.properties?.barangay || `Barangay ${idx + 1}`,
         precinct_id: String(feature.properties?.precinct_id || `P-${idx + 1}`),
         registered_voters: Number(feature.properties?.registered_voters) || 0,
@@ -241,21 +209,17 @@ export default function ParticipationTab() {
         turnout_pct: Number(feature.properties?.turnout_pct) || 0,
       };
 
-      const ringToD = (ring: [number, number][]) => {
-        return ring
-          .map((coord, rIdx) => {
-            const [px, py] = project(coord[0], coord[1]);
-            return `${rIdx === 0 ? 'M' : 'L'} ${px.toFixed(2)} ${py.toFixed(2)}`;
-          })
-          .join(' ') + ' Z';
-      };
+      const ringToD = (ring: [number, number][]) =>
+        ring.map((c, rIdx) => {
+          const [px, py] = project(c[0], c[1]);
+          return `${rIdx === 0 ? 'M' : 'L'} ${px.toFixed(2)} ${py.toFixed(2)}`;
+        }).join(' ') + ' Z';
 
       let pathD = '';
-      const geom = feature.geometry;
-      if (geom?.type === 'Polygon') {
-        pathD = geom.coordinates.map(ringToD).join(' ');
-      } else if (geom?.type === 'MultiPolygon') {
-        pathD = geom.coordinates.map((poly: any) => poly.map(ringToD).join(' ')).join(' ');
+      if (feature.geometry?.type === 'Polygon') {
+        pathD = feature.geometry.coordinates.map(ringToD).join(' ');
+      } else if (feature.geometry?.type === 'MultiPolygon') {
+        pathD = feature.geometry.coordinates.map((p: any) => p.map(ringToD).join(' ')).join(' ');
       }
 
       const pts: [number, number][] = [];
@@ -267,7 +231,7 @@ export default function ParticipationTab() {
         }
         coords.forEach(getPoints);
       };
-      if (geom?.coordinates) getPoints(geom.coordinates);
+      if (feature.geometry?.coordinates) getPoints(feature.geometry.coordinates);
 
       let fMinX = Infinity, fMaxX = -Infinity, fMinY = Infinity, fMaxY = -Infinity;
       pts.forEach(([px, py]) => {
@@ -277,27 +241,27 @@ export default function ParticipationTab() {
         if (py > fMaxY) fMaxY = py;
       });
 
-      const w = Math.max(fMaxX - fMinX, 20);
-      const h = Math.max(fMaxY - fMinY, 20);
-      const cx = fMinX + w / 2;
-      const cy = fMinY + h / 2;
-
       return {
         props,
         pathD,
-        bounds: { x: fMinX, y: fMinY, w, h, cx, cy },
+        bounds: {
+          x: fMinX,
+          y: fMinY,
+          w: Math.max(fMaxX - fMinX, 20),
+          h: Math.max(fMaxY - fMinY, 20),
+          cx: fMinX + Math.max(fMaxX - fMinX, 20) / 2,
+          cy: fMinY + Math.max(fMaxY - fMinY, 20) / 2,
+        },
       };
     });
 
     return { projectedHexes: hexes };
   }, [geoJson]);
 
-  // Smooth Zoom into a Barangay Cluster
   const zoomToBarangay = useCallback((targetBrgy: string) => {
     const cluster = projectedHexes.filter(
       h => normalizeName(h.props.barangay) === normalizeName(targetBrgy)
     );
-
     if (cluster.length > 0) {
       let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
       cluster.forEach(h => {
@@ -307,18 +271,10 @@ export default function ParticipationTab() {
         if (h.bounds.y + h.bounds.h > maxY) maxY = h.bounds.y + h.bounds.h;
       });
 
-      const w = maxX - minX;
-      const h = maxY - minY;
-      const cx = minX + w / 2;
-      const cy = minY + h / 2;
-
-      const targetK = Math.min(
-        Math.max(800 / (w + 140), 600 / (h + 140)),
-        3.5
-      );
-
-      const targetX = 400 - cx * targetK;
-      const targetY = 300 - cy * targetK;
+      const w = maxX - minX, h = maxY - minY;
+      const targetK = Math.min(Math.max(800 / (w + 140), 600 / (h + 140)), 3.5);
+      const targetX = 400 - (minX + w / 2) * targetK;
+      const targetY = 300 - (minY + h / 2) * targetK;
 
       if (isFinite(targetX) && isFinite(targetY) && isFinite(targetK)) {
         setTransform({ x: targetX, y: targetY, k: targetK });
@@ -326,7 +282,7 @@ export default function ParticipationTab() {
     }
   }, [projectedHexes]);
 
-  const handleSelectPrecinct = (props: PrecinctFeatureProps) => {
+  const handleSelectPrecinct = (props: PrecinctTurnoutProps) => {
     if (dragStartRef.current.moved) return;
     setSelectedFeature(props);
     zoomToBarangay(props.barangay);
@@ -339,17 +295,10 @@ export default function ParticipationTab() {
     setTransform({ x: 0, y: 0, k: 1 });
   };
 
-  // Pan / Drag Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
-    if (e.button !== 0) return;
-    if ((e.target as HTMLElement).closest('button')) return;
-
+    if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
     dragStartRef.current = {
-      clientX: e.clientX,
-      clientY: e.clientY,
-      initX: transform.x,
-      initY: transform.y,
-      moved: false,
+      clientX: e.clientX, clientY: e.clientY, initX: transform.x, initY: transform.y, moved: false,
     };
     isDraggingRef.current = true;
   };
@@ -362,16 +311,12 @@ export default function ParticipationTab() {
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
       dragStartRef.current.moved = true;
       setIsPanning(true);
-
       if (svgRef.current) {
         const rect = svgRef.current.getBoundingClientRect();
-        const scaleFactorX = 800 / (rect.width || 800);
-        const scaleFactorY = 600 / (rect.height || 600);
-
         setTransform(prev => ({
           ...prev,
-          x: dragStartRef.current.initX + dx * scaleFactorX,
-          y: dragStartRef.current.initY + dy * scaleFactorY,
+          x: dragStartRef.current.initX + dx * (800 / (rect.width || 800)),
+          y: dragStartRef.current.initY + dy * (600 / (rect.height || 600)),
         }));
       }
     }
@@ -386,22 +331,16 @@ export default function ParticipationTab() {
     setTransform(prev => {
       const newK = Math.min(Math.max(prev.k * factor, 0.7), 5.0);
       const ratio = newK / prev.k;
-      const newX = 400 - (400 - prev.x) * ratio;
-      const newY = 300 - (300 - prev.y) * ratio;
-      return { x: newX, y: newY, k: newK };
+      return { x: 400 - (400 - prev.x) * ratio, y: 300 - (300 - prev.y) * ratio, k: newK };
     });
   };
 
-  // Search filter
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
-    return barangaySummaries.filter(
-      b => b.barangay.toLowerCase().includes(q)
-    ).slice(0, 5);
+    return barangaySummaries.filter(b => b.barangay.toLowerCase().includes(q)).slice(0, 5);
   }, [searchQuery, barangaySummaries]);
 
-  // Selected barangay summary stats
   const activeBrgySummary = useMemo(() => {
     if (!selectedFeature) return null;
     return barangaySummaries.find(
@@ -409,7 +348,6 @@ export default function ParticipationTab() {
     ) || null;
   }, [selectedFeature, barangaySummaries]);
 
-  // Table sorted list
   const sortedTableData = useMemo(() => {
     return [...barangaySummaries].sort((a, b) => {
       if (sortKey === 'turnoutPct') return b.turnoutPct - a.turnoutPct;
@@ -417,28 +355,46 @@ export default function ParticipationTab() {
     });
   }, [barangaySummaries, sortKey]);
 
+  const handleDownloadJson = useCallback((type: 'barangays' | 'precincts') => {
+    const isPrecinct = type === 'precincts';
+    const data = isPrecinct ? geoJson : sortedTableData;
+    const filename = isPrecinct
+      ? 'infanta_hex_precincts_turnout.json'
+      : 'infanta_barangay_turnout_summary.json';
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [geoJson, sortedTableData]);
+
   return (
     <div className="space-y-8 animate-fade-in text-start select-none">
-
-      {/* 🔍 Search Input */}
-      <div className='flex flex-row xs:flex-col justify-between'>
+      {/* 🔍 Search Input & Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
-            How did People Vote
+            Voter Turnout & Participation
           </h2>
           <p className="text-md font-axis-subtitular-focus tracking-wide text-slate-500">
-            Explore the voting turnouts of Infantahins and the results from 2010 to 2025.
+            Analyze clustered precinct turnout and voter engagement across all 36 barangays of Infanta.
           </p>
         </div>
-        <div className="max-w-xl mb-2 relative">
-          <div className="flex flex-row gap-2.5 px-4 py-2 bg-white border border-slate-300 focus-within:border-slate-900 transition-all">
+
+        <div className="w-full md:w-80 relative">
+          <div className="flex flex-row items-center gap-2.5 px-3.5 py-2 bg-white border border-slate-300 focus-within:border-slate-900 transition-all">
             <LazyIcon name="lucide:search" className="h-4 w-4 text-slate-400 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search barangay for turnout analysis..."
-              className="w-full text-xs sm:text-sm font-axis-navbar-focus text-slate-800 placeholder-slate-400 bg-transparent outline-none"
+              placeholder="Search barangay..."
+              className="w-full text-xs font-axis-navbar-focus text-slate-800 placeholder-slate-400 bg-transparent outline-none"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} className="text-xs text-slate-400 hover:text-slate-700 cursor-pointer">
@@ -448,7 +404,7 @@ export default function ParticipationTab() {
           </div>
 
           {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 w-full mt-1.5 bg-white border border-slate-200 z-50 overflow-hidden divide-y divide-slate-100">
+            <div className="absolute top-full left-0 w-full mt-1.5 bg-white border border-slate-200 z-50 overflow-hidden divide-y divide-slate-100 shadow-sm">
               {searchResults.map(b => (
                 <button
                   key={b.barangay}
@@ -458,7 +414,7 @@ export default function ParticipationTab() {
                     if (firstTile) setSelectedFeature(firstTile.props);
                     setSearchQuery('');
                   }}
-                  className="w-full px-4 py-2.5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs font-axis-navbar-focus cursor-pointer"
+                  className="w-full px-3.5 py-2.5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs font-axis-navbar-focus cursor-pointer"
                 >
                   <span className="font-semibold text-slate-900">{b.barangay}</span>
                   <span className="text-slate-500 font-mono">{b.turnoutPct}% Turnout</span>
@@ -469,48 +425,25 @@ export default function ParticipationTab() {
         </div>
       </div>
 
-
       {/* 🗺️ Main 2-Column Cartogram Stage */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-7xl mx-auto">
-
-        {/* LEFT 8 COLS: Movable Hexagram Canvas */}
         <div className="lg:col-span-8 w-full bg-white border border-slate-200 flex flex-col p-4 relative select-none">
-
-          {/* Top-Left Pill Badge */}
           <div className="absolute top-6 left-6 z-20 pointer-events-none">
             <span className="inline-flex items-center gap-1.5 px-2 py-1.5 bg-[#0f172a] text-white text-[12px] font-axis-navbar-focus uppercase tracking-wider">
               <span>⬡</span> 1 Hex = 1 Clustered Precinct
             </span>
           </div>
 
-          {/* Top-Right Controls */}
           <div className="absolute top-6 right-6 z-20 flex flex-col gap-1.5">
-            <button
-              onClick={() => handleZoom(1.35)}
-              className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer"
-              aria-label="Zoom in"
-            >
-              +
-            </button>
-            <button
-              onClick={() => handleZoom(0.74)}
-              className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer"
-              aria-label="Zoom out"
-            >
-              −
-            </button>
+            <button onClick={() => handleZoom(1.35)} className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer">+</button>
+            <button onClick={() => handleZoom(0.74)} className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer">−</button>
             {(transform.k !== 1 || transform.x !== 0 || transform.y !== 0) && (
-              <button
-                onClick={handleResetView}
-                className="size-8 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer mt-1"
-                title="Reset view"
-              >
+              <button onClick={handleResetView} className="size-8 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer mt-1" title="Reset view">
                 <LazyIcon name="lucide:rotate-ccw" className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
-          {/* SVG Movable Canvas */}
           <div
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
@@ -519,17 +452,8 @@ export default function ParticipationTab() {
               isPanning ? 'cursor-grabbing' : 'cursor-grab'
             }`}
           >
-            <svg
-              ref={svgRef}
-              className="w-full h-full overflow-visible"
-              viewBox="0 0 800 600"
-            >
-              <g
-                style={{
-                  transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`,
-                  transition: isPanning ? 'none' : 'transform 600ms cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-              >
+            <svg ref={svgRef} className="w-full h-full overflow-visible" viewBox="0 0 800 600">
+              <g style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`, transition: isPanning ? 'none' : 'transform 600ms cubic-bezier(0.16, 1, 0.3, 1)' }}>
                 {projectedHexes.map((hex, idx) => {
                   const { props, pathD } = hex;
                   if (!pathD) return null;
@@ -544,14 +468,8 @@ export default function ParticipationTab() {
                       key={idx}
                       d={pathD}
                       onClick={() => handleSelectPrecinct(props)}
-                      onMouseEnter={() => {
-                        setHoveredPrecinctId(props.precinct_id);
-                        setHoveredBrgy(props.barangay);
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredPrecinctId(null);
-                        setHoveredBrgy(null);
-                      }}
+                      onMouseEnter={() => { setHoveredPrecinctId(props.precinct_id); setHoveredBrgy(props.barangay); }}
+                      onMouseLeave={() => { setHoveredPrecinctId(null); setHoveredBrgy(null); }}
                       fill={getTurnoutColor(props.turnout_pct)}
                       stroke={isSelected ? '#000000' : isHovered ? '#0f172a' : isSameBrgy ? '#334155' : '#ffffff'}
                       strokeWidth={isSelected ? 2.5 : isHovered ? 2.5 : isSameBrgy ? 1.5 : 1}
@@ -571,118 +489,79 @@ export default function ParticipationTab() {
           </div>
         </div>
 
-        {/* RIGHT 4 COLS: Electoral Inspector Card & Legend */}
+        {/* RIGHT 4 COLS: Turnout Inspector & Fisher-Jenks Legend */}
         <div className="lg:col-span-4 space-y-6 flex flex-col justify-start h-full pt-2 lg:pt-0">
-
           {selectedFeature ? (
-            /* STATE 1: PRECINCT SELECTED */
-            <div className="bg-white border border-slate-200 p-6 relative animate-fade-in text-start">
-              <button
-                onClick={handleResetView}
-                className="absolute right-4 top-4 size-7 bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
-                aria-label="Close inspector"
-              >
+            <div className="bg-white border border-slate-200 p-6 relative animate-fade-in text-start space-y-4">
+              <button onClick={handleResetView} className="absolute right-4 top-4 size-7 bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer" aria-label="Close">
                 ×
               </button>
 
-              <div className="border-b border-slate-100 pb-4 mb-4 pr-8">
-                <span className="text-xs font-axis-navbar-focus uppercase tracking-wider text-slate-400">
-                  Clustered Precinct
-                </span>
-                <h3 className="text-lg font-axis-wide-header uppercase text-slate-900 mt-1">
-                  Precinct {selectedFeature.precinct_id}
-                </h3>
-                <span className="text-sm uppercase tracking-wider text-fantas-50 bg-fantas-800 font-axis-navbar-focus px-2 py-1">
+              <div className="border-b border-slate-100 pb-3 pr-8">
+                <span className="text-xs font-axis-navbar-focus uppercase tracking-wider text-slate-400">Clustered Precinct</span>
+                <h3 className="text-lg font-axis-wide-header uppercase text-slate-900 mt-0.5">Precinct {selectedFeature.precinct_id}</h3>
+                <span className="text-xs uppercase tracking-wider text-fantas-50 bg-fantas-800 font-axis-navbar-focus px-2 py-0.5 inline-block mt-1">
                   BRGY. {selectedFeature.barangay}
                 </span>
               </div>
 
-              <div className="space-y-2">
-                <div>
-                  <div className='flex flex-row items-baseline gap-2'>
-                    <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">
-                      Precinct Turnout
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl tracking-wide font-axis-sng-indlab-value text-slate-900">
-                        {selectedFeature.turnout_pct}%
-                      </span>
-                    </div>
-                  </div>
+              <div className="space-y-3">
+                <div className="flex flex-row items-baseline gap-2">
+                  <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Precinct Turnout</span>
+                  <span className="text-2xl tracking-wide font-axis-sng-indlab-value text-slate-900">{selectedFeature.turnout_pct}%</span>
                 </div>
-                <div>
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 text-xs">
-                    <div className='flex flex-row items-baseline gap-2'>
-                      <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Actual Ballots</span>
-                      <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">
-                        {selectedFeature.actual_voters.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className='flex flex-row items-baseline gap-2'>
-                      <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Registered</span>
-                      <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">
-                        {selectedFeature.registered_voters.toLocaleString()}
-                      </span>
-                    </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs">
+                  <div className="flex flex-row items-baseline gap-2">
+                    <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Ballots</span>
+                    <span className="text-lg tracking-wide font-axis-sng-indlab-value text-slate-900">{selectedFeature.actual_voters.toLocaleString()}</span>
+                  </div>
+                  <div className="flex flex-row items-baseline gap-2">
+                    <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Registered</span>
+                    <span className="text-lg tracking-wide font-axis-sng-indlab-value text-slate-900">{selectedFeature.registered_voters.toLocaleString()}</span>
                   </div>
                 </div>
 
-                {/* Overall Barangay Summary Context */}
                 {activeBrgySummary && (
                   <div className="pt-3 border-t border-slate-100 text-xs">
-                    <div className="text-xs uppercase font-axis-navbar-focus tracking-wider text-fantas-800 mb-2">
-                      Barangay Total Context
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-1 sm:gap-4 pt-1 max-w-3xl">
-                      <div className="flex flex-row items-baseline gap-2">
-                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">{activeBrgySummary.barangay} Precincts</span>
-                        <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.totalPrecincts}</span>
+                    <div className="text-[10px] uppercase font-axis-navbar-focus tracking-wider text-fantas-800 mb-1">Barangay Total Context</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex flex-row items-baseline gap-1.5">
+                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Total Hexes:</span>
+                        <span className="text-sm font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.totalPrecincts}</span>
                       </div>
-                      <div className="flex flex-row items-baseline gap-2">
-                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Brgy Turnout</span>
-                        <span className="text-xl tracking-wide font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.turnoutPct}%</span>
+                      <div className="flex flex-row items-baseline gap-1.5">
+                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Avg Turnout:</span>
+                        <span className="text-sm font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.turnoutPct}%</span>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              <button
-                onClick={handleResetView}
-                className="w-full mt-6 py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-axis-navbar-focus uppercase tracking-wider transition-colors cursor-pointer"
-              >
+              <button onClick={handleResetView} className="w-full mt-4 py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-axis-navbar-focus uppercase tracking-wider transition-colors cursor-pointer">
                 Reset Map View
               </button>
             </div>
           ) : (
-            /* STATE 2: GENERAL LEGEND */
             <div className="bg-white border border-slate-200 p-6 text-start space-y-6">
               <div className="border-b border-slate-100 pb-3">
-                <h3 className="text-xl md:text-xl lg:text-xl sm:text-2xl font-axis-wide-header uppercase text-slate-900">
-                  Turnout Intensity
-                </h3>
+                <h3 className="text-xl font-axis-wide-header uppercase text-slate-900">Turnout Intensity</h3>
               </div>
 
-              {/* 💡 HORIZONTAL COLOR BAR LEGEND (Jenks Natural Breaks) */}
               <div>
                 <div className="flex items-center justify-between text-[12px] font-axis-subtitular-focus uppercase tracking-wider text-slate-500 pb-2">
                   <span>Lower Turnout</span>
                   <span>Higher Turnout</span>
                 </div>
 
-                {/* 5-Segment Horizontal Gradient/Bar */}
                 <div className="grid grid-cols-5 w-full h-4 overflow-hidden">
-                  {colorRamp.map((color, idx) => (
-                    <div
-                      key={idx}
-                      style={{ backgroundColor: color }}
-                      className="w-full h-full"
-                    />
+                  {turnoutColorRamp.map((color, idx) => (
+                    <div key={idx} style={{ backgroundColor: color }} className="w-full h-full" />
                   ))}
                 </div>
 
-                {/* Boundary Threshold Ticks */}
-                <div className="flex justify-between items-center text-[12px] font-axis-navbar-focus text-slate-600 pt-1.5ç proportional-nums">
+                <div className="flex justify-between items-center text-[12px] font-axis-navbar-focus text-slate-600 pt-1.5 proportional-nums">
                   <span>{jenksBreaks[0]?.toFixed(0)}%</span>
                   <span>{jenksBreaks[1]?.toFixed(0)}%</span>
                   <span>{jenksBreaks[2]?.toFixed(0)}%</span>
@@ -692,16 +571,11 @@ export default function ParticipationTab() {
                 </div>
 
                 <span className="text-[10px] uppercase tracking-wide font-axis-subtitular-focus text-slate-400 block pt-1">
-                  Classification through Fisher-Jenks Natural Breaks Method (5 bins)
+                  Fisher-Jenks Natural Breaks (5 bins)
                 </span>
               </div>
 
               <div className="pt-4 border-t border-slate-100 space-y-4">
-                <span className="text-xs text-slate-400 font-sans block leading-relaxed">
-                  Hover or click any tile to view precinct-level voter participation.
-                </span>
-
-                {/* Colorblind Toggle */}
                 <label className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
                   <span className="flex items-center gap-2 text-xs font-axis-navbar-focus text-slate-700">
                     <LazyIcon name="lucide:eye" className="h-4 w-4 text-slate-500" />
@@ -717,23 +591,39 @@ export default function ParticipationTab() {
               </div>
             </div>
           )}
-
         </div>
-
       </div>
 
-      {/* 📋 BOTTOM TABLE: Barangay Participation Rankings */}
+      {/* 📋 BOTTOM TABLE: Rankings & JSON Exporter */}
       <div className="space-y-3">
-        <div className="flex justify-between items-center bg-white p-3 border border-slate-200 text-xs">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 border border-slate-200 text-xs">
           <span className="text-slate-700 font-axis-navbar-focus uppercase tracking-wider">
-            Barangay Electoral Rankings ({sortedTableData.length} Barangays)
+            Barangay Turnout Rankings ({sortedTableData.length} Barangays)
           </span>
-          <div className="flex items-center gap-2">
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5 mr-1 sm:mr-3 border-r border-slate-200 pr-3">
+              <button
+                onClick={() => handleDownloadJson('barangays')}
+                className="px-2.5 py-1 text-[11px] uppercase tracking-wider font-axis-navbar-focus bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <LazyIcon name="lucide:download" className="h-3.5 w-3.5 text-slate-500" />
+                Summary JSON
+              </button>
+              <button
+                onClick={() => handleDownloadJson('precincts')}
+                className="px-2.5 py-1 text-[11px] uppercase tracking-wider font-axis-navbar-focus bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <LazyIcon name="lucide:file-json" className="h-3.5 w-3.5 text-slate-500" />
+                GeoJSON
+              </button>
+            </div>
+
             <span className="text-slate-400">Sort by:</span>
             <button
               onClick={() => setSortKey('turnoutPct')}
               className={`px-2.5 py-1 uppercase tracking-wider font-axis-navbar-focus cursor-pointer ${
-                sortKey === 'turnoutPct' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700'
+                sortKey === 'turnoutPct' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
               Turnout %
@@ -741,10 +631,10 @@ export default function ParticipationTab() {
             <button
               onClick={() => setSortKey('registeredVoters')}
               className={`px-2.5 py-1 uppercase tracking-wider font-axis-navbar-focus cursor-pointer ${
-                sortKey === 'registeredVoters' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700'
+                sortKey === 'registeredVoters' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
-              Numbers
+              Voters
             </button>
           </div>
         </div>
@@ -755,58 +645,46 @@ export default function ParticipationTab() {
               <tr>
                 <th className="py-2.5 px-4">#</th>
                 <th className="py-2.5 px-4">Barangay</th>
-                <th className="py-2.5 px-4">Precincts (Hexes)</th>
+                <th className="py-2.5 px-4">Precincts</th>
                 <th className="py-2.5 px-4">Registered</th>
                 <th className="py-2.5 px-4">Actual Voters</th>
                 <th className="py-2.5 px-4 min-w-[180px]">Turnout Percentage</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-axis-navbar-focus">
-              {sortedTableData.map((row, idx) => {
-                const isSelected = selectedFeature?.barangay === row.barangay;
-                const isHovered = hoveredBrgy === row.barangay;
-
-                return (
-                  <tr
-                    key={row.barangay}
-                    onMouseEnter={() => setHoveredBrgy(row.barangay)}
-                    onMouseLeave={() => setHoveredBrgy(null)}
-                    onClick={() => {
-                      zoomToBarangay(row.barangay);
-                      const tile = projectedHexes.find(h => normalizeName(h.props.barangay) === normalizeName(row.barangay));
-                      if (tile) setSelectedFeature(tile.props);
-                    }}
-                    className={`cursor-pointer transition-colors ${
-                      isSelected ? 'bg-emerald-50 text-sm' : isHovered ? 'bg-slate-50' : ''
-                    }`}
-                  >
-                    <td className="py-2.5 px-4 text-slate-400">{idx + 1}</td>
-                    <td className="py-2.5 px-4 tracking-wide text-sm text-slate-900">{row.barangay}</td>
-                    <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-600">{row.totalPrecincts}</td>
-                    <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-700">{row.registeredVoters.toLocaleString()}</td>
-                    <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-900">{row.actualVoters.toLocaleString()}</td>
-                    <td className="py-2.5 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-axis-number-focus text-sm text-slate-900 min-w-[45px]">{row.turnoutPct}%</span>
-                        <div className="flex-1 h-3 bg-slate-200 overflow-hidden">
-                          <div
-                            className="h-full"
-                            style={{
-                              width: `${row.turnoutPct}%`,
-                              backgroundColor: getTurnoutColor(row.turnoutPct),
-                            }}
-                          />
-                        </div>
+              {sortedTableData.map((row, idx) => (
+                <tr
+                  key={row.barangay}
+                  onMouseEnter={() => setHoveredBrgy(row.barangay)}
+                  onMouseLeave={() => setHoveredBrgy(null)}
+                  onClick={() => {
+                    zoomToBarangay(row.barangay);
+                    const tile = projectedHexes.find(h => normalizeName(h.props.barangay) === normalizeName(row.barangay));
+                    if (tile) setSelectedFeature(tile.props);
+                  }}
+                  className={`cursor-pointer transition-colors ${
+                    selectedFeature?.barangay === row.barangay ? 'bg-emerald-50 text-sm' : hoveredBrgy === row.barangay ? 'bg-slate-50' : ''
+                  }`}
+                >
+                  <td className="py-2.5 px-4 text-slate-400">{idx + 1}</td>
+                  <td className="py-2.5 px-4 tracking-wide text-sm font-semibold text-slate-900">{row.barangay}</td>
+                  <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-600">{row.totalPrecincts}</td>
+                  <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-700">{row.registeredVoters.toLocaleString()}</td>
+                  <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-900">{row.actualVoters.toLocaleString()}</td>
+                  <td className="py-2.5 px-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-axis-number-focus text-sm text-slate-900 min-w-[45px]">{row.turnoutPct}%</span>
+                      <div className="flex-1 h-3 bg-slate-200 overflow-hidden">
+                        <div className="h-full transition-all duration-300" style={{ width: `${row.turnoutPct}%`, backgroundColor: getTurnoutColor(row.turnoutPct) }} />
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </div>
-
     </div>
   );
 }

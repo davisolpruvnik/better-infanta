@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfrastructureTab from '@/components/transp/infra';
-import ParticipationTab from '@/components/transp/participation';
+import ElectoralContainer from '@/components/transp/electioncont';
 
 export default function TransparencyPage() {
   const { t } = useTranslation();
@@ -88,7 +88,7 @@ export default function TransparencyPage() {
       {/* 3. TAB CONTENT BODY */}
       <main className="container mx-auto px-6 max-w-7xl py-8">
         {activeTab === 'infrastructure' && <InfrastructureTab />}
-        {activeTab === 'participation' && <ParticipationTab />}
+        {activeTab === 'participation' && <ElectoralContainer />}
       </main>
     </div>
   );
