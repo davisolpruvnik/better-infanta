@@ -163,12 +163,12 @@ export default function InfrastructureTab() {
 
           el.innerHTML = `
             <!-- 1. Elevated Pin Head -->
-            <div class="flex items-center justify-center size-6 rounded-full border-2 transition-all duration-300 shadow-md ${
+            <div class="flex items-center justify-center size-6 border-2 transition-all duration-300 ${
               isSelected
                 ? 'bg-fantas-900 border-amber-400 ring-4 ring-amber-400/30'
-                : 'bg-white border-fantas-800 shadow-xs group-hover:border-fantas-950 group-hover:shadow-md'
+                : 'bg-white border-fantas-800  group-hover:border-fantas-950'
             }">
-              <div class="size-2 rounded-full transition-colors duration-300 ${
+              <div class="size-2 transition-colors duration-300 ${
                 isSelected ? 'bg-amber-400' : 'bg-fantas-800'
               }"></div>
             </div>
@@ -180,8 +180,8 @@ export default function InfrastructureTab() {
 
             <!-- 3. Ground Anchor Dot (Always fixed to true coordinates) -->
             <div class="relative size-2 flex items-center justify-center">
-              ${isSelected ? '<span class="animate-ping absolute size-4 rounded-full bg-amber-400 opacity-75 pointer-events-none"></span>' : ''}
-              <div class="size-1.5 rounded-full ${isSelected ? 'bg-amber-500 ring-2 ring-white' : 'bg-fantas-900/60'}"></div>
+              ${isSelected ? '<span class="animate-ping absolute size-4 bg-amber-400 opacity-75 pointer-events-none"></span>' : ''}
+              <div class="size-1.5 ${isSelected ? 'bg-amber-500 ring-2 ring-white' : 'bg-fantas-900/60'}"></div>
             </div>
           `;
 
@@ -193,9 +193,9 @@ export default function InfrastructureTab() {
             className: 'font-sans shadow-lg',
           }).setHTML(`
             <div class="p-1 font-sans text-left max-w-[200px]">
-              <span class="text-[9px] font-mono text-gray-400 block">${proj.contractId}</span>
-              <span class="text-xs font-bold text-gray-900 leading-tight block mt-0.5 line-clamp-2">${proj.description}</span>
-              <span class="text-[11px] font-bold text-emerald-700 block mt-1">₱${(proj.budget / 1_000_000).toFixed(2)}M</span>
+              <span class="text-[10px] font-axis-number-focus text-gray-400 block">${proj.contractId}</span>
+              <span class="text-xs font-axis-navbar-focus tracking-wide text-gray-900 leading-tight block mt-0.5 line-clamp-2">${proj.description}</span>
+              <span class="text-[11px] font-axis-number-focus text-emerald-700 block mt-1">₱${(proj.budget / 1_000_000).toFixed(2)}M</span>
             </div>
           `);
 
@@ -241,60 +241,69 @@ export default function InfrastructureTab() {
     }
   };
 
+  function formatCompactCurrency(value: number, currency = '₱') {
+    if (value === 0 || !value) return `${currency}0`;
+
+    const formatter = new Intl.NumberFormat('en-PH', {
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 2,
+    });
+
+    return `${currency}${formatter.format(value)}`;
+  }
+
   return (
     <div className="space-y-6 text-start select-none">
 
       {/* 📊 SUMMARY TILES BAR */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-start font-mono">
-        <div className="bg-white border border-slate-200 p-4">
-          <span className="text-[10px] uppercase text-slate-400 tracking-wider block font-sans">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-start">
+        <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
+          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
             Filtered Projects
           </span>
-          <span className="text-2xl font-bold text-slate-900 block mt-1">
-            {filteredProjects.length} <span className="text-xs font-normal text-slate-500">contracts</span>
+          <span className="text-3xl font-axis-sng-indlab-value text-slate-900 tracking-wide mt-1">
+            {filteredProjects.length} <span className="text-xs font-axis-subtitular-focus uppercase tracking-wider text-slate-500">contracts</span>
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4">
-          <span className="text-[10px] uppercase text-slate-400 tracking-wider block font-sans">
+        <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
+          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
             Total Allocated Cost
           </span>
-          <span className="text-2xl font-bold text-fantas-900 block mt-1">
-            ₱{(stats.totalBudget / 1_000_000).toFixed(2)}M
+          <span className="text-3xl font-axis-sng-indlab-value text-fantas-800 tracking-wide mt-1">
+            {formatCompactCurrency(stats.totalBudget)}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4">
-          <span className="text-[10px] uppercase text-slate-400 tracking-wider block font-sans">
+        <div className="flex flex-col justify-center bg-white border border-slate-200 py-4 px-4">
+          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
             Average Progress
           </span>
-          <span className="text-2xl font-bold text-emerald-700 block mt-1">
+          <span className="text-3xl font-axis-sng-indlab-value text-emerald-700 mt-1">
             {stats.avgProgress}%
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4">
-          <span className="text-[10px] uppercase text-slate-400 tracking-wider block font-sans">
+        <div className="flex flex-col justify-center bg-white border border-slate-200 p-4">
+          <span className="text-xs uppercase text-slate-400 tracking-wider font-axis-navbar-focus">
             Auditing Agency
           </span>
-          <span className="text-sm font-bold text-slate-800 block mt-1 leading-tight font-sans">
+          <span className="text-xl font-axis-sng-indlab-value tracking-wide text-slate-800 block mt-1 leading-tight font-sans">
             Quezon 1st DEO (DPWH)
           </span>
         </div>
       </div>
 
       {/* 🗺️ MAPLIBRE GL GEOGRAPHIC STAGE */}
-      <div className="w-full bg-white border border-slate-200 overflow-hidden relative shadow-2xs">
+      <div className="w-full bg-white border border-slate-200 overflow-hidden relative ">
         <div className="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="size-2 bg-emerald-500 animate-pulse" />
             <span className="text-xs font-axis-navbar-focus uppercase tracking-wider text-slate-700">
               Interactive Geotagged Public Works Map
             </span>
           </div>
-          <span className="text-[10px] font-mono text-slate-400">
-            OpenFreeMap Positron (Quezon 1st District)
-          </span>
         </div>
 
         <div ref={mapContainerRef} className="w-full h-80 sm:h-96" />
@@ -307,7 +316,7 @@ export default function InfrastructureTab() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-2.5 py-1 text-[11px] font-axis-navbar-focus uppercase tracking-wider transition-colors cursor-pointer rounded-xs border ${
+              className={`px-2.5 py-1 text-[11px] font-axis-navbar-focus uppercase tracking-wider transition-colors cursor-pointer border ${
                 selectedCategory === cat
                   ? 'bg-fantas-800 border-fantas-800 text-white'
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -330,95 +339,108 @@ export default function InfrastructureTab() {
       </div>
 
       {/* 📋 THE TRANSPARENCY DATA TABLE */}
-      <div className="bg-white border border-slate-200 overflow-x-auto shadow-2xs">
-        <table className="w-full text-left text-xs border-collapse">
-          <thead className="bg-slate-100 text-slate-700 font-axis-navbar-focus uppercase tracking-wider border-b border-slate-200">
-            <tr>
-              <th className="py-2.5 px-3">Contract ID</th>
-              <th className="py-2.5 px-3">Scope / Description</th>
-              <th className="py-2.5 px-3">Category</th>
-              <th className="py-2.5 px-3">Contractor (PCAB Lic.)</th>
-              <th className="py-2.5 px-3 text-right">Approved Budget</th>
-              <th className="py-2.5 px-3 text-center">Status / Progress</th>
-              <th className="py-2.5 px-3 text-center">Fund Source</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 font-sans">
-            {filteredProjects.map((proj) => {
-              const isSelected = selectedContractId === proj.contractId;
-              const catClass = CATEGORY_COLORS[proj.categoryClean || proj.category] || "bg-slate-50 text-slate-700 border-slate-200";
+      {/* 📋 THE TRANSPARENCY DATA TABLE */}
+            <div className="bg-white border border-slate-200 overflow-hidden ">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-axis-navbar-focus uppercase tracking-wider text-[11px]">
+                      <th className="py-3 px-4 w-32 font-semibold">Contract ID</th>
+                      <th className="py-3 px-4 min-w-[280px] font-semibold">Scope / Description</th>
+                      <th className="py-3 px-4 w-28 font-semibold">Category</th>
+                      <th className="py-3 px-4 min-w-[180px] font-semibold">Contractor (PCAB Lic.)</th>
+                      <th className="py-3 px-4 w-36 text-right font-semibold">Approved Budget</th>
+                      <th className="py-3 px-4 w-44 text-left font-semibold">Status / Progress</th>
+                      <th className="py-3 px-4 w-28 text-center font-semibold">Fund Source</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-sans">
+                    {filteredProjects.map((proj) => {
+                      const isSelected = selectedContractId === proj.contractId;
+                      const catClass =
+                        CATEGORY_COLORS[proj.categoryClean || proj.category] ||
+                        "bg-slate-50 text-slate-700 border-slate-200";
 
-              return (
-                <tr
-                  key={proj.contractId}
-                  onClick={() => handleRowClick(proj)}
-                  className={`cursor-pointer transition-colors ${
-                    isSelected ? 'bg-fantas-50/70 font-medium' : 'hover:bg-slate-50/70'
-                  }`}
-                >
-                  {/* Contract ID */}
-                  <td className="py-3 px-3 font-mono font-bold text-[11px] text-fantas-900 whitespace-nowrap">
-                    {proj.contractId}
-                  </td>
+                      return (
+                        <tr
+                          key={proj.contractId}
+                          onClick={() => handleRowClick(proj)}
+                          className={`group cursor-pointer transition-all duration-150 border-l-4 ${
+                            isSelected
+                              ? 'border-l-amber-500 bg-amber-50/40 '
+                              : 'border-l-transparent hover:bg-slate-50/80 hover:border-l-slate-300'
+                          }`}
+                        >
+                          {/* Contract ID */}
+                          <td className="py-3.5 px-4 align-top font-axis-number-focus text-xs text-fantas-900 whitespace-nowrap">
+                            <span className="inline-block py-0.5 px-1.5 text-slate-700 font-axis-number-focus text-[12px]">
+                              {proj.contractId}
+                            </span>
+                          </td>
 
-                  {/* Description */}
-                  <td className="py-3 px-3 max-w-sm">
-                    <span className="font-semibold text-slate-900 block leading-tight line-clamp-2">
-                      {proj.description}
-                    </span>
-                    <span className="text-[11px] text-slate-500 block mt-0.5 font-mono">
-                      FY {proj.infraYear} • {proj.programName}
-                    </span>
-                  </td>
+                          {/* Description */}
+                          <td className="py-3.5 px-4 align-top max-w-sm">
+                            <span className="font-axis-medium text-slate-900 block leading-snug">
+                              {proj.description}
+                            </span>
+                            <span className="text-[11px] text-slate-400 block mt-1 font-axis-subtitular-focus uppercase tracking-wider">
+                              FY {proj.infraYear} • {proj.programName}
+                            </span>
+                          </td>
 
-                  {/* Category Badge */}
-                  <td className="py-3 px-3 whitespace-nowrap">
-                    <span className={`inline-block px-2 py-0.5 text-[9px] uppercase font-axis-navbar-focus tracking-wider border rounded-xs ${catClass}`}>
-                      {(proj.categoryClean || proj.category).split(' ')[0]}
-                    </span>
-                  </td>
+                          {/* Category Badge */}
+                          <td className="py-3.5 px-4 align-top whitespace-nowrap">
+                            <span className={`inline-block px-2 py-0.5 text-[9px] uppercase font-axis-navbar-focus tracking-wider border ${catClass}`}>
+                              {(proj.categoryClean || proj.category).split(' ')[0]}
+                            </span>
+                          </td>
 
-                  {/* Contractor */}
-                  <td className="py-3 px-3">
-                    <span className="font-semibold text-slate-800 block text-[11px] leading-snug">
-                      {proj.contractorNameClean || proj.contractor}
-                    </span>
-                    {proj.contractorLicenseId && (
-                      <span className="text-[10px] font-mono text-slate-400 block">
-                        Lic. #{proj.contractorLicenseId}
-                      </span>
-                    )}
-                  </td>
+                          {/* Contractor */}
+                          <td className="py-3.5 px-4 align-top">
+                            <span className="font-axis-medium text-slate-800 block text-[11px] leading-snug">
+                              {proj.contractorNameClean || proj.contractor}
+                            </span>
+                            {proj.contractorLicenseId && (
+                              <span className="text-[10px] font-axis-subtitular-focus text-slate-400 uppercase tracking-wider block mt-0.5">
+                                Lic. #{proj.contractorLicenseId}
+                              </span>
+                            )}
+                          </td>
 
-                  {/* Budget */}
-                  <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">
-                    ₱{proj.budget.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
-                  </td>
+                          {/* Budget */}
+                          <td className="py-3.5 px-4 align-top text-right font-axis-number-focus text-slate-900 whitespace-nowrap">
+                            ₱{proj.budget.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                          </td>
 
-                  {/* Status / Progress Bar */}
-                  <td className="py-3 px-3 min-w-[120px]">
-                    <div className="flex items-center justify-between text-[10px] font-mono mb-1">
-                      <span className="text-emerald-700 font-bold uppercase">{proj.status}</span>
-                      <span>{proj.progress}%</span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-emerald-600 transition-all duration-300"
-                        style={{ width: `${proj.progress}%` }}
-                      />
-                    </div>
-                  </td>
+                          {/* Status / Progress Bar */}
+                          <td className="py-3.5 px-4 align-top min-w-40">
+                            <div className="flex items-center justify-between text-[11px] font-axis-number-focus mb-1.5">
+                              <span className="text-emerald-700 font-axis-navbar-focus text-[11px] uppercase tracking-wider font-semibold">
+                                {proj.status}
+                              </span>
+                              <span className="text-slate-600 font-axis-number-focus text-[11px]">{proj.progress}%</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-slate-100 overflow-hidden border border-slate-200/50">
+                              <div
+                                className="h-full bg-emerald-600 transition-all duration-300"
+                                style={{ width: `${proj.progress}%` }}
+                              />
+                            </div>
+                          </td>
 
-                  {/* Fund Source */}
-                  <td className="py-3 px-3 text-center font-mono text-[10px] text-slate-500 whitespace-nowrap">
-                    {proj.sourceOfFunds}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                          {/* Fund Source */}
+                          <td className="py-3.5 px-4 align-top text-center font-mono text-[10px] text-slate-500 whitespace-nowrap">
+                            <span className="inline-block px-2 py-0.5 bg-slate-50 border border-slate-200/70 rounded-xs">
+                              {proj.sourceOfFunds}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
     </div>
   );

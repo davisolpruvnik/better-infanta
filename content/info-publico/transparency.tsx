@@ -1,7 +1,6 @@
 // src/pages/TransparencyPage.tsx
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { INFANTA_BARANGAYS } from '@/data/censusDataInfanta';
 import InfrastructureTab from '@/components/transp/infra';
 import ParticipationTab from '@/components/transp/participation';
 
@@ -9,9 +8,6 @@ export default function TransparencyPage() {
   const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<'infrastructure' | 'participation' | 'audits'>('infrastructure');
-
-  // Quick summary aggregates
-  const totalBarangays = useMemo(() => INFANTA_BARANGAYS.length, []);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
