@@ -23,10 +23,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
     visualizer({
-      open: true,
+      open: false,
       filename: 'bundle-analysis.html',
       gzipSize: true,
-      brotliSize: true,
+      brotliSize: false,
     }),
   ],
   // 💡 Injects the commit hash into import.meta.env.VITE_COMMIT_HASH
@@ -42,5 +42,6 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+    allowedHosts: ['.trycloudflare.com']
   },
 });
