@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import Section from '../ui/Section';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Link } from 'react-router-dom';
-import { serviceCategories } from '../../data/yamlLoader';
+import servicesData from '../../data/services.json';
 import { resolveIconName } from '@/lib/icon-resolver';
 
 interface Subcategory {
@@ -29,8 +29,6 @@ interface ServicesSectionProps {
 }
 
 export default function ServicesSection({
-  title,
-  description,
   previewLimit = 3,
 }: ServicesSectionProps) {
   const { t } = useTranslation();
@@ -50,8 +48,9 @@ export default function ServicesSection({
     );
   };
 
-  const allCategories = (serviceCategories.categories || []) as Category[];
-  const displayedCategories = allCategories.slice(0, previewLimit);
+    // 💡 2. FIXED: Reads from servicesData.categories
+    const allCategories = ((servicesData as any)?.categories || []) as Category[];
+    const displayedCategories = allCategories.slice(0, previewLimit);
 
   return (
     <Section>

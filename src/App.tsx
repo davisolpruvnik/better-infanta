@@ -16,8 +16,8 @@ import Home from './pages/Home';
 const Services = lazy(() => import('./pages/Services'));
 const Document = lazy(() => import('./pages/Document'));
 const Government = lazy(() => import('./pages/Government'));
-const StatsPage = lazy(() => import('../content/info-publico/statistics'));
-const TransparencyPage = lazy(() => import('../content/info-publico/transparency'));
+const StatsPage = lazy(() => import('./components/info-publico/statistics'));
+const TransparencyPage = lazy(() => import('./components/info-publico/transparency'));
 const Municipio = lazy(() => import('./pages/govs-detail/municipio'));
 const Barangays = lazy(() => import('./pages/govs-detail/barangays'));
 
