@@ -92,14 +92,6 @@ export default function SEO({
         sizes="16x16"
         href="/favicon-16x16.png"
       />
-
-      {/* Preconnect to external domains */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin="anonymous"
-      />
     </Helmet>
   );
 }

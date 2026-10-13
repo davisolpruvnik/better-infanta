@@ -291,7 +291,7 @@ export default function TideCard({ className = '' }: { className?: string }) {
   if (loading) {
     return (
       <div className="w-full lg:w-96 xl:w-[420px] border-t-2 border-b-2 border-fantas-900/90 py-10 px-4 flex flex-col justify-center items-center bg-transparent">
-        <span className="text-xs uppercase tracking-widest text-fantas-900/80 animate-pulse font-mono">
+        <span className="text-xs uppercase tracking-widest text-fantas-900/80 animate-pulse font-axis-navbar-focus">
           Reading Tidal Data...
         </span>
       </div>

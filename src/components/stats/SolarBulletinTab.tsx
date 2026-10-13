@@ -209,7 +209,7 @@ export default function SolarBulletinTab() {
           <span className="text-[#2C241D]/80 text-wrap sm:text-nowrap leading-tight tracking-tight">
             Power to be used from a 1 kWp after losses:
           </span>
-          <span className="font-bold text-sm text-[#7c0902] shrink-0 font-mono">
+          <span className="font-bold text-sm text-[#7c0902] shrink-0 font-axis-number-focus">
             {usableKwh1kWp} kWh
           </span>
         </div>

@@ -90,7 +90,7 @@ export default function AuditsTab() {
             >
               <div>
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
-                  <span className="font-mono text-xl font-bold text-slate-900">
+                  <span className="font-axis-navbar-focus text-xl text-slate-900">
                     CY {report.year}
                   </span>
                   <span
@@ -108,7 +108,7 @@ export default function AuditsTab() {
                 </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 text-xs font-mono grid grid-cols-2 gap-2">
+              <div className="pt-4 mt-4 border-t border-slate-100 text-xs font-axis-navbar-focus grid grid-cols-2 gap-2">
                 <div>
                   <span className="text-[10px] text-slate-400 block uppercase">Disallowances</span>
                   <span className="font-bold text-slate-800">{report.disallowedTotal}</span>
@@ -143,16 +143,16 @@ export default function AuditsTab() {
             <tbody className="divide-y divide-slate-100 font-sans">
               {AUDIT_FINDINGS.map((item) => (
                 <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="py-3 px-4 font-mono text-[11px] text-slate-500 font-bold">
+                  <td className="py-3 px-4 font-axis-navbar-focus text-[11px] text-slate-500">
                     {item.id}
                   </td>
-                  <td className="py-3 px-4 font-mono text-slate-700">{item.year}</td>
+                  <td className="py-3 px-4 font-axis-navbar-focus text-slate-700">{item.year}</td>
                   <td className="py-3 px-4 font-semibold text-slate-900">{item.category}</td>
                   <td className="py-3 px-4 text-slate-700 leading-relaxed max-w-xs">{item.finding}</td>
                   <td className="py-3 px-4 text-slate-600 leading-relaxed max-w-xs">{item.actionTaken}</td>
                   <td className="py-3 px-4">
                     <span
-                      className={`px-2 py-0.5 text-[10px] font-bold uppercase font-mono ${
+                      className={`px-2 py-0.5 text-[10px] font-bold uppercase font-axis-navbar-focus ${
                         item.compliance === 'Fully Complied'
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-amber-100 text-amber-800'

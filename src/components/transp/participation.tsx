@@ -417,7 +417,7 @@ export default function ParticipationTab() {
                   className="w-full px-3.5 py-2.5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs font-axis-navbar-focus cursor-pointer"
                 >
                   <span className="font-semibold text-slate-900">{b.barangay}</span>
-                  <span className="text-slate-500 font-mono">{b.turnoutPct}% Turnout</span>
+                  <span className="text-slate-500 font-axis-navbar-focus">{b.turnoutPct}% Turnout</span>
                 </button>
               ))}
             </div>
