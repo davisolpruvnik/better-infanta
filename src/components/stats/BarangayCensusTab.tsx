@@ -25,7 +25,7 @@ import {
   getHistoricalTimeline,
 } from '../../utils/censusUtils';
 import { CENSUS_YEAR_END, CENSUS_YEAR_START, INFANTA_BARANGAYS } from '@/data/censusDataInfanta';
-import Town100PeopleChart from './crumbs/Town100PeopleChart';
+import Town100PeopleChart from './charts/Town100PeopleChart';
 
 export default function BarangayCensusTab() {
   const [barangaySearch, setBarangaySearch] = useState('');

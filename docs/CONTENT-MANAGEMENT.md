@@ -1,0 +1,208 @@
+# Content management
+
+This is for maintainers. It describes how content is structured, how to add and update it, and how to keep the portal in sync with its sources.
+
+For voice and structure of the content itself, see [CONTENT-GUIDE.md](./CONTENT-GUIDE.md).
+
+## 1. How services are structured
+
+Each service is a Markdown file — `.md` — stored under:
+
+```
+content/services/<category>/<service-slug>.md
+```
+
+The file has a block of fields at the top, delimited by `---`. The delimiters are borrowed from YAML frontmatter; the fields inside follow a YAML-like syntax. There is no narrative body below the closing `---`.
+
+Each category has an `index.yaml` that lists the services in the category and provides the metadata used for navigation.
+
+The categories are:
+
+```
+agriculture-fisheries/
+business/
+disaster-preparedness/
+education/
+environment/
+garbage-waste-disposal/
+health-services/
+housing-land-use/
+infrastructure-public-works/
+social-welfare/
+tourism/
+```
+
+A service `.md` file:
+
+```markdown
+---
+title: 'Business Permit and License'
+description: 'Issues the permit required to operate a business within Infanta.'
+fees: 'P2,500'
+fee_details: 'Varies by business classification. See the BPLO for the exact amount.'
+time: '3 d'
+time_details: 'Includes inspection. Times vary by queue.'
+office: 'Business Permits and Licensing Office'
+office_address: 'Ground Floor, Infanta Municipal Building, Poblacion 38, Infanta, Quezon'
+office_hours: 'Mon to Fri, 8AM-5PM (No Noon Break)'
+whocanavail:
+  - 'Business owners operating within Infanta'
+requirements_mandatory:
+  - 'DTI or SEC registration'
+  - 'Barangay clearance'
+requirements_business_specific:
+  - 'Proof of business location'
+requirements_renewal_only:
+  - 'Previous year''s permit'
+steps:
+  - "Submit the application form at Window 2. | BPLO staff will review the form and check the requirements."
+  - "> Present the original documents for verification."
+  - "Pay the assessed fees at the Municipal Treasurer's Office."
+  - "Return to BPLO with the receipt. | The permit is released the same day."
+postscripts:
+  - 'Renewals follow the same procedure but use a shorter form.'
+---
+```
+
+The file ends after the closing `---`.
+
+### Why the file is `.md` and not `.yaml`
+
+The service files carry fields — `description`, `steps` — that frequently run to full sentences with punctuation that YAML handles awkwardly. Markdown is the format the content is written in; the `---` delimiters are borrowed for the field block at the top. The extension `.md` matches what is actually written, and it keeps the door open for a future body below the closing `---` if the content needs one.
+
+### Field quoting rules
+
+YAML-like syntax breaks on a handful of characters. Follow these rules:
+
+- **Quote every string with single quotes.** `'P90'`, `'Barangay clearance'`. This avoids almost every parse failure.
+- **If a value contains a single quote, double it.** `'Previous year''s permit'`. This is the YAML convention and it is also what most Markdown parsers accept.
+- **Do not use double quotes around a value that contains a double quote.** Rewrite the sentence.
+- **A colon followed by a space inside a value must be quoted.** `'Office of the Municipal Agriculturist: Crops/Fishery Section'` is fine because it is quoted. Unquoted, the parser will treat the colon as a new key.
+- **A leading `-`, `#`, or `>` must be quoted.** Otherwise the parser reads it as a list marker, a comment, or a block scalar.
+- **A `#` not at the start of a line is fine unquoted** in most parsers, but quote it anyway to be safe.
+
+The safest habit is: quote every string. There is no cost to it, and it eliminates an entire class of bugs.
+
+## 2. How to add a new service
+
+1. Confirm the service exists in the current Citizen's Charter. Do not add a service based on a phone call or a rumor.
+2. Create the `.md` file under the correct category.
+3. Fill in the field block. Every required field must be filled. If the charter does not specify a value, write `Hindi tinukoy sa charter` — do not leave the field blank and do not guess.
+4. Follow the field reference in [CONTENT-GUIDE.md](./CONTENT-GUIDE.md), section 2, and the requirements and steps conventions in sections 3 and 4.
+5. Add the service to the category's `index.yaml`.
+6. Run `npm run dev` and open the service page. Verify that the metadata block (fees, time, office, who can avail) and the requirements groups render at the top of the page.
+7. Commit with a message that names the service and the charter issue date.
+
+## 3. How government data is structured
+
+Government data lives under `content/government/lgu/`:
+
+```
+executive.json          — executive officials
+executive.md            — narrative
+index.yaml              — index
+brgys/index.yaml        — barangay list
+depts/index.yaml        — departments
+legislative/index.yaml  — council composition
+municipio/index.yaml    — municipal profile
+```
+
+Each `index.yaml` is the source of truth. The `.json` files are generated by `npm run convert-yaml` where needed.
+
+To update an official (new mayor, new councilor), edit the relevant `index.yaml` and re-run the conversion. Do not edit a generated `.json` directly.
+
+## 4. How to update financial data
+
+BLGF publishes the prior year's Statement of Receipts and Expenditures once a year, typically mid-year.
+
+Workflow:
+
+1. Download the current SRE for Infanta from BLGF.
+2. Verify the figures against the prior year's file. If a prior year was restated, note the restatement.
+3. Update `src/data/` with the new year.
+4. Run `npm run build` and open the finance section. Verify the timeseries.
+5. Update the "last updated" date on the finance page.
+6. Commit with the reporting year in the message.
+
+Do not interpolate missing years. If BLGF did not publish a year, the chart shows a gap.
+
+## 5. How to update census data
+
+PSA publishes census data every five years. Mid-decade estimates are published separately and are not currently ingested.
+
+Workflow:
+
+1. Download the current census results for Infanta and its barangays.
+2. Update `src/data/censusDataInfanta.ts`.
+3. Check the "Town of 100 People" visualization. The proportions change when the underlying numbers change, and the surrounding copy may need review.
+4. Run `npm run build` and verify the statistics section.
+5. Commit with the census year in the message.
+
+Do not extrapolate between census years. If a year is missing, the chart shows a gap.
+
+## 6. How solar and tide data refresh
+
+Both are automatic. No maintainer action is required.
+
+- **Solar.** The GTI API is called on demand when a user runs the calculator. Battery parameters and derating assumptions are hardcoded in `src/lib/solar-calc.ts`. If CSIRO–SEDA Malaysia or the Journal of Power Sources publishes revised parameters, update the constants and note the change in [CHANGELOG.md](./CHANGELOG.md).
+- **Tides.** The marine API is called on load. The reference station (Port of Real, 660/024) is hardcoded. If a better reference station becomes available, update the constant and the disclaimer text together.
+
+If either API changes its response format, the hook that consumes it (`useSolarForecast.ts`, `useWeather.ts`) will fail. Check the API changelog before assuming the portal is broken.
+
+## 7. How to update the Citizen's Charter reference
+
+When the LGU publishes a new charter:
+
+1. Diff the new charter against the previous issue. Identify added, removed, and modified services.
+2. For each added service, follow the workflow in section 2.
+3. For each removed service, remove the `.md` file and the entry in `index.yaml`. Do not archive removed services in the live tree — the portal reflects the current charter.
+4. For each modified service, update the field block. If a fee, processing time, office, or requirement changed, update it.
+5. Update the source line on every service page.
+6. Update the citation on the home page and any index page that cites the charter.
+7. Commit with a message that names the new issue date and summarizes the diff.
+
+This is the largest recurring maintenance task. Budget for it.
+
+## 8. Review cadence and checklists
+
+**Monthly.**
+- Check that tide and weather APIs are returning data.
+- Check for broken links in service pages.
+
+**Annually.**
+- Update financial data after BLGF publishes.
+- Update executive and legislative rosters after elections or appointments.
+
+**Every five years.**
+- Update census data after PSA publishes.
+
+**On new charter issue.**
+- Full diff and update. See section 7.
+
+**Checklist for any content PR.**
+
+- [ ] Every required field is filled (no blanks, no guesses).
+- [ ] `fees` and `time` use the compact formats.
+- [ ] `fee_details` and `time_details` are present when the base value is not enough on its own.
+- [ ] At least one `requirements_<label>` field is present.
+- [ ] Requirement labels are sentence case, conversational, and match the charter's own categories.
+- [ ] `requirements_mandatory` is the first requirements field if it is present.
+- [ ] The plain `requirements` form and the categorized form are not mixed in the same document.
+- [ ] Steps do not number themselves in the text.
+- [ ] Each `|` puts supporting detail after the pipe and a required action before it.
+- [ ] `>` and `>>` are used only for nesting, not for emphasis.
+- [ ] Nesting does not exceed `>>`.
+- [ ] No step contains more than one pipe.
+- [ ] `postscripts` is present only when there is a real final note.
+- [ ] Source is named and dated.
+- [ ] The metadata block renders at the top of the page.
+- [ ] Voice matches the register (conversational Tagalog, no marketing).
+- [ ] Page renders correctly in EN and FIL.
+
+## See also
+
+- [CONTENT-GUIDE.md](./CONTENT-GUIDE.md) — voice and structure
+- [DATA.md](./DATA.md) — sources and limitations
+- [DEPLOYMENT-GUIDE.md](./DEPLOYMENT-GUIDE.md) — build and deploy
+
+Reply **"continue"** for `DEPLOYMENT-GUIDE.md`.

@@ -1,7 +1,7 @@
 // src/components/transparency/ElectoralContainer.tsx
 import { useState, lazy, Suspense } from 'react';
-import ParticipationTab from './crumbs/participation';
-import ElectionResultsTab from './crumbs/electionres';
+import ParticipationTab from './components/participation';
+import ElectionResultsTab from './components/electionres';
 
 const Iconify = lazy(() =>
   import('@iconify/react').then(module => ({ default: module.Icon }))

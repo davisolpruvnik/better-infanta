@@ -1,11 +1,7 @@
-// src/components/transparency/ParticipationTab.tsx
-import { useState, useMemo, useRef, useCallback, lazy } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import hexCartoJson from '@/data/geog/turnout-map/infanta_hex_precincts.json';
-
-const LazyIcon = lazy(() =>
-  import('@iconify/react').then(module => ({ default: module.Icon }))
-);
-
+import { BarangaySearchBar, CartogramStage, normalizeName, useCartogramPanZoom, useGeoJsonProjection } from './CartogramStage';
+import LazyIcon from '@/components/ui/Lazying';
 export interface PrecinctTurnoutProps {
   barangay: string;
   precinct_id: string;
@@ -21,10 +17,6 @@ export interface BarangayTurnoutSummary {
   actualVoters: number;
   turnoutPct: number;
 }
-
-const normalizeName = (name: string): string => {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
-};
 
 function getJenksBreaks(data: number[], nClasses = 5): number[] {
   const valid = data.filter(d => typeof d === 'number' && !isNaN(d) && d > 0);
@@ -90,19 +82,33 @@ export default function ParticipationTab() {
   const [selectedFeature, setSelectedFeature] = useState<PrecinctTurnoutProps | null>(null);
   const [hoveredPrecinctId, setHoveredPrecinctId] = useState<string | null>(null);
   const [hoveredBrgy, setHoveredBrgy] = useState<string | null>(null);
-
-  const [searchQuery, setSearchQuery] = useState('');
   const [colorblindMode, setColorblindMode] = useState(false);
   const [sortKey, setSortKey] = useState<'turnoutPct' | 'registeredVoters'>('turnoutPct');
 
-  const [transform, setTransform] = useState<{ x: number; y: number; k: number }>({ x: 0, y: 0, k: 1 });
-  const [isPanning, setIsPanning] = useState(false);
+  const {
+    transform,
+    setTransform,
+    isPanning,
+    svgRef,
+    hasMoved,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handleZoom,
+    handleResetTransform,
+  } = useCartogramPanZoom();
 
-  const isDraggingRef = useRef(false);
-  const dragStartRef = useRef<{ clientX: number; clientY: number; initX: number; initY: number; moved: boolean }>({
-    clientX: 0, clientY: 0, initX: 0, initY: 0, moved: false,
-  });
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  // 🧮 1-line coordinate projection hook
+  const { projectedFeatures, zoomToBarangay } = useGeoJsonProjection<PrecinctTurnoutProps>(
+    geoJson,
+    useCallback((p: any, idx: number) => ({
+      barangay: p.barangay || `Barangay ${idx + 1}`,
+      precinct_id: String(p.precinct_id || `P-${idx + 1}`),
+      registered_voters: Number(p.registered_voters) || 0,
+      actual_voters: Number(p.actual_voters) || 0,
+      turnout_pct: Number(p.turnout_pct) || 0,
+    }), [])
+  );
 
   const turnoutColorRamp = useMemo(() => {
     if (colorblindMode) return ['#fde725', '#5ec962', '#21918c', '#3b528b', '#440154'];
@@ -159,187 +165,18 @@ export default function ParticipationTab() {
     return Array.from(map.values());
   }, [geoJson]);
 
-  const { projectedHexes } = useMemo(() => {
-    const width = 800, height = 600, padding = 45;
-    const allCoords: [number, number][] = [];
-
-    const extractCoords = (coords: any) => {
-      if (!Array.isArray(coords)) return;
-      if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
-        allCoords.push([coords[0], coords[1]]);
-        return;
-      }
-      coords.forEach(extractCoords);
-    };
-
-    geoJson.features.forEach((f: any) => {
-      if (f.geometry?.coordinates) extractCoords(f.geometry.coordinates);
-    });
-
-    if (allCoords.length === 0) return { projectedHexes: [] };
-
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    allCoords.forEach(([x, y]) => {
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-    });
-
-    const xDiff = maxX - minX || 1;
-    const yDiff = maxY - minY || 1;
-    const scale = Math.min((width - padding * 2) / xDiff, (height - padding * 2) / yDiff);
-
-    const pixelWidth = xDiff * scale;
-    const pixelHeight = yDiff * scale;
-    const offsetX = (width - pixelWidth) / 2;
-    const offsetY = (height - pixelHeight) / 2;
-
-    const project = (x: number, y: number) => [
-      offsetX + (x - minX) * scale,
-      height - offsetY - (y - minY) * scale,
-    ];
-
-    const hexes = geoJson.features.map((feature: any, idx: number) => {
-      const props: PrecinctTurnoutProps = {
-        barangay: feature.properties?.barangay || `Barangay ${idx + 1}`,
-        precinct_id: String(feature.properties?.precinct_id || `P-${idx + 1}`),
-        registered_voters: Number(feature.properties?.registered_voters) || 0,
-        actual_voters: Number(feature.properties?.actual_voters) || 0,
-        turnout_pct: Number(feature.properties?.turnout_pct) || 0,
-      };
-
-      const ringToD = (ring: [number, number][]) =>
-        ring.map((c, rIdx) => {
-          const [px, py] = project(c[0], c[1]);
-          return `${rIdx === 0 ? 'M' : 'L'} ${px.toFixed(2)} ${py.toFixed(2)}`;
-        }).join(' ') + ' Z';
-
-      let pathD = '';
-      if (feature.geometry?.type === 'Polygon') {
-        pathD = feature.geometry.coordinates.map(ringToD).join(' ');
-      } else if (feature.geometry?.type === 'MultiPolygon') {
-        pathD = feature.geometry.coordinates.map((p: any) => p.map(ringToD).join(' ')).join(' ');
-      }
-
-      const pts: [number, number][] = [];
-      const getPoints = (coords: any) => {
-        if (!Array.isArray(coords)) return;
-        if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
-          pts.push(project(coords[0], coords[1]) as [number, number]);
-          return;
-        }
-        coords.forEach(getPoints);
-      };
-      if (feature.geometry?.coordinates) getPoints(feature.geometry.coordinates);
-
-      let fMinX = Infinity, fMaxX = -Infinity, fMinY = Infinity, fMaxY = -Infinity;
-      pts.forEach(([px, py]) => {
-        if (px < fMinX) fMinX = px;
-        if (px > fMaxX) fMaxX = px;
-        if (py < fMinY) fMinY = py;
-        if (py > fMaxY) fMaxY = py;
-      });
-
-      return {
-        props,
-        pathD,
-        bounds: {
-          x: fMinX,
-          y: fMinY,
-          w: Math.max(fMaxX - fMinX, 20),
-          h: Math.max(fMaxY - fMinY, 20),
-          cx: fMinX + Math.max(fMaxX - fMinX, 20) / 2,
-          cy: fMinY + Math.max(fMaxY - fMinY, 20) / 2,
-        },
-      };
-    });
-
-    return { projectedHexes: hexes };
-  }, [geoJson]);
-
-  const zoomToBarangay = useCallback((targetBrgy: string) => {
-    const cluster = projectedHexes.filter(
-      h => normalizeName(h.props.barangay) === normalizeName(targetBrgy)
-    );
-    if (cluster.length > 0) {
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      cluster.forEach(h => {
-        if (h.bounds.x < minX) minX = h.bounds.x;
-        if (h.bounds.x + h.bounds.w > maxX) maxX = h.bounds.x + h.bounds.w;
-        if (h.bounds.y < minY) minY = h.bounds.y;
-        if (h.bounds.y + h.bounds.h > maxY) maxY = h.bounds.y + h.bounds.h;
-      });
-
-      const w = maxX - minX, h = maxY - minY;
-      const targetK = Math.min(Math.max(800 / (w + 140), 600 / (h + 140)), 3.5);
-      const targetX = 400 - (minX + w / 2) * targetK;
-      const targetY = 300 - (minY + h / 2) * targetK;
-
-      if (isFinite(targetX) && isFinite(targetY) && isFinite(targetK)) {
-        setTransform({ x: targetX, y: targetY, k: targetK });
-      }
-    }
-  }, [projectedHexes]);
-
   const handleSelectPrecinct = (props: PrecinctTurnoutProps) => {
-    if (dragStartRef.current.moved) return;
+    if (hasMoved()) return;
     setSelectedFeature(props);
-    zoomToBarangay(props.barangay);
+    zoomToBarangay(props.barangay, setTransform);
   };
 
   const handleResetView = () => {
     setSelectedFeature(null);
     setHoveredBrgy(null);
     setHoveredPrecinctId(null);
-    setTransform({ x: 0, y: 0, k: 1 });
+    handleResetTransform();
   };
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
-    dragStartRef.current = {
-      clientX: e.clientX, clientY: e.clientY, initX: transform.x, initY: transform.y, moved: false,
-    };
-    isDraggingRef.current = true;
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
-    const dx = e.clientX - dragStartRef.current.clientX;
-    const dy = e.clientY - dragStartRef.current.clientY;
-
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-      dragStartRef.current.moved = true;
-      setIsPanning(true);
-      if (svgRef.current) {
-        const rect = svgRef.current.getBoundingClientRect();
-        setTransform(prev => ({
-          ...prev,
-          x: dragStartRef.current.initX + dx * (800 / (rect.width || 800)),
-          y: dragStartRef.current.initY + dy * (600 / (rect.height || 600)),
-        }));
-      }
-    }
-  };
-
-  const handlePointerUp = () => {
-    isDraggingRef.current = false;
-    setIsPanning(false);
-  };
-
-  const handleZoom = (factor: number) => {
-    setTransform(prev => {
-      const newK = Math.min(Math.max(prev.k * factor, 0.7), 5.0);
-      const ratio = newK / prev.k;
-      return { x: 400 - (400 - prev.x) * ratio, y: 300 - (300 - prev.y) * ratio, k: newK };
-    });
-  };
-
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase();
-    return barangaySummaries.filter(b => b.barangay.toLowerCase().includes(q)).slice(0, 5);
-  }, [searchQuery, barangaySummaries]);
 
   const activeBrgySummary = useMemo(() => {
     if (!selectedFeature) return null;
@@ -375,7 +212,7 @@ export default function ParticipationTab() {
 
   return (
     <div className="space-y-8 animate-fade-in text-start select-none">
-      {/* 🔍 Search Input & Header */}
+      {/* HEADER & REUSABLE SEARCH */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
@@ -386,108 +223,62 @@ export default function ParticipationTab() {
           </p>
         </div>
 
-        <div className="w-full md:w-80 relative">
-          <div className="flex flex-row items-center gap-2.5 px-3.5 py-2 bg-white border border-slate-300 focus-within:border-slate-900 transition-all">
-            <LazyIcon name="lucide:search" className="h-4 w-4 text-slate-400 shrink-0" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search barangay..."
-              className="w-full text-xs font-axis-navbar-focus text-slate-800 placeholder-slate-400 bg-transparent outline-none"
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="text-xs text-slate-400 hover:text-slate-700 cursor-pointer">
-                ×
-              </button>
-            )}
-          </div>
-
-          {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 w-full mt-1.5 bg-white border border-slate-200 z-50 overflow-hidden divide-y divide-slate-100 shadow-sm">
-              {searchResults.map(b => (
-                <button
-                  key={b.barangay}
-                  onClick={() => {
-                    zoomToBarangay(b.barangay);
-                    const firstTile = projectedHexes.find(h => normalizeName(h.props.barangay) === normalizeName(b.barangay));
-                    if (firstTile) setSelectedFeature(firstTile.props);
-                    setSearchQuery('');
-                  }}
-                  className="w-full px-3.5 py-2.5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs font-axis-navbar-focus cursor-pointer"
-                >
-                  <span className="font-semibold text-slate-900">{b.barangay}</span>
-                  <span className="text-slate-500 font-axis-navbar-focus">{b.turnoutPct}% Turnout</span>
-                </button>
-              ))}
-            </div>
+        <BarangaySearchBar
+          items={barangaySummaries}
+          placeholder="Search barangay..."
+          getBarangayName={b => b.barangay}
+          renderSubtitle={b => (
+            <span className="text-slate-500 font-axis-navbar-focus">{b.turnoutPct}% Turnout</span>
           )}
-        </div>
+          onSelect={bName => {
+            zoomToBarangay(bName, setTransform);
+            const firstTile = projectedFeatures.find(h => normalizeName(h.props.barangay) === normalizeName(bName));
+            if (firstTile) setSelectedFeature(firstTile.props);
+          }}
+        />
       </div>
 
-      {/* 🗺️ Main 2-Column Cartogram Stage */}
+      {/* CARTOGRAM STAGE & INSPECTOR */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-7xl mx-auto">
-        <div className="lg:col-span-8 w-full bg-white border border-slate-200 flex flex-col p-4 relative select-none">
-          <div className="absolute top-6 left-6 z-20 pointer-events-none">
-            <span className="inline-flex items-center gap-1.5 px-2 py-1.5 bg-[#0f172a] text-white text-[12px] font-axis-navbar-focus uppercase tracking-wider">
-              <span>⬡</span> 1 Hex = 1 Clustered Precinct
-            </span>
-          </div>
+        <CartogramStage
+          className="lg:col-span-8"
+          svgRef={svgRef}
+          transform={transform}
+          isPanning={isPanning}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onZoom={handleZoom}
+          onReset={handleResetView}
+          badgeText="1 Hex = 1 Clustered Precinct"
+          subText="Drag map to pan • Click any hex tile to inspect precinct"
+        >
+          {projectedFeatures.map((hex, idx) => {
+            const { props, pathD } = hex;
+            if (!pathD) return null;
 
-          <div className="absolute top-6 right-6 z-20 flex flex-col gap-1.5">
-            <button onClick={() => handleZoom(1.35)} className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer">+</button>
-            <button onClick={() => handleZoom(0.74)} className="size-8 bg-[#334155] hover:bg-[#0f172a] text-white flex items-center justify-center text-base font-bold transition-colors cursor-pointer">−</button>
-            {(transform.k !== 1 || transform.x !== 0 || transform.y !== 0) && (
-              <button onClick={handleResetView} className="size-8 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer mt-1" title="Reset view">
-                <LazyIcon name="lucide:rotate-ccw" className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
+            const isSelected = selectedFeature?.precinct_id === props.precinct_id;
+            const isHovered = hoveredPrecinctId === props.precinct_id;
+            const isSameBrgy = (hoveredBrgy && hoveredBrgy === props.barangay) ||
+                               (selectedFeature && selectedFeature.barangay === props.barangay);
 
-          <div
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            className={`w-full h-[400px] sm:h-[480px] lg:h-[520px] flex items-center justify-center relative overflow-hidden touch-none ${
-              isPanning ? 'cursor-grabbing' : 'cursor-grab'
-            }`}
-          >
-            <svg ref={svgRef} className="w-full h-full overflow-visible" viewBox="0 0 800 600">
-              <g style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`, transition: isPanning ? 'none' : 'transform 600ms cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                {projectedHexes.map((hex, idx) => {
-                  const { props, pathD } = hex;
-                  if (!pathD) return null;
-
-                  const isSelected = selectedFeature?.precinct_id === props.precinct_id;
-                  const isHovered = hoveredPrecinctId === props.precinct_id;
-                  const isSameBrgy = (hoveredBrgy && hoveredBrgy === props.barangay) ||
-                                     (selectedFeature && selectedFeature.barangay === props.barangay);
-
-                  return (
-                    <path
-                      key={idx}
-                      d={pathD}
-                      onClick={() => handleSelectPrecinct(props)}
-                      onMouseEnter={() => { setHoveredPrecinctId(props.precinct_id); setHoveredBrgy(props.barangay); }}
-                      onMouseLeave={() => { setHoveredPrecinctId(null); setHoveredBrgy(null); }}
-                      fill={getTurnoutColor(props.turnout_pct)}
-                      stroke={isSelected ? '#000000' : isHovered ? '#0f172a' : isSameBrgy ? '#334155' : '#ffffff'}
-                      strokeWidth={isSelected ? 2.5 : isHovered ? 2.5 : isSameBrgy ? 1.5 : 1}
-                      className="transition-colors duration-150 cursor-pointer outline-none"
-                    >
-                      <title>{`Brgy. ${props.barangay} | Precinct ${props.precinct_id} (${props.turnout_pct}%)`}</title>
-                    </path>
-                  );
-                })}
-              </g>
-            </svg>
-          </div>
-
-          <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-[12px] tracking-wider font-axis-footer-focus uppercase text-slate-400">
-            <span>Infanta Electoral Return Cartogram</span>
-            <span>Drag map to pan • Click any hex tile to inspect precinct</span>
-          </div>
-        </div>
+            return (
+              <path
+                key={idx}
+                d={pathD}
+                onClick={() => handleSelectPrecinct(props)}
+                onMouseEnter={() => { setHoveredPrecinctId(props.precinct_id); setHoveredBrgy(props.barangay); }}
+                onMouseLeave={() => { setHoveredPrecinctId(null); setHoveredBrgy(null); }}
+                fill={getTurnoutColor(props.turnout_pct)}
+                stroke={isSelected ? '#000000' : isHovered ? '#0f172a' : isSameBrgy ? '#334155' : '#ffffff'}
+                strokeWidth={isSelected ? 2.5 : isHovered ? 2.5 : isSameBrgy ? 1.5 : 1}
+                className="transition-colors duration-150 cursor-pointer outline-none"
+              >
+                <title>{`Brgy. ${props.barangay} | Precinct ${props.precinct_id} (${props.turnout_pct}%)`}</title>
+              </path>
+            );
+          })}
+        </CartogramStage>
 
         {/* RIGHT 4 COLS: Turnout Inspector & Fisher-Jenks Legend */}
         <div className="lg:col-span-4 space-y-6 flex flex-col justify-start h-full pt-2 lg:pt-0">
@@ -594,7 +385,7 @@ export default function ParticipationTab() {
         </div>
       </div>
 
-      {/* 📋 BOTTOM TABLE: Rankings & JSON Exporter */}
+      {/* BOTTOM TABLE */}
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 border border-slate-200 text-xs">
           <span className="text-slate-700 font-axis-navbar-focus uppercase tracking-wider">
@@ -658,8 +449,8 @@ export default function ParticipationTab() {
                   onMouseEnter={() => setHoveredBrgy(row.barangay)}
                   onMouseLeave={() => setHoveredBrgy(null)}
                   onClick={() => {
-                    zoomToBarangay(row.barangay);
-                    const tile = projectedHexes.find(h => normalizeName(h.props.barangay) === normalizeName(row.barangay));
+                    zoomToBarangay(row.barangay, setTransform);
+                    const tile = projectedFeatures.find(h => normalizeName(h.props.barangay) === normalizeName(row.barangay));
                     if (tile) setSelectedFeature(tile.props);
                   }}
                   className={`cursor-pointer transition-colors ${

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import BarangayCensusTab from '@/components/stats/BarangayCensusTab';
 import { INFANTA_BARANGAYS } from '@/data/censusDataInfanta';
-import CmciAnalyticsSection from '@/components/stats/crumbs/CmciAnalytics';
+import CmciAnalyticsSection from '@/components/stats/charts/CmciAnalytics';
 import BLGFFinanceTab from '@/components/stats/LGUFinance';
 import { useBLGFParquet } from '@/hooks/useBLGFData';
 import SolarBulletinTab from '@/components/stats/SolarBulletinTab';

@@ -12,10 +12,10 @@ import {
 
 import { BLGFRawRecord, getLocalRevenue, getNTADependency } from '@/types/blgf';
 import { useBLGFParquet } from '@/hooks/useBLGFData';
-import BanknoteSpendingTreemap from './crumbs/Tax1000PesosChart';
-import NTALineChart from './crumbs/NTALineChart';
-import NTABarChart from './crumbs/NTABarChart';
-import BLGFTechnicalTable from './crumbs/BLGFTechnicalMesa';
+import BanknoteSpendingTreemap from './charts/Tax1000PesosChart';
+import NTALineChart from './charts/NTALineChart';
+import NTABarChart from './charts/NTABarChart';
+import BLGFTechnicalTable from './charts/BLGFTechnicalMesa';
 
 interface BLGFFinanceTabProps {
   blgfDataset?: BLGFRawRecord[];

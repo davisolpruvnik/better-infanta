@@ -107,22 +107,22 @@ export default function CmciAnalyticsSection({ data = INFANTA_CMCI_DATA }: CmciA
   };
 
   return (
-    <section
-      aria-label="CMCI Competitiveness Index Section"
-      className="bg-white border border-fantas-900/10   p-3.5 sm:p-5 md:p-6 space-y-4 md:space-y-5"
-    >
-      {/* 1. HEADER (font-axis-titular-focus & font-axis-subtitular-focus) */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3.5 border-b border-fantas-100">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-base sm:text-lg font-axis-titular-focus uppercase tracking-wide text-fantas-900 leading-snug">
-              CMCI Competitiveness (2015–2024)
-            </h3>
-          </div>
-          <p className="text-xs sm:text-sm font-axis-subtitular-focus uppercase tracking-wide text-slate-500 mt-0.5">
-            DTI National Municipal Competitiveness Rankings & Scores
-          </p>
+  <section
+    aria-label="CMCI Competitiveness Index Section"
+    className="relative space-y-6"
+  >
+    {/* Header Section */}
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-2 border-b border-slate-100">
+      <div>
+        <div className="flex items-center gap-2">
+          <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
+            CMCI Competitiveness (2015-2024)
+          </h2>
         </div>
+        <p className="text-sm font-axis-navbar-focus tracking-wide text-slate-500 mt-0.5">
+          Take a look on how Infanta performs on competitiveness indices nationwide.
+        </p>
+      </div>
 
         {/* View Segmented Control (font-axis-navbar-focus) */}
         <div
@@ -162,6 +162,7 @@ export default function CmciAnalyticsSection({ data = INFANTA_CMCI_DATA }: CmciA
       </div>
 
       {/* 2. COLLAPSIBLE PILLAR FILTER CONTROLS */}
+      <div className='bg-white border border-slate-200 space-y-6 p-6'>
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* Collapsible Button Trigger */}
@@ -381,10 +382,11 @@ export default function CmciAnalyticsSection({ data = INFANTA_CMCI_DATA }: CmciA
             </AreaChart>
           )}
         </ResponsiveContainer>
-      </div>
+        </div>
+        </div>
 
       {/* 4. ACTIVE DATA BREAKDOWN CARD (font-axis-chunky & font-axis-navbar-focus) */}
-      <div className="border border-fantas-900/10 bg-slate-50/80 p-3 sm:p-4  space-y-3">
+      <div className="border border-fantas-900/10 bg-white p-3 sm:p-4  space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-3xl font-axis-titular-focus text-fantas-900 tracking-tight">

@@ -5,7 +5,7 @@ import LandingSite from '../components/home/Landing';
 import WeatherCardDetail from '@/components/home/DetailedWeather';
 import TideCard from '@/components/home/DetailedTide';
 import QuickActions from '@/components/home/IWantTo';
-import HotlineHero from '@/components/ui/HotlineHero';
+import HotlineHero from '@/components/home/HotlineHero';
 
 const Home: React.FC = () => {
   return (

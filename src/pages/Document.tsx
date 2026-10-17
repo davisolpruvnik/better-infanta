@@ -14,7 +14,7 @@ import {
   loadMarkdownContent,
   type MarkdownContent,
 } from '../lib/markdownLoader';
-import { createMarkdownComponents } from '../lib/markdownComponents';
+import { createMarkdownComponents } from '../components/ui/markdownComponents';
 import { getTypographyTheme } from '../lib/typographyThemes';
 
 // 💡 1. Clean imports: Only fetch what we need from Loader and custom Icon component

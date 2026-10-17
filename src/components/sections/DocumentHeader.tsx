@@ -1,3 +1,4 @@
+// src/components/sections/DocumentHeader.tsx
 import { ParsedServiceDoc } from "@/types/serviceDocuments";
 import { Popover } from "@base-ui/react";
 import type { FC, ReactNode } from "react";
@@ -6,6 +7,59 @@ interface DocumentHeaderProps {
   doc: ParsedServiceDoc;
   renderIcon: (name: string, className?: string) => ReactNode;
 }
+
+interface MetricDetailBlockProps {
+  label: string;
+  value: string;
+  popoverTitle?: string;
+  popoverDetails?: string;
+  renderIcon: (name: string, className?: string) => ReactNode;
+}
+
+const MetricDetailBlock: FC<MetricDetailBlockProps> = ({
+  label,
+  value,
+  popoverTitle,
+  popoverDetails,
+  renderIcon,
+}) => (
+  <div className="relative flex flex-col items-center lg:items-end text-center lg:text-end">
+    <div className="flex flex-row items-center">
+      <span className="block uppercase text-[14px] xs:text-[12px] font-axis-sng-indlab-header text-fantas-900/80 tracking-widest">
+        {label}
+      </span>
+      {popoverDetails && (
+        <Popover.Root>
+          <Popover.Trigger
+            openOnHover
+            className="inline-flex items-center justify-center px-1 rounded-full text-fantas-900/60 hover:text-fantas-950 hover:bg-fantas-50/50 transition-colors focus:outline-none cursor-pointer"
+          >
+            {renderIcon("tabler:help-circle", "h-4 w-4")}
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Positioner side="bottom" sideOffset={6}>
+              <Popover.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-fantas-900/80 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[ending-style]:scale-90 data-[ending-style]:opacity-0">
+                {popoverTitle && (
+                  <span className="block text-[12px] font-axis-navbar-focus text-fantas-800 uppercase tracking-wider mb-1 select-none">
+                    {popoverTitle}
+                  </span>
+                )}
+                <span className="text-[11px] font-axis-book leading-snug">
+                  {popoverDetails}
+                </span>
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        </Popover.Root>
+      )}
+    </div>
+    <div className="flex items-center gap-1.5 mt-1">
+      <span className="text-2xl md:text-3xl font-axis-sng-indlab-value text-fantas-950 tracking-wide">
+        {value}
+      </span>
+    </div>
+  </div>
+);
 
 export const DocumentHeader: FC<DocumentHeaderProps> = ({ doc, renderIcon }) => {
   return (
@@ -27,79 +81,23 @@ export const DocumentHeader: FC<DocumentHeaderProps> = ({ doc, renderIcon }) => 
       {doc.isStructured && (
         <div className="flex flex-col items-center lg:items-end text-center lg:text-end gap-4 shrink-0 w-full lg:w-auto border-t lg:border-t-0 border-gray-100 pt-4 lg:pt-0">
           <div className="flex items-center justify-center lg:justify-end gap-6 md:gap-8 w-full lg:w-auto">
-            {/* Estimated Cost */}
-            <div className="relative flex flex-col items-center lg:items-end text-center lg:text-end">
-              <div className="flex flex-row items-center">
-                <span className="block uppercase text-[14px] xs:text-[12px] font-axis-sng-indlab-header text-fantas-900/80 tracking-widest">
-                  Estimated Cost
-                </span>
-                {doc.feeDetails && (
-                  <Popover.Root>
-                    <Popover.Trigger
-                      openOnHover
-                      className="inline-flex items-center justify-center px-1 rounded-full text-fantas-900/60 hover:text-fantas-950 hover:bg-fantas-50/50 transition-colors focus:outline-none cursor-pointer"
-                    >
-                      {renderIcon("tabler:help-circle", "h-4 w-4")}
-                    </Popover.Trigger>
-                    <Popover.Portal>
-                      <Popover.Positioner side="bottom" sideOffset={6}>
-                        <Popover.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-fantas-900/80 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[ending-style]:scale-90 data-[ending-style]:opacity-0">
-                          <span className="block text-[12px] font-axis-navbar-focus text-fantas-800 uppercase tracking-wider mb-1 select-none">
-                            Calculation Basis
-                          </span>
-                          <span className="text-[11px] font-axis-book leading-snug">
-                            {doc.feeDetails}
-                          </span>
-                        </Popover.Popup>
-                      </Popover.Positioner>
-                    </Popover.Portal>
-                  </Popover.Root>
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-2xl md:text-3xl font-axis-sng-indlab-value text-fantas-950 tracking-wide">
-                  {doc.fees || "Free / No Fees"}
-                </span>
-              </div>
-            </div>
+            <MetricDetailBlock
+              label="Estimated Cost"
+              value={doc.fees || "Free / No Fees"}
+              popoverTitle="Calculation Basis"
+              popoverDetails={doc.feeDetails}
+              renderIcon={renderIcon}
+            />
 
             <div className="w-px h-8 bg-gray-200/80 self-center" aria-hidden="true" />
 
-            {/* Processing Time */}
-            <div className="relative flex flex-col items-center lg:items-end text-center lg:text-end">
-              <div className="flex flex-row items-center">
-                <span className="block uppercase text-[14px] xs:text-[12px] font-axis-sng-indlab-header text-fantas-900/80 tracking-widest">
-                  Processing Time
-                </span>
-                {doc.timeDetails && (
-                  <Popover.Root>
-                    <Popover.Trigger
-                      openOnHover
-                      className="inline-flex items-center justify-center px-1 rounded-full text-fantas-900/60 hover:text-fantas-950 hover:bg-fantas-50/50 transition-colors focus:outline-none cursor-pointer"
-                    >
-                      {renderIcon("tabler:help-circle", "h-4 w-4")}
-                    </Popover.Trigger>
-                    <Popover.Portal>
-                      <Popover.Positioner side="bottom" sideOffset={6}>
-                        <Popover.Popup className="z-50 max-w-xs p-2.5 bg-white border border-gray-200 rounded-xl shadow-lg text-[10px] leading-relaxed text-fantas-900/80 normal-case origin-[var(--transform-origin)] transition-all duration-200 ease-out data-[starting-style]:scale-90 data-[starting-style]:opacity-0 data-[ending-style]:scale-90 data-[ending-style]:opacity-0">
-                          <span className="block text-[12px] font-axis-navbar-focus text-fantas-800 uppercase tracking-wider mb-1 select-none">
-                            Details on Time
-                          </span>
-                          <span className="text-[11px] font-axis-book leading-snug">
-                            {doc.timeDetails}
-                          </span>
-                        </Popover.Popup>
-                      </Popover.Positioner>
-                    </Popover.Portal>
-                  </Popover.Root>
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-2xl md:text-3xl font-axis-sng-indlab-value text-fantas-950 tracking-wide">
-                  {doc.time || "Varies*"}
-                </span>
-              </div>
-            </div>
+            <MetricDetailBlock
+              label="Processing Time"
+              value={doc.time || "Varies*"}
+              popoverTitle="Details on Time"
+              popoverDetails={doc.timeDetails}
+              renderIcon={renderIcon}
+            />
           </div>
 
           {/* Office / Where to Apply */}

@@ -2,7 +2,7 @@
  * ReactMarkdown components with configurable typography themes
  */
 
-import { type TypographyTheme } from './typographyThemes';
+import { type TypographyTheme } from '../../lib/typographyThemes';
 import { type ReactNode, type HTMLAttributes } from 'react';
 import { TableWithToggle } from './TableWithToggle';
 

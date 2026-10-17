@@ -1,6 +1,6 @@
 // src/components/safety/HotlineHero.tsx
 import LazyIcon from '@/components/ui/Lazying';
-import Section from './Section';
+import Section from '../ui/Section';
 
 interface HotlineItem {
   agency: string;

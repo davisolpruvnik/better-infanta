@@ -1,334 +1,86 @@
-# BetterInfanta.org
+# BetterInfanta
+
+A community-run digital portal for the Municipality of Infanta, Quezon, Philippines. BetterInfanta presents public information — Citizen's Charter services, census data, municipal financials, tides, and solar potential — in an editorial format built for phones and for people who are trying to get something done today.
 
 _Ganda nay-an, hane?_
 
-An accessible, open-source website template for Infanta, Quezon and Infantahins.
+- **Live:** [betterinfantaquezon.org](https://betterinfantaquezon.org)
+- **Status:** Active
+- **License:** CC0
+- **Part of:** [BetterGov.PH](https://bettergov.ph)
+- **Built on top of:** [Better Local Government starter kit](https://github.com/iyanski/betterlocalgov)
+- **Where to see:** [https://lgu.bettergov.ph](https:/lgu.bettergov.ph)
 
-Built with React, TypeScript, and Tailwind CSS.
+BetterInfanta is not affiliated with the Municipality of Infanta or any government agency. It is volunteer-run.
 
-## ✨ Features
+## What it covers
 
-- **🌐 Multilingual Support**: English, Tagalog, and Tayabas Tagalog (Infanta dialect)
-- **📱 Responsive Design**: Mobile-first approach with modern UI/UX
-- **♿ Accessibility**: WCAG 2.1 compliant design
-- **📝 Content Management**: YAML-based content system for easy updates
-- **🎨 Customizable**: Easy theming and branding customization
-- **⚡ Fast Performance**: Built with Vite for optimal loading speeds
-- **🔍 SEO Optimized**: Built-in SEO with react-helmet, meta tags, and Open Graph support
+- **Services.** Every service in the Citizen's Charter, with cost, time, location, and who can avail at the top of every page.
+- **Statistics.** PSA census data, including the "Town of 100 People" visualization and barangay-level detail.
+- **Finance.** BLGF Statement of Receipts and Expenditures, 1992–2025, with peer comparison.
+- **Tides.** Tide curve, table, and NOW marker, referenced to the Port of Real station.
+- **Solar.** Solar potential calculator with GPS detection, per-barangay coordinates, and LFP battery sizing.
+- **Government.** Executive, legislative, and department rosters.
 
-## 🚀 Quick Start
+## Documentation
 
-### Prerequisites
+- [DESIGN.md](./DESIGN.md) — the design system and philosophy (Kumpol and Latik)
+- [DATA.md](./DATA.md) — every data source, cadence, and known limitation
+- [CONTENT-GUIDE.md](./CONTENT-GUIDE.md) — voice and structure for writers
+- [CONTENT-MANAGEMENT.md](./CONTENT-MANAGEMENT.md) — how to add and update content
+- [DEPLOYMENT-GUIDE.md](./DEPLOYMENT-GUIDE.md) — local setup, Cloudflare Pages
+- [INSPIRATION.md](./INSPIRATION.md) — the design references, expanded
+- [CHANGELOG.md](./CHANGELOG.md) — version history
+- [src/data/README.md](./src/data/README.md) — the data layer
+- [src/lib/README.md](./src/lib/README.md) — the utility layer
 
-- Node.js 18+
-- npm or yarn
-- Git
-
-### Installation
-
-1. **Fork the repository**
-   - Visit https://github.com/iyanski/betterlocalgov
-   - Click the "Fork" button in the top right
-   - This creates your own copy of the repository
-
-2. **Clone your forked repository**
-
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/betterlocalgov.git
-   cd betterlocalgov
-   ```
-
-   Replace `YOUR-USERNAME` with your GitHub username.
-
-3. **Add upstream remote** (to get updates from the original repo)
-
-   ```bash
-   git remote add upstream https://github.com/iyanski/betterlocalgov.git
-   ```
-
-4. **Install dependencies**
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-5. **Run the setup script**
-
-   ```bash
-   npm run setup
-   ```
-
-   This will guide you through configuring your government's information.
-
-6. **Start development server**
-
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-7. **Open your browser**
-   Navigate to `http://localhost:5173` or a `localhost` that appears in the terminal.
-
-## 📚 Documentation
-
-- **[STARTER-KIT-README.md](STARTER-KIT-README.md)** - Complete setup and customization guide
-- **[CONTENT-GUIDE.md](CONTENT-GUIDE.md)** - Content writing and contribution guidelines
-- **[CONTENT-MANAGEMENT.md](CONTENT-MANAGEMENT.md)** - Guide for non-technical users to edit and manage website content
-- **[DEPLOYMENT-GUIDE.md](DEPLOYMENT-GUIDE.md)** - Deployment instructions for Vercel and other platforms
-- **[STARTER-KIT-SUMMARY.md](STARTER-KIT-SUMMARY.md)** - Audit results and implementation summary
-- **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
-
-## 🎯 Perfect For
-
-- **Local Government Units** (Cities, Municipalities, Provinces)
-- **Government IT Departments** looking for modern web solutions
-- **Web Development Agencies** serving government clients
-- **Civic Technology Organizations** building government tools
-- **Government Officials** wanting professional online presence
-
-## ⚡ Quick Setup (3-5 hours to live website)
-
-1. **Fork & Clone** (5 minutes)
-   - Fork the repository on GitHub (click "Fork" at https://github.com/iyanski/betterlocalgov)
-   - Clone your fork:
-
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/betterlocalgov.git
-   cd betterlocalgov
-   git remote add upstream https://github.com/iyanski/betterlocalgov.git
-   npm install
-   ```
-
-   Replace `YOUR-USERNAME` with your GitHub username.
-
-2. **Configure Your Government** (15 minutes)
-
-   ```bash
-   npm run setup
-   # Interactive setup guides you through configuration
-   ```
-
-3. **Customize Content** (2-4 hours)
-   - Edit service information in `content/services/`
-   - Add government department info in `content/government/`
-   - Update contact information and branding
-
-4. **Deploy to Production** (15 minutes)
-   - Connect to Vercel for free hosting
-   - Set up custom domain (optional)
-   - Your website is live!
-
-## 🌟 What Makes This Different
-
-### **Built for Philippine LGUs**
-
-- **Multilingual**: English, Tagalog, and Tayabas Tagalog (Infanta dialect)
-- **Local Context**: Designed for Philippine government structure
-- **Cultural Sensitivity**: Respects local customs and practices
-- **Accessibility**: WCAG 2.1 compliant for all citizens
-
-### **Non-Technical Friendly**
-
-- **YAML Content Management**: Easy content updates without coding
-- **Visual Setup**: Interactive configuration process
-- **Clear Documentation**: Step-by-step guides for everything
-- **Template System**: Pre-built content templates
-
-### **Modern & Professional**
-
-- **Mobile-First**: Works perfectly on all devices
-- **Fast Loading**: Optimized for performance
-- **SEO Ready**: Built-in search engine optimization
-- **Secure**: Modern security best practices
-
-## 🛠️ Development
-
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-- `npm run format` - Format code with Prettier
-- `npm run setup` - Run setup script for new installations
-- `npm run convert-yaml` - Convert YAML to JSON
-- `npm run dev:yaml` - Convert YAML and start dev server
-
-### Project Structure
+## Running locally
 
 ```
-content/
-├── government/         # Government section markdown & YAML
-│   └── departments/    # Department pages (executive, legislative, etc.)
-└── services/           # Services section markdown & YAML
-
-src/
-├── components/         # Reusable UI components
-│   ├── home/           # Home page components
-│   ├── layout/         # Layout components (Navbar, Footer)
-│   └── ui/             # Basic UI components
-├── data/               # YAML configuration (services.yaml, government.yaml)
-├── i18n/               # Internationalization
-├── lib/                # Utility functions (markdownLoader, yamlLoader)
-├── pages/              # Page components (Home, Services, Government, Document)
-└── types/              # TypeScript type definitions
+git clone https://github.com/davisolpruvnik/better-infanta.git
+cd better-infanta
+npm install
+npm run convert-yaml
+npm run dev
 ```
 
-## 👥 Contributors
+The dev server runs at `http://localhost:5173`. There are no environment variables to set.
 
-- **[iyanski](https://github.com/iyanski)** — Project creator and maintainer
-- **[Nicu Listana](https://github.com/niculistana)** — Contributor
+Deployment is on Cloudflare Pages. Full setup, deployment, and troubleshooting are in [DEPLOYMENT-GUIDE.md](./DEPLOYMENT-GUIDE.md).
 
-## 🤝 Contributing
+## Data sources
 
-We welcome contributions from everyone! Whether you're a developer, government official, or community member, there are many ways to help improve this project.
+| Dataset | Source | Cadence |
+|---------|--------|---------|
+| Services | Citizen's Charter, March 2026 | On new charter issue |
+| Census | PSA | Every 5 years |
+| Finance | BLGF SRE | Annually |
+| Weather | Open-Meteo | Automatic |
+| Tides | Open-Meteo Marine (Port of Real 660/024) | Automatic |
+| Solar | Open-Meteo GTI | Automatic |
 
-### 🌟 For Non-Technical Contributors
+Full list of sources and limitations: [DATA.md](./DATA.md).
 
-**No coding experience required!** You can contribute valuable content and improvements using GitHub's web interface.
+## Contributing
 
-#### Quick Start for Non-Technical Users
+Read [DESIGN.md](./DESIGN.md) first. Every content and code decision inherits from it.
 
-1. **Create a GitHub account** (free at github.com)
-2. **Navigate to the repository** in your web browser
-3. **Use our detailed guide**: [CONTENT-MANAGEMENT.md](CONTENT-MANAGEMENT.md) - Complete step-by-step instructions for editing content without any technical knowledge
+- **Writers.** See [CONTENT-GUIDE.md](./CONTENT-GUIDE.md) for voice and structure, and [CONTENT-MANAGEMENT.md](./CONTENT-MANAGEMENT.md) for the update workflow.
+- **Designers and developers.** See [DESIGN.md](./DESIGN.md), [INSPIRATION.md](./INSPIRATION.md), and [DEPLOYMENT-GUIDE.md](./DEPLOYMENT-GUIDE.md).
 
-#### What You Can Contribute
+Open an issue before opening a large PR. Integration and architecture decisions are made in issues, not in review.
 
-- **📝 Content Updates**: Fix outdated information, add new services, improve descriptions
-- **🌐 Translations**: Help translate content to Filipino, Cebuano, or other local languages
-- **📋 Service Information**: Add details about government services, requirements, and processes
-- **🔍 Content Review**: Check for accuracy, clarity, and completeness
-- **💡 Suggestions**: Propose new features or improvements
+## Contributors
 
-#### How to Contribute (No Git Required)
+- [iyanski](https://github.com/iyanski) — upstream starter kit
+- [Nicu Listana](https://github.com/niculistana) — upstream starter kit
 
-1. **Find content to edit**:
-   - Go to `content/services/` for service pages or `content/government/` for department pages
-   - Choose a category (health, education, business, departments, etc.)
-   - Click on any `.md` file to edit
+## License
 
-2. **Make your changes**:
-   - Click the pencil icon (✏️) to edit
-   - Update the content using simple text formatting
-   - Add new information, fix errors, or improve clarity
+CC0. Public domain. No restrictions on use, modification, or distribution. No attribution required, though it is appreciated.
 
-3. **Save your changes**:
-   - Write a brief description of what you changed
-   - Click "Commit changes"
-   - Your changes will be reviewed and merged
+The upstream [Better Local Government starter kit](https://github.com/iyanski/betterlocalgov) is also CC0.
 
-#### Content Types You Can Edit
+## Disclaimer
 
-- **Service Descriptions**: How to apply for permits, scholarships, health services
-- **Requirements**: Documents needed, eligibility criteria, deadlines
-- **Contact Information**: Office locations, phone numbers, hours
-- **Process Steps**: Step-by-step instructions for government services
-- **Translations**: Help make content available in local languages
-
-### 👨‍💻 For Technical Contributors
-
-#### Content Contributors (Basic Technical)
-
-1. **Fork the repository** on GitHub (click "Fork" at https://github.com/iyanski/betterlocalgov)
-2. **Clone your fork**: `git clone https://github.com/YOUR-USERNAME/betterlocalgov.git`
-3. **Add upstream remote**: `git remote add upstream https://github.com/iyanski/betterlocalgov.git`
-4. **Create a content branch**: `git checkout -b content/update-health-services`
-5. **Edit content files** in `content/`
-6. **Test your changes**: `npm run dev`
-7. **Submit a pull request** to the original repository
-
-#### Developers
-
-1. **Fork the repository** on GitHub (click "Fork" at https://github.com/iyanski/betterlocalgov)
-2. **Clone your fork**: `git clone https://github.com/YOUR-USERNAME/betterlocalgov.git`
-3. **Add upstream remote**: `git remote add upstream https://github.com/iyanski/betterlocalgov.git`
-4. **Create a feature branch**: `git checkout -b feature/new-component`
-5. **Make your changes**
-6. **Run tests**: `npm run lint && npm run build`
-7. **Submit a pull request** to the original repository
-
-#### Keeping Your Fork Updated
-
-To get the latest changes from the original repository:
-
-```bash
-# Fetch the latest changes from upstream
-git fetch upstream
-
-# Switch to your main branch
-git checkout main
-
-# Merge upstream changes into your main branch
-git merge upstream/main
-
-# Push updates to your fork on GitHub
-git push origin main
-```
-
-**Best Practice**: Always sync your fork before creating a new branch for contributions.
-
-### 📋 Contribution Guidelines
-
-#### Content Guidelines
-
-- **Accuracy First**: Ensure all information is current and correct
-- **Clear Language**: Write for the general public, avoid jargon
-- **Complete Information**: Include all necessary details (requirements, steps, contacts)
-- **Local Context**: Consider the specific needs of your community
-- **Accessibility**: Use clear headings, simple language, and logical structure
-
-#### Technical Guidelines
-
-- Follow existing code style and patterns
-- Test your changes thoroughly
-- Update documentation when needed
-- Ensure mobile responsiveness
-- Maintain accessibility standards
-
-### 🎯 Priority Areas for Contribution
-
-1. **Content Accuracy**: Update outdated information, fix errors
-2. **Localization**: Translate content to Filipino, Cebuano, and other Philippine languages
-3. **Service Coverage**: Add missing government services and programs
-4. **User Experience**: Improve clarity and ease of use
-5. **Accessibility**: Ensure content is accessible to all citizens
-
-### 🆘 Need Help?
-
-- **For Content Questions**: Check [CONTENT-MANAGEMENT.md](CONTENT-MANAGEMENT.md)
-- **For Technical Issues**: Open an issue on GitHub
-- **For General Questions**: Contact the project maintainers
-
-### 🏆 Recognition
-
-All contributors are recognized in our project documentation. Your contributions help make government services more accessible to all citizens!
-
-## 📄 License
-
-This project is licensed under the Creative Commons Zero (CC0) License - see the [LICENSE](LICENSE) file for details.
-
-**CC0 License Benefits:**
-
-- **Public Domain**: No restrictions on use, modification, or distribution
-- **Government Friendly**: Perfect for public sector projects
-- **Maximum Reusability**: Anyone can use, modify, and distribute freely
-- **No Attribution Required**: Though attribution is appreciated
-
-## 🙏 Acknowledgments
-
-- Built with [React](https://reactjs.org/)
-- Styled with [Tailwind CSS v4](https://tailwindcss.com/)
-- UI components by [@bettergov/kapwa](https://github.com/bettergov/kapwa)
-- Icons by [Lucide React](https://lucide.dev/)
-- Content management with [YAML](https://yaml.org/)
-- Internationalization with [i18next](https://www.i18next.com/)
-
----
-
-**Made with ❤️ for Philippine Local Government Units**
+BetterInfanta is not affiliated with the Municipality of Infanta, the Province of Quezon, or any government agency. It is volunteer-run and not an official source. Information is presented as-is, with sources and limitations named. For official transactions, consult the LGU directly.

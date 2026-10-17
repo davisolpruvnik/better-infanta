@@ -3,7 +3,7 @@
 
 import { Autocomplete as AutocompletePrimitive } from '@base-ui/react/autocomplete';
 import type React from 'react';
-import { cn } from '../../../lib/utils';
+import { cn } from '../../lib/utils';
 import { Input } from './input';
 import { ScrollArea } from './scroll-area';
 import { lazy, Suspense } from 'react';

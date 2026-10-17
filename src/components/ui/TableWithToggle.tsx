@@ -11,7 +11,7 @@ import {
   lazy,
   Suspense,
 } from 'react';
-import { type TypographyTheme } from './typographyThemes';
+import { type TypographyTheme } from '../../lib/typographyThemes';
 
 // 💡 Lazy-load the Iconify renderer asynchronously (0 KB initial JS tax)
 const LazyIconify = lazy(() =>

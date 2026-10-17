@@ -1,9 +1,27 @@
-// src/components/ui/Breadcrumbs.tsx
+// src/components/ui/BreadcrumbsLess.tsx
 import React, { Suspense, lazy, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const LazyIconify = lazy(() =>
   import('@iconify/react').then(m => ({ default: m.Icon }))
+);
+
+const HomeIcon = () => (
+  <Suspense
+    fallback={<div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />}
+  >
+    <LazyIconify icon="lucide:home" className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600 shrink-0" />
+  </Suspense>
+);
+
+const ChevronSeparator = () => (
+  <li aria-hidden="true" className="shrink-0">
+    <Suspense
+      fallback={<div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />}
+    >
+      <LazyIconify icon="lucide:chevron-right" className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400" />
+    </Suspense>
+  </li>
 );
 
 export interface BreadcrumbItem {
@@ -14,7 +32,6 @@ export interface BreadcrumbItem {
 export interface BreadcrumbsProps {
   items?: BreadcrumbItem[];
   className?: string;
-  /** Maximum items to display before collapsing middle items (default: 3) */
   maxItems?: number;
 }
 
@@ -26,7 +43,6 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Generate breadcrumbs from current path if no items provided
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
     const breadcrumbs: BreadcrumbItem[] = [{ label: 'Home', href: '/' }];
@@ -36,7 +52,6 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
       currentPath += `/${segment}`;
       const isLast = index === pathSegments.length - 1;
 
-      // Convert segment to readable label
       const label = segment
         .split('-')
         .map(word => {
@@ -58,8 +73,6 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
 
   const breadcrumbItems = items || generateBreadcrumbs();
   const totalItems = breadcrumbItems.length;
-
-  // Determine if middle items should collapse
   const shouldCollapse = totalItems > maxItems && !isExpanded;
 
   const firstItem = breadcrumbItems[0];
@@ -74,18 +87,8 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
       <ol className="flex justify-center items-center flex-wrap sm:flex-nowrap gap-1 max-w-full">
         {shouldCollapse ? (
           <>
-            {/* First Item (Home) */}
             <li className="inline-flex items-center gap-1.5 shrink-0">
-              <Suspense
-                fallback={
-                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
-                }
-              >
-                <LazyIconify
-                  icon="lucide:home"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600 shrink-0"
-                />
-              </Suspense>
+              <HomeIcon />
               {firstItem.href ? (
                 <Link
                   to={firstItem.href}
@@ -100,21 +103,8 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
               )}
             </li>
 
-            {/* Chevron Separator */}
-            <li aria-hidden="true" className="shrink-0">
-              <Suspense
-                fallback={
-                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
-                }
-              >
-                <LazyIconify
-                  icon="lucide:chevron-right"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400"
-                />
-              </Suspense>
-            </li>
+            <ChevronSeparator />
 
-            {/* Ellipsis Button to Expand Hidden Middle Items */}
             <li className="inline-flex items-center shrink-0">
               <button
                 type="button"
@@ -132,21 +122,8 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
               </button>
             </li>
 
-            {/* Chevron Separator */}
-            <li aria-hidden="true" className="shrink-0">
-              <Suspense
-                fallback={
-                  <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
-                }
-              >
-                <LazyIconify
-                  icon="lucide:chevron-right"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400"
-                />
-              </Suspense>
-            </li>
+            <ChevronSeparator />
 
-            {/* Last Item (Current Page) */}
             <li className="inline-flex items-center min-w-0 shrink">
               {lastItem.href ? (
                 <Link
@@ -166,7 +143,6 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
             </li>
           </>
         ) : (
-          /* Expanded / Full View */
           breadcrumbItems.map((item, index) => {
             const isFirst = index === 0;
             const isLast = index === totalItems - 1;
@@ -174,18 +150,7 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
             return (
               <React.Fragment key={index}>
                 <li className="inline-flex items-center gap-1.5 min-w-0 shrink-0 sm:shrink">
-                  {isFirst && (
-                    <Suspense
-                      fallback={
-                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
-                      }
-                    >
-                      <LazyIconify
-                        icon="lucide:home"
-                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-600 shrink-0"
-                      />
-                    </Suspense>
-                  )}
+                  {isFirst && <HomeIcon />}
 
                   {item.href ? (
                     <Link
@@ -204,20 +169,7 @@ const Breadcrumbsless: React.FC<BreadcrumbsProps> = ({
                   )}
                 </li>
 
-                {!isLast && (
-                  <li aria-hidden="true" className="shrink-0">
-                    <Suspense
-                      fallback={
-                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded bg-fantas-200/50 animate-pulse shrink-0" />
-                      }
-                    >
-                      <LazyIconify
-                        icon="lucide:chevron-right"
-                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-fantas-400"
-                      />
-                    </Suspense>
-                  </li>
-                )}
+                {!isLast && <ChevronSeparator />}
               </React.Fragment>
             );
           })

@@ -5,7 +5,7 @@ import { BatteryType } from '@/types/solar';
 import { APPLIANCES, STORAGE_FACTORS } from '@/data/solarData';
 import { calculateUsableKwh, calculateApplianceRuntime } from '@/lib/solar-calc';
 import { useSolarForecast } from '@/hooks/useSolarForecast';
-import { SolarYieldCurve } from './crumbs/SolarYieldCurve';
+import { SolarYieldCurve } from './charts/SolarYieldCurve';
 
 export default function SolarBulletinTab() {
   const { data, loading, geoLoading, error, location, detectLocation } = useSolarForecast();
