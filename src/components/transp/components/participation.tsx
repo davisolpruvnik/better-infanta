@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import hexCartoJson from '@/data/geog/turnout-map/infanta_hex_precincts.json';
-import { BarangaySearchBar, CartogramStage, normalizeName, useCartogramPanZoom, useGeoJsonProjection } from './CartogramStage';
 import LazyIcon from '@/components/ui/Lazying';
+import { BarangaySearchBar, CartogramStage, normalizeName, useCartogramPanZoom, useGeoJsonProjection } from './cartogramStage';
 export interface PrecinctTurnoutProps {
   barangay: string;
   precinct_id: string;

@@ -8,7 +8,7 @@ import {
   useGeoJsonProjection,
   LazyIcon,
   normalizeName,
-} from './CartogramStage';
+} from './cartogramStage';
 
 export type ResultsMode = 'tandem' | 'mayor' | 'vice_mayor';
 

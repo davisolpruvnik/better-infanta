@@ -10,9 +10,9 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Plantao from './components/layout/plantao';
 import ScrollToTop from './components/ui/ScrollToTop';
-import Home from './pages/Home';
 
 // 💡 Lazy-load secondary pages (MapLibre, Parquet, and GeoJSONs are now downloaded on-demand!)
+const Home = lazy(() => import('./pages/Home'));
 const Services = lazy(() => import('./pages/Services'));
 const Document = lazy(() => import('./pages/Document'));
 const Government = lazy(() => import('./pages/Government'));
