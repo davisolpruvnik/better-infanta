@@ -19,6 +19,20 @@ const getCommitHash = () => {
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    sourcemap: false,
+    assetsInlineLimit: 4096,
+        rollupOptions: {
+          output: {
+            manualChunks(id) {
+              // 💡 Bundles all markdown & content guides into ONE file instead of 50 separate chunks!
+              if (id.includes('/content/') || id.includes('markdown')) {
+                return 'citizen-charter-content';
+              }
+            },
+          },
+        },
+  },
   plugins: [
     react(),
     tailwindcss(),
