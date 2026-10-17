@@ -24,15 +24,15 @@ BetterInfanta is not affiliated with the Municipality of Infanta or any governme
 
 ## Documentation
 
-- [DESIGN.md](./DESIGN.md) — the design system and philosophy (Kumpol and Latik)
-- [DATA.md](./DATA.md) — every data source, cadence, and known limitation
-- [CONTENT-GUIDE.md](./CONTENT-GUIDE.md) — voice and structure for writers
-- [CONTENT-MANAGEMENT.md](./CONTENT-MANAGEMENT.md) — how to add and update content
-- [DEPLOYMENT-GUIDE.md](./DEPLOYMENT-GUIDE.md) — local setup, Cloudflare Pages
-- [INSPIRATION.md](./INSPIRATION.md) — the design references, expanded
-- [CHANGELOG.md](./CHANGELOG.md) — version history
-- [src/data/README.md](./src/data/README.md) — the data layer
-- [src/lib/README.md](./src/lib/README.md) — the utility layer
+- [DESIGN.md](./docs/DESIGN.md) — the design system and philosophy
+- [DATA.md](./docs/DATA.md) — every data source, cadence, and known limitation
+- [CONTENT-GUIDE.md](./docs/CONTENT-GUIDE.md) — voice and structure for writers
+- [CONTENT-MANAGEMENT.md](./docs/CONTENT-MANAGEMENT.md) — how to add and update content
+- [DEPLOYMENT-GUIDE.md](./docs/DEPLOYMENT-GUIDE.md) — local setup, Cloudflare Pages
+- [INSPIRATION.md](./docs/INSPIRATION.md) — the design references, expanded
+- [CHANGELOG.md](./docs/CHANGELOG.md) — version history (not yet available)
+- [src/data/README.md](./src/data/README.md) — the data layer (not yet available)
+- [src/lib/README.md](./src/lib/README.md) — the utility layer (not yet available)
 
 ## Running locally
 
