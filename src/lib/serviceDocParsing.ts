@@ -1,4 +1,50 @@
-import { ParsedServiceDoc, ProcessedStep, RequirementGroup } from "@/types/serviceDocuments";
+export interface RegulatoryFeeItem {
+  name: string;
+  price: string;
+}
+
+export interface RegulatoryFeeCategory {
+  category?: string;
+  items: RegulatoryFeeItem[];
+}
+
+export interface RequirementGroup {
+  key: string;
+  label: string;
+  items: string[];
+}
+
+export interface ProcessedStep {
+  id: number;
+  level: number;
+  cleanStep: string;
+  badge: string;
+  summaryText: string;
+  detailText: string;
+  isAccordion: boolean;
+  isSubStep: boolean;
+  indentClass: string;
+}
+
+export interface ParsedServiceDoc {
+  isStructured: boolean;
+  title: string;
+  description: string;
+  fees?: string;
+  feeDetails?: string;
+  time?: string;
+  timeDetails?: string;
+  office?: string;
+  officeAddress?: string;
+  officeHours?: string;
+  requirementsGroups: RequirementGroup[];
+  whocanavail: string[];
+  steps: string[];
+  postscripts?: string;
+  feeBreakdownMode?: 'separate' | 'inline';
+  regulatory_fees?: RegulatoryFeeCategory[];
+  rawMarkdownContent: string;
+}
 
 export function formatRequirementLabel(key: string): string {
   if (key === 'requirements') return 'General';
@@ -64,39 +110,92 @@ export function parseServiceDocument(
     const frontmatterText = parts[1];
     const remainingMarkdown = parts.slice(2).join('---').trim();
 
-    const data: Record<string, string | string[]> = {};
+    const data: Record<string, any> = {};
+    const lines = frontmatterText.split('\n');
+
     let currentKey = '';
     let currentList: string[] = [];
 
-    for (const line of frontmatterText.split('\n')) {
-      const trimmedLine = line.trim();
+    // Parse top-level keys safely without eating everything below
+    for (let i = 0; i < lines.length; i++) {
+      const rawLine = lines[i];
+      const trimmedLine = rawLine.trim();
       if (!trimmedLine) continue;
 
-      if (trimmedLine.startsWith('-') && currentKey) {
-        const itemValue = trimmedLine
-          .replace(/^-\s*/, '')
-          .replace(/^["']|["']$/g, '')
-          .trim();
-        currentList.push(itemValue);
-        data[currentKey] = [...currentList];
-        continue;
-      }
+      // Check if this line is a top-level key (starts at margin, contains ':')
+      const isTopLevelKey = !rawLine.startsWith(' ') && !rawLine.startsWith('\t') && !rawLine.startsWith('-') && trimmedLine.includes(':');
 
-      const colonIndex = trimmedLine.indexOf(':');
-      if (colonIndex !== -1) {
-        const key = trimmedLine.substring(0, colonIndex).trim();
-        const value = trimmedLine
-          .substring(colonIndex + 1)
-          .trim()
-          .replace(/^["']|["']$/g, '');
+      if (isTopLevelKey) {
+        // Save previously accumulated list
+        if (currentKey && currentList.length > 0) {
+          data[currentKey] = [...currentList];
+        }
+
+        const colonIdx = trimmedLine.indexOf(':');
+        const key = trimmedLine.substring(0, colonIdx).trim();
+        const value = trimmedLine.substring(colonIdx + 1).trim().replace(/^["']|["']$/g, '');
 
         currentKey = key;
         currentList = [];
 
-        if (value) data[key] = value;
+        if (value) {
+          data[key] = value;
+        }
+        continue;
+      }
+
+      // If it's a regular list item under an active key (like requirements, steps, whocanavail)
+      if (currentKey && currentKey !== 'regulatory_fees' && trimmedLine.startsWith('-')) {
+        const itemVal = trimmedLine.replace(/^-\s*/, '').replace(/^["']|["']$/g, '').trim();
+        currentList.push(itemVal);
+        data[currentKey] = [...currentList];
       }
     }
 
+    // Save any trailing list
+    if (currentKey && currentList.length > 0 && currentKey !== 'regulatory_fees') {
+      data[currentKey] = [...currentList];
+    }
+
+    // 💡 Dedicated Safe Parser for regulatory_fees block
+    const regulatory_fees: RegulatoryFeeCategory[] = [];
+    const feeBlockMatch = frontmatterText.match(/regulatory_fees:\s*([\s\S]*?)(?=\n[a-zA-Z0-9_]+:|$)/);
+
+    if (feeBlockMatch) {
+      const feeLines = feeBlockMatch[1].split('\n');
+      let curCat: RegulatoryFeeCategory | null = null;
+      let curItem: RegulatoryFeeItem | null = null;
+
+      for (const fLine of feeLines) {
+        const t = fLine.trim();
+        if (!t) continue;
+
+        if (t.includes('category:')) {
+          if (curCat) regulatory_fees.push(curCat);
+          const name = t.replace(/.*category:\s*/, '').replace(/^["']|["']$/g, '').trim();
+          curCat = { category: name, items: [] };
+          curItem = null;
+          continue;
+        }
+
+        if (t.includes('name:')) {
+          if (!curCat) curCat = { category: 'General', items: [] };
+          const name = t.replace(/.*name:\s*/, '').replace(/^["']|["']$/g, '').trim();
+          curItem = { name, price: '' };
+          curCat.items.push(curItem);
+          continue;
+        }
+
+        if (t.includes('price:') && curItem) {
+          const price = t.replace(/.*price:\s*/, '').replace(/^["']|["']$/g, '').trim();
+          curItem.price = price;
+          continue;
+        }
+      }
+      if (curCat) regulatory_fees.push(curCat);
+    }
+
+    // Group requirements
     const requirementsGroups: RequirementGroup[] = [];
     for (const key of Object.keys(data)) {
       if (key.startsWith('requirements')) {
@@ -118,28 +217,33 @@ export function parseServiceDocument(
       data['time'] ||
       data['office'] ||
       requirementsGroups.length > 0 ||
-      data['steps']
+      (Array.isArray(data['steps']) && data['steps'].length > 0)
     );
 
-    return {
-      isStructured,
-      title: (data['title'] as string) || fallbackTitle,
-      description: (data['description'] as string) || descriptionFromLoader,
-      fees: data['fees'] as string,
-      feeDetails: data['fee_details'] as string,
-      time: (data['time'] || data['processingTime']) as string,
-      timeDetails: (data['time_details'] || data['processingTime_details']) as string,
-      office: data['office'] as string,
-      officeAddress: (data['office_address'] as string) || undefined,
-      officeHours: (data['office_hours'] as string) || undefined,
-      requirementsGroups,
-      whocanavail: Array.isArray(data['whocanavail']) ? (data['whocanavail'] as string[]) : [],
-      steps: Array.isArray(data['steps']) ? (data['steps'] as string[]) : [],
-      postscripts: Array.isArray(data['postscripts'])
-        ? (data['postscripts'] as string[]).join('\n')
-        : (data['postscripts'] as string) || undefined,
-      rawMarkdownContent: remainingMarkdown,
-    };
+    const feeBreakdownMode = (data['fee_breakdown_mode'] as 'separate' | 'inline') || 'inline';
+
+        return {
+          isStructured,
+          title: (data['title'] as string) || fallbackTitle,
+          description: (data['description'] as string) || descriptionFromLoader,
+          fees: data['fees'] as string,
+          feeDetails: data['fee_details'] as string,
+          time: (data['time'] || data['processingTime']) as string,
+          timeDetails: (data['time_details'] || data['processingTime_details']) as string,
+          office: data['office'] as string,
+          officeAddress: (data['office_address'] as string) || undefined,
+          officeHours: (data['office_hours'] as string) || undefined,
+          requirementsGroups,
+          whocanavail: Array.isArray(data['whocanavail']) ? (data['whocanavail'] as string[]) : [],
+          steps: Array.isArray(data['steps']) ? (data['steps'] as string[]) : [],
+          postscripts: Array.isArray(data['postscripts'])
+            ? (data['postscripts'] as string[]).join('\n')
+            : (data['postscripts'] as string) || undefined,
+          feeBreakdownMode, // 💡 Add this line
+          regulatory_fees,
+          rawMarkdownContent: remainingMarkdown,
+        };
+
   } catch (err) {
     console.error('Failed parsing structured frontmatter', err);
     return {

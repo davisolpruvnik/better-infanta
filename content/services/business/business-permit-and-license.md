@@ -7,6 +7,77 @@ time: '1 hr 20 mins'
 office: 'Business Permits & Licensing Office (BPLO)'
 office_address: 'Local Finance Building beside former Tourism Office, Infanta Municipal Hall, Brgy. Poblacion 38, Infanta, Quezon'
 office_hours: 'Mon to Fri, 8AM-5PM (No Noon Break)'
+
+fee_breakdown_mode: 'separate'
+regulatory_fees:
+  # TABLE 1.1 - BUREAU OF FIRE PROTECTION (BFP)
+  - category: "Bureau of Fire Protection (BFP)"
+    items:
+      - name: "Fire Safety Inspection Certificate (FSIC) - New & Renewal"
+        price: "15% of all regulatory fees (Min. ₱500)"
+
+  # TABLE 1.2 & 2.1 - OFFICE OF THE MUNICIPAL BUILDING OFFICIAL (OBO)
+  - category: "Office of the Building Official (OBO) - Fencing"
+    items:
+      - name: "Fencing: Masonry, metal, or concrete (up to 1.80m height)"
+        price: "₱3 / linear meter"
+      - name: "Fencing: Masonry, metal, or concrete (in excess of 1.80m height)"
+        price: "₱4 / linear meter"
+      - name: "Fencing: Indigenous materials, barbed, chicken, or hog wires"
+        price: "₱2.40 / linear meter"
+
+  - category: "Office of the Building Official (OBO) - Occupancy"
+    items:
+      - name: "Certificate of Use / Occupancy (Costing up to ₱150,000)"
+        price: "₱100"
+      - name: "Certificate of Use / Occupancy (Over ₱150,000 to ₱400,000)"
+        price: "₱200"
+      - name: "Certificate of Use / Occupancy (Over ₱400,000 to ₱850,000)"
+        price: "₱400"
+      - name: "Certificate of Use / Occupancy (Over ₱850,000 to ₱1,200,000)"
+        price: "₱800"
+      - name: "Certificate of Use / Occupancy (Every million or fraction in excess of ₱1.2M)"
+        price: "₱800 / million"
+
+  # TABLE 2.2 - MUNICIPAL HEALTH OFFICE (MHO)
+  - category: "Municipal Health Office (MHO)"
+    items:
+      - name: "Health Certificate / Card (per employee / food handler)"
+        price: "Based on No. of Employees"
+      - name: "Sanitary Inspection & Clearance Fee"
+        price: "Varies by Business Nature"
+
+  # TABLE 4 - ZONING & LOCATIONAL CLEARANCE
+  - category: "Zoning & Planning Office - Commercial & Industrial"
+    items:
+      - name: "Locational Clearance: Project cost below ₱100,000"
+        price: "₱1,200"
+      - name: "Locational Clearance: Over ₱100,000 to ₱500,000"
+        price: "₱1,800"
+      - name: "Locational Clearance: Over ₱500,000 to ₱1,000,000"
+        price: "₱2,400"
+      - name: "Locational Clearance: Over ₱1,000,000 to ₱2,000,000"
+        price: "₱3,600"
+      - name: "Locational Clearance: Over ₱2,000,000"
+        price: "₱6,000 + (1/10 of 1% in excess of ₱2M)"
+
+  - category: "Zoning & Planning Office - Special Uses & Alterations"
+    items:
+      - name: "Special Projects (Gas Stations, Cell Sites, Slaughterhouses - Below ₱2M)"
+        price: "₱6,000"
+      - name: "Special Projects (Gas Stations, Cell Sites, Slaughterhouses - Over ₱2M)"
+        price: "₱6,000 + (1/10 of 1% in excess of ₱2M)"
+      - name: "Alteration / Expansion (affected area/cost only)"
+        price: "Same as original application"
+
+  # TABLE 5.1 - MUNICIPAL ENVIRONMENT & NATURAL RESOURCES OFFICE (MENRO)
+  - category: "Municipal Environment & Natural Resources Office (MENRO)"
+    items:
+      - name: "MENRO Certification Fee"
+        price: "₱75"
+      - name: "Environmental Inspection & Clearance Fee"
+        price: "₱50"
+
 whocanavail:
   - 'Local business owners or representatives'
   - 'Sole Proprietorships, Partnerships, & Corporations or representatives'

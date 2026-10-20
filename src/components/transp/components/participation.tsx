@@ -1,7 +1,18 @@
 import { useState, useMemo, useCallback } from 'react';
 import hexCartoJson from '@/data/geog/turnout-map/infanta_hex_precincts.json';
-import LazyIcon from '@/components/ui/Lazying';
-import { BarangaySearchBar, CartogramStage, normalizeName, useCartogramPanZoom, useGeoJsonProjection } from './cartogramStage';
+import PrecinctSheet from './precinctSheet';
+import { getJenksBreaks, downloadJson } from '@/utils/cartoUtils';
+import {
+  BarangaySearchBar,
+  CartogramStage,
+  CartogramHexGrid,
+  normalizeName,
+  useCartogramPanZoom,
+  useGeoJsonProjection,
+  useCartogramSelection,
+  LazyIcon,
+} from './cartogramStage';
+
 export interface PrecinctTurnoutProps {
   barangay: string;
   precinct_id: string;
@@ -18,70 +29,81 @@ export interface BarangayTurnoutSummary {
   turnoutPct: number;
 }
 
-function getJenksBreaks(data: number[], nClasses = 5): number[] {
-  const valid = data.filter(d => typeof d === 'number' && !isNaN(d) && d > 0);
-  if (valid.length === 0) return [70, 75, 80, 85, 90, 95];
+function PrecinctTurnoutCard({
+  precinct,
+  barangaySummary,
+  onReset,
+}: {
+  precinct: PrecinctTurnoutProps;
+  barangaySummary: BarangayTurnoutSummary | null;
+  onReset: () => void;
+}) {
+  return (
+    <div className="space-y-4 text-start">
+      <div className="border-b border-slate-100 pb-3 pr-8 relative">
+        <span className="text-xs font-axis-navbar-focus uppercase tracking-wider text-slate-400">Clustered Precinct</span>
+        <h3 className="text-lg font-axis-wide-header uppercase text-fantas-900 mt-0.5">Precinct {precinct.precinct_id}</h3>
+        <span className="text-xs uppercase tracking-wider text-white bg-fantas-900 font-axis-navbar-focus px-2 py-0.5 inline-block mt-1">
+          BRGY. {precinct.barangay}
+        </span>
+        <button
+          onClick={onReset}
+          className="absolute right-0 top-0 size-7 bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
 
-  const sorted = [...valid].sort((a, b) => a - b);
-  const n = sorted.length;
-  if (n <= nClasses) {
-    const unique = Array.from(new Set(sorted));
-    while (unique.length < nClasses + 1) unique.push(unique[unique.length - 1] + 1);
-    return unique;
-  }
+      <div className="space-y-3">
+        <div className="flex flex-row items-baseline gap-2">
+          <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Precinct Turnout</span>
+          <span className="text-2xl tracking-wide font-axis-sng-indlab-value text-fantas-900">{precinct.turnout_pct}%</span>
+        </div>
 
-  const mat1: number[][] = Array.from({ length: n + 1 }, () => Array(nClasses + 1).fill(0));
-  const mat2: number[][] = Array.from({ length: n + 1 }, () => Array(nClasses + 1).fill(0));
+        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs">
+          <div className="flex flex-row items-baseline gap-2">
+            <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Ballots</span>
+            <span className="text-lg tracking-wide font-axis-sng-indlab-value text-fantas-900">{precinct.actual_voters.toLocaleString()}</span>
+          </div>
+          <div className="flex flex-row items-baseline gap-2">
+            <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Registered</span>
+            <span className="text-lg tracking-wide font-axis-sng-indlab-value text-fantas-900">{precinct.registered_voters.toLocaleString()}</span>
+          </div>
+        </div>
 
-  for (let y = 1; y <= nClasses; y++) {
-    mat1[1][y] = 1;
-    mat2[1][y] = 0;
-    for (let t = 2; t <= n; t++) mat2[t][y] = Infinity;
-  }
+        {barangaySummary && (
+          <div className="pt-3 border-t border-slate-100 text-xs">
+            <div className="text-[10px] uppercase font-axis-navbar-focus tracking-wider text-fantas-900 font-semibold mb-1">
+              Barangay Total Context
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-row items-baseline gap-1.5">
+                <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Total Hexes:</span>
+                <span className="text-sm font-axis-sng-indlab-value text-fantas-900">{barangaySummary.totalPrecincts}</span>
+              </div>
+              <div className="flex flex-row items-baseline gap-1.5">
+                <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Brgy Turnout:</span>
+                <span className="text-sm font-axis-sng-indlab-value text-fantas-900">{barangaySummary.turnoutPct}%</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
-  let v = 0;
-  for (let l = 2; l <= n; l++) {
-    let s1 = 0, s2 = 0, w = 0;
-    for (let m = 1; m <= l; m++) {
-      const i3 = l - m + 1;
-      const val = sorted[i3 - 1];
-      s2 += val * val;
-      s1 += val;
-      w++;
-      v = s2 - (s1 * s1) / w;
-      const i4 = i3 - 1;
-      if (i4 !== 0) {
-        for (let j = 2; j <= nClasses; j++) {
-          if (mat2[l][j] >= v + mat2[i4][j - 1]) {
-            mat1[l][j] = i3;
-            mat2[l][j] = v + mat2[i4][j - 1];
-          }
-        }
-      }
-    }
-    mat1[l][1] = 1;
-    mat2[l][1] = v;
-  }
-
-  const kclass: number[] = Array(nClasses + 1).fill(0);
-  kclass[nClasses] = sorted[n - 1];
-  let count = nClasses, cur = n;
-  while (count >= 2) {
-    const id = mat1[cur][count] - 2;
-    kclass[count - 1] = sorted[id];
-    cur = mat1[cur][count] - 1;
-    count--;
-  }
-  kclass[0] = sorted[0];
-  return kclass;
+      <button
+        onClick={onReset}
+        className="w-full mt-4 py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-axis-navbar-focus uppercase tracking-wider transition-colors cursor-pointer"
+      >
+        Reset Map View
+      </button>
+    </div>
+  );
 }
 
 export default function ParticipationTab() {
   const geoJson = hexCartoJson as any;
 
-  const [selectedFeature, setSelectedFeature] = useState<PrecinctTurnoutProps | null>(null);
-  const [hoveredPrecinctId, setHoveredPrecinctId] = useState<string | null>(null);
-  const [hoveredBrgy, setHoveredBrgy] = useState<string | null>(null);
   const [colorblindMode, setColorblindMode] = useState(false);
   const [sortKey, setSortKey] = useState<'turnoutPct' | 'registeredVoters'>('turnoutPct');
 
@@ -98,7 +120,6 @@ export default function ParticipationTab() {
     handleResetTransform,
   } = useCartogramPanZoom();
 
-  // 🧮 1-line coordinate projection hook
   const { projectedFeatures, zoomToBarangay } = useGeoJsonProjection<PrecinctTurnoutProps>(
     geoJson,
     useCallback((p: any, idx: number) => ({
@@ -108,6 +129,23 @@ export default function ParticipationTab() {
       actual_voters: Number(p.actual_voters) || 0,
       turnout_pct: Number(p.turnout_pct) || 0,
     }), [])
+  );
+
+  const {
+    selectedFeature,
+    hoveredPrecinctId,
+    setHoveredPrecinctId,
+    hoveredBrgy,
+    setHoveredBrgy,
+    selectPrecinct,
+    selectBarangay,
+    resetView,
+  } = useCartogramSelection(
+    projectedFeatures,
+    zoomToBarangay,
+    setTransform,
+    hasMoved,
+    handleResetTransform
   );
 
   const turnoutColorRamp = useMemo(() => {
@@ -165,19 +203,6 @@ export default function ParticipationTab() {
     return Array.from(map.values());
   }, [geoJson]);
 
-  const handleSelectPrecinct = (props: PrecinctTurnoutProps) => {
-    if (hasMoved()) return;
-    setSelectedFeature(props);
-    zoomToBarangay(props.barangay, setTransform);
-  };
-
-  const handleResetView = () => {
-    setSelectedFeature(null);
-    setHoveredBrgy(null);
-    setHoveredPrecinctId(null);
-    handleResetTransform();
-  };
-
   const activeBrgySummary = useMemo(() => {
     if (!selectedFeature) return null;
     return barangaySummaries.find(
@@ -192,30 +217,12 @@ export default function ParticipationTab() {
     });
   }, [barangaySummaries, sortKey]);
 
-  const handleDownloadJson = useCallback((type: 'barangays' | 'precincts') => {
-    const isPrecinct = type === 'precincts';
-    const data = isPrecinct ? geoJson : sortedTableData;
-    const filename = isPrecinct
-      ? 'infanta_hex_precincts_turnout.json'
-      : 'infanta_barangay_turnout_summary.json';
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }, [geoJson, sortedTableData]);
-
   return (
     <div className="space-y-8 animate-fade-in text-start select-none">
       {/* HEADER & REUSABLE SEARCH */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-slate-900">
+          <h2 className="text-2xl font-axis-wide-header uppercase tracking-wide text-fantas-900">
             Voter Turnout & Participation
           </h2>
           <p className="text-md font-axis-subtitular-focus tracking-wide text-slate-500">
@@ -230,11 +237,7 @@ export default function ParticipationTab() {
           renderSubtitle={b => (
             <span className="text-slate-500 font-axis-navbar-focus">{b.turnoutPct}% Turnout</span>
           )}
-          onSelect={bName => {
-            zoomToBarangay(bName, setTransform);
-            const firstTile = projectedFeatures.find(h => normalizeName(h.props.barangay) === normalizeName(bName));
-            if (firstTile) setSelectedFeature(firstTile.props);
-          }}
+          onSelect={selectBarangay}
         />
       </div>
 
@@ -249,95 +252,39 @@ export default function ParticipationTab() {
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onZoom={handleZoom}
-          onReset={handleResetView}
+          onReset={resetView}
           badgeText="1 Hex = 1 Clustered Precinct"
           subText="Drag map to pan • Click any hex tile to inspect precinct"
         >
-          {projectedFeatures.map((hex, idx) => {
-            const { props, pathD } = hex;
-            if (!pathD) return null;
-
-            const isSelected = selectedFeature?.precinct_id === props.precinct_id;
-            const isHovered = hoveredPrecinctId === props.precinct_id;
-            const isSameBrgy = (hoveredBrgy && hoveredBrgy === props.barangay) ||
-                               (selectedFeature && selectedFeature.barangay === props.barangay);
-
-            return (
-              <path
-                key={idx}
-                d={pathD}
-                onClick={() => handleSelectPrecinct(props)}
-                onMouseEnter={() => { setHoveredPrecinctId(props.precinct_id); setHoveredBrgy(props.barangay); }}
-                onMouseLeave={() => { setHoveredPrecinctId(null); setHoveredBrgy(null); }}
-                fill={getTurnoutColor(props.turnout_pct)}
-                stroke={isSelected ? '#000000' : isHovered ? '#0f172a' : isSameBrgy ? '#334155' : '#ffffff'}
-                strokeWidth={isSelected ? 2.5 : isHovered ? 2.5 : isSameBrgy ? 1.5 : 1}
-                className="transition-colors duration-150 cursor-pointer outline-none"
-              >
-                <title>{`Brgy. ${props.barangay} | Precinct ${props.precinct_id} (${props.turnout_pct}%)`}</title>
-              </path>
-            );
-          })}
+          <CartogramHexGrid
+            features={projectedFeatures}
+            selectedId={selectedFeature?.precinct_id}
+            hoveredId={hoveredPrecinctId}
+            activeBarangay={hoveredBrgy || selectedFeature?.barangay}
+            getFillColor={p => getTurnoutColor(p.turnout_pct)}
+            getTitle={p => `Brgy. ${p.barangay} | Precinct ${p.precinct_id} (${p.turnout_pct}%)`}
+            onSelect={selectPrecinct}
+            onHover={(id, brgy) => {
+              setHoveredPrecinctId(id);
+              setHoveredBrgy(brgy);
+            }}
+          />
         </CartogramStage>
 
         {/* RIGHT 4 COLS: Turnout Inspector & Fisher-Jenks Legend */}
         <div className="lg:col-span-4 space-y-6 flex flex-col justify-start h-full pt-2 lg:pt-0">
           {selectedFeature ? (
-            <div className="bg-white border border-slate-200 p-6 relative animate-fade-in text-start space-y-4">
-              <button onClick={handleResetView} className="absolute right-4 top-4 size-7 bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer" aria-label="Close">
-                ×
-              </button>
-
-              <div className="border-b border-slate-100 pb-3 pr-8">
-                <span className="text-xs font-axis-navbar-focus uppercase tracking-wider text-slate-400">Clustered Precinct</span>
-                <h3 className="text-lg font-axis-wide-header uppercase text-slate-900 mt-0.5">Precinct {selectedFeature.precinct_id}</h3>
-                <span className="text-xs uppercase tracking-wider text-fantas-50 bg-fantas-800 font-axis-navbar-focus px-2 py-0.5 inline-block mt-1">
-                  BRGY. {selectedFeature.barangay}
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex flex-row items-baseline gap-2">
-                  <span className="text-xs uppercase font-axis-navbar-focus text-slate-400 tracking-wide">Precinct Turnout</span>
-                  <span className="text-2xl tracking-wide font-axis-sng-indlab-value text-slate-900">{selectedFeature.turnout_pct}%</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs">
-                  <div className="flex flex-row items-baseline gap-2">
-                    <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Ballots</span>
-                    <span className="text-lg tracking-wide font-axis-sng-indlab-value text-slate-900">{selectedFeature.actual_voters.toLocaleString()}</span>
-                  </div>
-                  <div className="flex flex-row items-baseline gap-2">
-                    <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Registered</span>
-                    <span className="text-lg tracking-wide font-axis-sng-indlab-value text-slate-900">{selectedFeature.registered_voters.toLocaleString()}</span>
-                  </div>
-                </div>
-
-                {activeBrgySummary && (
-                  <div className="pt-3 border-t border-slate-100 text-xs">
-                    <div className="text-[10px] uppercase font-axis-navbar-focus tracking-wider text-fantas-800 mb-1">Barangay Total Context</div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="flex flex-row items-baseline gap-1.5">
-                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Total Hexes:</span>
-                        <span className="text-sm font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.totalPrecincts}</span>
-                      </div>
-                      <div className="flex flex-row items-baseline gap-1.5">
-                        <span className="text-xs uppercase font-axis-navbar-focus text-slate-400">Avg Turnout:</span>
-                        <span className="text-sm font-axis-sng-indlab-value text-slate-900">{activeBrgySummary.turnoutPct}%</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <button onClick={handleResetView} className="w-full mt-4 py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-axis-navbar-focus uppercase tracking-wider transition-colors cursor-pointer">
-                Reset Map View
-              </button>
+            <div className="hidden lg:block bg-white border border-slate-200 p-6 animate-fade-in text-start">
+              <PrecinctTurnoutCard
+                precinct={selectedFeature}
+                barangaySummary={activeBrgySummary}
+                onReset={resetView}
+              />
             </div>
           ) : (
             <div className="bg-white border border-slate-200 p-6 text-start space-y-6">
               <div className="border-b border-slate-100 pb-3">
-                <h3 className="text-xl font-axis-wide-header uppercase text-slate-900">Turnout Intensity</h3>
+                <h3 className="text-xl font-axis-wide-header uppercase text-fantas-900">Turnout Intensity</h3>
               </div>
 
               <div>
@@ -385,6 +332,17 @@ export default function ParticipationTab() {
         </div>
       </div>
 
+      {/* MOBILE SHEET */}
+      <PrecinctSheet isOpen={Boolean(selectedFeature)} onClose={resetView}>
+        {selectedFeature && (
+          <PrecinctTurnoutCard
+            precinct={selectedFeature}
+            barangaySummary={activeBrgySummary}
+            onReset={resetView}
+          />
+        )}
+      </PrecinctSheet>
+
       {/* BOTTOM TABLE */}
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 border border-slate-200 text-xs">
@@ -395,14 +353,14 @@ export default function ParticipationTab() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1.5 mr-1 sm:mr-3 border-r border-slate-200 pr-3">
               <button
-                onClick={() => handleDownloadJson('barangays')}
+                onClick={() => downloadJson('infanta_barangay_turnout_summary.json', sortedTableData)}
                 className="px-2.5 py-1 text-[11px] uppercase tracking-wider font-axis-navbar-focus bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <LazyIcon name="lucide:download" className="h-3.5 w-3.5 text-slate-500" />
                 Summary JSON
               </button>
               <button
-                onClick={() => handleDownloadJson('precincts')}
+                onClick={() => downloadJson('infanta_hex_precincts_turnout.json', geoJson)}
                 className="px-2.5 py-1 text-[11px] uppercase tracking-wider font-axis-navbar-focus bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <LazyIcon name="lucide:file-json" className="h-3.5 w-3.5 text-slate-500" />
@@ -414,7 +372,7 @@ export default function ParticipationTab() {
             <button
               onClick={() => setSortKey('turnoutPct')}
               className={`px-2.5 py-1 uppercase tracking-wider font-axis-navbar-focus cursor-pointer ${
-                sortKey === 'turnoutPct' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                sortKey === 'turnoutPct' ? 'bg-fantas-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
               Turnout %
@@ -422,7 +380,7 @@ export default function ParticipationTab() {
             <button
               onClick={() => setSortKey('registeredVoters')}
               className={`px-2.5 py-1 uppercase tracking-wider font-axis-navbar-focus cursor-pointer ${
-                sortKey === 'registeredVoters' ? 'bg-fantas-800 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                sortKey === 'registeredVoters' ? 'bg-fantas-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
               Voters
@@ -448,23 +406,19 @@ export default function ParticipationTab() {
                   key={row.barangay}
                   onMouseEnter={() => setHoveredBrgy(row.barangay)}
                   onMouseLeave={() => setHoveredBrgy(null)}
-                  onClick={() => {
-                    zoomToBarangay(row.barangay, setTransform);
-                    const tile = projectedFeatures.find(h => normalizeName(h.props.barangay) === normalizeName(row.barangay));
-                    if (tile) setSelectedFeature(tile.props);
-                  }}
+                  onClick={() => selectBarangay(row.barangay)}
                   className={`cursor-pointer transition-colors ${
                     selectedFeature?.barangay === row.barangay ? 'bg-emerald-50 text-sm' : hoveredBrgy === row.barangay ? 'bg-slate-50' : ''
                   }`}
                 >
                   <td className="py-2.5 px-4 text-slate-400">{idx + 1}</td>
-                  <td className="py-2.5 px-4 tracking-wide text-sm font-semibold text-slate-900">{row.barangay}</td>
+                  <td className="py-2.5 px-4 tracking-wide text-sm font-semibold text-fantas-900">{row.barangay}</td>
                   <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-600">{row.totalPrecincts}</td>
                   <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-700">{row.registeredVoters.toLocaleString()}</td>
-                  <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-slate-900">{row.actualVoters.toLocaleString()}</td>
+                  <td className="py-2.5 px-4 tracking-wide text-sm font-axis-number-focus text-fantas-900">{row.actualVoters.toLocaleString()}</td>
                   <td className="py-2.5 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="font-axis-number-focus text-sm text-slate-900 min-w-[45px]">{row.turnoutPct}%</span>
+                      <span className="font-axis-number-focus text-sm text-fantas-900 min-w-[45px]">{row.turnoutPct}%</span>
                       <div className="flex-1 h-3 bg-slate-200 overflow-hidden">
                         <div className="h-full transition-all duration-300" style={{ width: `${row.turnoutPct}%`, backgroundColor: getTurnoutColor(row.turnoutPct) }} />
                       </div>

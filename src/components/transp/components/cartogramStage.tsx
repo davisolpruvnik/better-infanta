@@ -1,4 +1,3 @@
-// src/components/transp/crumbs/CartogramStage.tsx
 import { useState, useRef, useCallback, lazy, Suspense, useMemo, type ReactNode, type RefObject } from 'react';
 
 const Iconify = lazy(() =>
@@ -88,7 +87,7 @@ export function useCartogramPanZoom() {
   };
 }
 
-// 🧮 Shared Projection & Zoom Engine
+// Shared Projection & Zoom Engine
 export function useGeoJsonProjection<T extends { barangay: string }>(
   geoJson: any,
   mapProps: (properties: any, idx: number) => T
@@ -211,6 +210,104 @@ export function useGeoJsonProjection<T extends { barangay: string }>(
   return { projectedFeatures, zoomToBarangay };
 }
 
+// 🎯 Shared Selection & Interaction Hook
+export function useCartogramSelection<T extends { barangay: string; precinct_id: string }>(
+  projectedFeatures: Array<{ props: T; pathD: string }>,
+  zoomToBarangay: (brgyName: string, setTransform: (updater: any) => void) => void,
+  setTransform: (updater: any) => void,
+  hasMoved: () => boolean,
+  handleResetTransform: () => void
+) {
+  const [selectedFeature, setSelectedFeature] = useState<T | null>(null);
+  const [hoveredPrecinctId, setHoveredPrecinctId] = useState<string | null>(null);
+  const [hoveredBrgy, setHoveredBrgy] = useState<string | null>(null);
+
+  const selectPrecinct = useCallback((props: T) => {
+    if (hasMoved()) return;
+    setSelectedFeature(props);
+    zoomToBarangay(props.barangay, setTransform);
+  }, [hasMoved, zoomToBarangay, setTransform]);
+
+  const selectBarangay = useCallback((barangayName: string) => {
+    zoomToBarangay(barangayName, setTransform);
+    const tile = projectedFeatures.find(
+      h => normalizeName(h.props.barangay) === normalizeName(barangayName)
+    );
+    if (tile) setSelectedFeature(tile.props);
+  }, [projectedFeatures, zoomToBarangay, setTransform]);
+
+  const resetView = useCallback(() => {
+    setSelectedFeature(null);
+    setHoveredBrgy(null);
+    setHoveredPrecinctId(null);
+    handleResetTransform();
+  }, [handleResetTransform]);
+
+  return {
+    selectedFeature,
+    setSelectedFeature,
+    hoveredPrecinctId,
+    setHoveredPrecinctId,
+    hoveredBrgy,
+    setHoveredBrgy,
+    selectPrecinct,
+    selectBarangay,
+    resetView,
+  };
+}
+
+// ⬡ Shared Hex Grid Path Layer
+interface CartogramHexGridProps<T extends { barangay: string; precinct_id: string }> {
+  features: Array<{ props: T; pathD: string }>;
+  selectedId?: string | null;
+  hoveredId?: string | null;
+  activeBarangay?: string | null;
+  getFillColor: (props: T) => string;
+  getTitle?: (props: T) => string;
+  onSelect: (props: T) => void;
+  onHover: (id: string | null, brgy: string | null) => void;
+}
+
+export function CartogramHexGrid<T extends { barangay: string; precinct_id: string }>({
+  features,
+  selectedId,
+  hoveredId,
+  activeBarangay,
+  getFillColor,
+  getTitle,
+  onSelect,
+  onHover,
+}: CartogramHexGridProps<T>) {
+  return (
+    <>
+      {features.map((item, idx) => {
+        const { props, pathD } = item;
+        if (!pathD) return null;
+
+        const isSelected = selectedId === props.precinct_id;
+        const isHovered = hoveredId === props.precinct_id;
+        const isSameBrgy = Boolean(activeBarangay && activeBarangay === props.barangay);
+
+        return (
+          <path
+            key={props.precinct_id || idx}
+            d={pathD}
+            onClick={() => onSelect(props)}
+            onMouseEnter={() => onHover(props.precinct_id, props.barangay)}
+            onMouseLeave={() => onHover(null, null)}
+            fill={getFillColor(props)}
+            stroke={isSelected ? '#000000' : isHovered ? '#0f172a' : isSameBrgy ? '#334155' : '#ffffff'}
+            strokeWidth={isSelected || isHovered ? 2.5 : isSameBrgy ? 1.5 : 1}
+            className="transition-colors duration-150 cursor-pointer outline-none"
+          >
+            {getTitle && <title>{getTitle(props)}</title>}
+          </path>
+        );
+      })}
+    </>
+  );
+}
+
 // 🔍 Shared Barangay Search Bar with Dropdown
 interface BarangaySearchBarProps<T> {
   placeholder?: string;
@@ -312,7 +409,7 @@ export function CartogramStage({
   return (
     <div className={`w-full bg-white border border-slate-200 flex flex-col p-4 relative select-none ${className}`}>
       <div className="absolute top-6 left-6 z-20 pointer-events-none">
-        <span className="inline-flex items-center gap-1.5 px-2 py-1.5 bg-[#0f172a] text-white text-[12px] font-axis-navbar-focus uppercase tracking-wider">
+        <span className="inline-flex items-center gap-1.5 px-2 py-1.5 bg-fantas-900 text-white text-[12px] font-axis-navbar-focus uppercase tracking-wider">
           <span>⬡</span> {badgeText}
         </span>
       </div>

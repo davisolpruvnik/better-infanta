@@ -12,6 +12,23 @@ requirements_individual:
   - 'Personal information (full name, address, nationality, place and date of birth, gender, profession/occupation, monthly income'
 requirements_corporation/group:
   - 'Organization/group information (name, address, place and date of registration, type of organization, annual gross income)'
+
+fee_breakdown_mode: "inline"
+regulatory_fees:
+  - category: "Individual Taxpayers"
+    items:
+      - name: "Basic Community Tax"
+        price: "₱5.00"
+      - name: "Additional Tax on Gross Annual Income"
+        price: "₱1.00 per ₱1,000 declared"
+
+  - category: "Corporations / Non-Individual Entities"
+    items:
+      - name: "Basic Community Tax"
+        price: "₱500.00"
+      - name: "Additional Tax on Gross Receipts / Asset Value"
+        price: "₱2.00 per ₱5,000 declared"
+
 whocanavail:
   - Any individual (18 years old and above)
   - Any corporation/company

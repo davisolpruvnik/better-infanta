@@ -16,6 +16,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Services = lazy(() => import('./pages/Services'));
 const Document = lazy(() => import('./pages/Document'));
 const Government = lazy(() => import('./pages/Government'));
+const DocumentFees = lazy(() => import('./pages/DocumentFees'))
 const StatsPage = lazy(() => import('./components/info-publico/statistics'));
 const TransparencyPage = lazy(() => import('./components/info-publico/transparency'));
 const Municipio = lazy(() => import('./pages/govs-detail/municipio'));
@@ -42,6 +43,7 @@ function App() {
                     path="/services/:category/:documentSlug"
                     element={<Document categoryType="service" />}
                   />
+                  <Route path="/services/:category/:documentSlug/fees" element={<DocumentFees categoryType="service" />} />
                   <Route path="/government" element={<Government />} />
 
                   {/* 2. Municipio Section (Executive & Legislative Officials) */}

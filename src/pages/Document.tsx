@@ -3,7 +3,7 @@ import Section from '../components/ui/Section';
 import Breadcrumbsless from '@/components/ui/BreadcrumbsLess';
 import { Heading } from '../components/ui/Heading';
 import { Text } from '../components/ui/Text';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -17,7 +17,7 @@ import {
 import { createMarkdownComponents } from '../components/ui/markdownComponents';
 import { getTypographyTheme } from '../lib/typographyThemes';
 
-// 💡 1. Clean imports: Only fetch what we need from Loader and custom Icon component
+// 💡 Clean imports: Only fetch what we need from Loader and custom Icon component
 import {
   serviceCategories,
   governmentCategories,
@@ -52,6 +52,7 @@ export default function Document({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeReqKey, setActiveReqKey] = useState<string>('');
+  const [activeFeeKey, setActiveFeeKey] = useState<string>('');
   const [openStepId, setOpenStepId] = useState<string | null>(null);
 
   const markdownComponents = useMemo(
@@ -84,24 +85,29 @@ export default function Document({
     return processSteps(doc.steps);
   }, [doc?.steps]);
 
-  // 💡 HELPER: Calculates the exact horizontal distance back to the main timeline line responsively
+  // 💡 HELPER: Calculates horizontal connector line back to timeline
   const getConnectorClass = (indentClass: string) => {
     if (indentClass.includes('ml-4')) {
-      // 💡 Level 3 (24px parent padding + 16px margin = 40px)
-      return "absolute top-[14px] -left-[40px] w-[48px] h-px bg-fantas-200 pointer-events-none";
+      return 'absolute top-[14px] -left-[40px] w-[48px] h-px bg-fantas-200 pointer-events-none';
     }
     if (indentClass.includes('ml-2')) {
-      // 💡 Level 2 (24px parent padding + 8px margin = 32px)
-      return "absolute top-[14px] -left-[32px] w-[40px] h-px bg-fantas-200 pointer-events-none";
+      return 'absolute top-[14px] -left-[32px] w-[40px] h-px bg-fantas-200 pointer-events-none';
     }
-    // 💡 Level 1 (24px parent padding + 0px margin = 24px)
-    return "absolute top-[14px] -left-6 w-8 h-px bg-fantas-200 pointer-events-none";
+    return 'absolute top-[14px] -left-6 w-8 h-px bg-fantas-200 pointer-events-none';
   };
 
   // Handle active dynamic requirement tab defaults
   useEffect(() => {
     if (doc?.requirementsGroups && doc.requirementsGroups.length > 0) {
       setActiveReqKey(doc.requirementsGroups[0].key);
+    }
+  }, [doc]);
+
+  // Handle active dynamic regulatory fee tab defaults
+  useEffect(() => {
+    if (doc?.regulatory_fees && doc.regulatory_fees.length > 0) {
+      const defaultCategory = doc.regulatory_fees[0].category || '0';
+      setActiveFeeKey(defaultCategory);
     }
   }, [doc]);
 
@@ -189,12 +195,10 @@ export default function Document({
         <div>
           <LazyIcon
             name="fluent-emoji-high-contrast:construction"
-            className='w-8 h-8 text-black'
-            />
+            className="w-8 h-8 text-black"
+          />
         </div>
-        <span>
-          Loading...
-        </span>
+        <span>Loading...</span>
       </Section>
     );
   }
@@ -205,12 +209,12 @@ export default function Document({
         <div className="flex justify-center mb-8">
           <Breadcrumbsless items={breadcrumbs} />
         </div>
-        <div className='flex flex-col justify-center items-center gap-2'>
+        <div className="flex flex-col justify-center items-center gap-2">
           <LazyIcon
             name="fluent-emoji-high-contrast:construction"
-            className='w-8 h-8 text-fantas-800'
+            className="w-8 h-8 text-fantas-800"
           />
-          <span className='text-fantas-800 font-axis-bold'>
+          <span className="text-fantas-800 font-axis-bold">
             Process not available yet.
           </span>
         </div>
@@ -273,6 +277,13 @@ export default function Document({
     doc.requirementsGroups[0];
   const activeRequirements = activeGroup ? activeGroup.items : [];
 
+  // Active Regulatory Fee Category resolution
+  const activeFeeCategory =
+    doc.regulatory_fees?.find(
+      (g, idx) => (g.category || String(idx)) === activeFeeKey
+    ) || doc.regulatory_fees?.[0];
+  const activeFeeItems = activeFeeCategory ? activeFeeCategory.items : [];
+
   return (
     <>
       <SEO
@@ -304,7 +315,7 @@ export default function Document({
                     </h3>
                   </div>
 
-                  {/* Clean Stepper Timeline resting directly on the background */}
+                  {/* Stepper Timeline */}
                   <div className="relative border-l border-fantas-200 ml-4 pl-6 space-y-8">
                     {processedSteps.map(step => {
                       const isStepOpen = openStepId === step.id;
@@ -314,25 +325,27 @@ export default function Document({
                           key={step.id}
                           className={`relative transition-all duration-300 ${step.indentClass}`}
                         >
-                          {/* FIXED BADGE ALIGNMENT: top-0.5 to align pixel-perfectly with the first line of text */}
                           {!step.isSubStep && (
                             <span className="flex absolute -left-[36.5px] top-0.5 h-6 w-6 items-center justify-center rounded-full bg-fantas-800 border-white ring-1 ring-fantas-50 text-white font-axis-chunky text-[10px] text-center shadow-sm z-10">
                               {step.badge}
                             </span>
                           )}
 
-                          {/* 💡 NEW ELEMENT: Renders a horizontal connector line from the nested card back to the vertical timeline line */}
                           {step.isSubStep && (
-                            <span className={getConnectorClass(step.indentClass)} aria-hidden="true" />
+                            <span
+                              className={getConnectorClass(step.indentClass)}
+                              aria-hidden="true"
+                            />
                           )}
 
                           {step.isAccordion ? (
                             <div className="text-sm font-axis-book tracking-normal text-wrap leading-relaxed text-gray-700 py-1">
-                              {/* 💡 Accessible toggle header replacing <summary> */}
                               <button
                                 type="button"
                                 onClick={() =>
-                                  setOpenStepId(prev => (prev === step.id ? null : step.id))
+                                  setOpenStepId(prev =>
+                                    prev === step.id ? null : step.id
+                                  )
                                 }
                                 aria-expanded={isStepOpen}
                                 className="w-full text-left flex items-start justify-start gap-3 select-none outline-none cursor-pointer group"
@@ -344,11 +357,8 @@ export default function Document({
                                     </span>
                                   )}
 
-                                  {/* 💡 Normal inline text wrapper */}
                                   <span className="pr-4 text-xs sm:text-sm flex-1 min-w-0 max-w-2xl font-axis-book break-words leading-normal text-fantas-950">
                                     <span>{step.summaryText.trim()}</span>{' '}
-
-                                    {/* 💡 TAPPABLE CHIP: Animates rotation with state */}
                                     <span
                                       className={`inline-flex items-center justify-center size-5.5 rounded-full bg-fantas-50 group-hover:bg-fantas-100 text-fantas-600 border border-fantas-200/50 shadow-2xs transition-transform duration-200 shrink-0 select-none align-middle ml-1.5 ${
                                         isStepOpen ? 'rotate-180' : 'rotate-0'
@@ -364,7 +374,6 @@ export default function Document({
                                 </div>
                               </button>
 
-                              {/* 💡 Animated Accordion Body */}
                               <AnimatePresence initial={false}>
                                 {isStepOpen && (
                                   <motion.div
@@ -374,7 +383,10 @@ export default function Document({
                                       height: 'auto',
                                       opacity: 1,
                                       transition: {
-                                        height: { duration: 0.25, ease: [0.04, 0.62, 0.23, 0.98] },
+                                        height: {
+                                          duration: 0.25,
+                                          ease: [0.04, 0.62, 0.23, 0.98],
+                                        },
                                         opacity: { duration: 0.2, delay: 0.05 },
                                       },
                                     }}
@@ -382,13 +394,15 @@ export default function Document({
                                       height: 0,
                                       opacity: 0,
                                       transition: {
-                                        height: { duration: 0.2, ease: [0.04, 0.62, 0.23, 0.98] },
+                                        height: {
+                                          duration: 0.2,
+                                          ease: [0.04, 0.62, 0.23, 0.98],
+                                        },
                                         opacity: { duration: 0.15 },
                                       },
                                     }}
                                     className="overflow-hidden"
                                   >
-                                    {/* Detail text parsing */}
                                     <div className="mt-2.5 pt-2.5 border-t border-gray-300 border-dotted text-fantas-800 font-axis-thin xs:text-xs sm:text-sm tracking-normal leading-snug markdown-content text-wrap break-words">
                                       <ReactMarkdown
                                         remarkPlugins={[remarkGfm]}
@@ -402,7 +416,6 @@ export default function Document({
                               </AnimatePresence>
                             </div>
                           ) : (
-                            /* Clean, Flat, Border-free static step layout */
                             <div className="text-gray-800 py-1 flex flex-col sm:flex-row items-start gap-2 sm:gap-2.5 text-wrap break-words">
                               {step.isSubStep && (
                                 <span className="px-2 py-0.5 text-[10px] font-axis-chunky bg-fantas-50 border border-fantas-200 text-fantas-800 rounded shrink-0">
@@ -439,7 +452,6 @@ export default function Document({
               {/* Who to avail Section */}
               {doc.whocanavail.length > 0 && (
                 <div className="flex flex-row items-stretch gap-4 border-b border-gray-200 pb-6">
-                  {/* Left Column: Vertical Label Segment */}
                   <div className="w-[115px] shrink-0 flex items-start gap-1.5 pt-0.5">
                     <LazyIcon
                       name="lucide:user-check"
@@ -450,13 +462,11 @@ export default function Document({
                     </span>
                   </div>
 
-                  {/* Dynamic Vertical Divider Line */}
                   <div
                     className="w-px bg-gray-200 self-stretch shrink-0"
                     aria-hidden="true"
                   />
 
-                  {/* Right Column: Dynamic Bullet List */}
                   <div className="flex-grow min-w-0">
                     <ul className="space-y-3">
                       {doc.whocanavail.map((req, i) => (
@@ -478,9 +488,7 @@ export default function Document({
 
               {/* Required Documents Section */}
               <div className="flex flex-row items-stretch gap-4 border-b border-gray-200 pb-6">
-                {/* Left Column: Vertical Label Segment + Radio Toggles (Option Chooser) */}
                 <div className="w-[115px] shrink-0 flex flex-col items-start gap-4">
-                  {/* Header Title */}
                   <div className="flex items-start gap-1.5 pt-0.5">
                     <LazyIcon
                       name="ri:clipboard-line"
@@ -491,7 +499,6 @@ export default function Document({
                     </span>
                   </div>
 
-                  {/* Base UI RadioGroup Option Chooser */}
                   {doc.requirementsGroups.length > 1 && (
                     <RadioGroup
                       value={activeReqKey}
@@ -518,13 +525,11 @@ export default function Document({
                   )}
                 </div>
 
-                {/* Dynamic Vertical Divider Line */}
                 <div
                   className="w-px bg-gray-200 self-stretch shrink-0"
                   aria-hidden="true"
                 />
 
-                {/* Right Column: Active Checklist */}
                 <div className="flex-grow min-w-0 space-y-4">
                   {activeRequirements.length > 0 ? (
                     <ul className="space-y-3">
@@ -551,12 +556,131 @@ export default function Document({
                 </div>
               </div>
 
+              {/* 💡 INLINE REGULATORY FEES: Directly below Required Documents, matching layout & RadioGroup */}
+              {doc.regulatory_fees &&
+                doc.regulatory_fees.length > 0 &&
+                doc.feeBreakdownMode !== 'separate' && (
+                  <div className="flex flex-row items-stretch gap-4 border-b border-gray-200 pb-6">
+                    {/* Left Column: Vertical Label Segment + Radio Toggles */}
+                    <div className="w-[115px] shrink-0 flex flex-col items-start gap-4">
+                      <div className="flex items-start gap-1.5 pt-0.5">
+                        <LazyIcon
+                          name="lucide:receipt"
+                          className="h-4 w-4 text-fantas-950 shrink-0"
+                        />
+                        <span className="text-[14px] font-axis-navbar-focus uppercase tracking-wider text-fantas-950 leading-tight">
+                          Regulatory Fees
+                        </span>
+                      </div>
+
+                      {/* Base UI RadioGroup Category Chooser (only if > 1 category) */}
+                      {doc.regulatory_fees.length > 1 && (
+                        <RadioGroup
+                          value={activeFeeKey}
+                          onValueChange={setActiveFeeKey}
+                          className="w-full flex flex-col items-start gap-2.5 pt-2.5 border-t border-gray-200/50"
+                        >
+                          {doc.regulatory_fees.map((group, idx) => {
+                            const groupKey = group.category || String(idx);
+                            return (
+                              <label
+                                key={groupKey}
+                                className="flex items-start gap-2 cursor-pointer text-[10px] sm:text-xs font-axis-navbar-focus uppercase tracking-wider text-gray-700/80 hover:text-gray-900 select-none"
+                              >
+                                <Radio.Root
+                                  value={groupKey}
+                                  className="flex size-3.5 shrink-0 items-center justify-center border rounded-full p-0 border-fantas-600 bg-white text-white data-checked:bg-fantas-700 data-checked:border-fantas-700 focus-visible:outline-2 cursor-pointer"
+                                >
+                                  <Radio.Indicator className="flex items-center justify-center data-unchecked:hidden before:size-1 before:rounded-full before:bg-current" />
+                                </Radio.Root>
+                                <span className="font-axis-navbar-focus tracking-wider text-[12px] leading-snug">
+                                  {group.category || `Category ${idx + 1}`}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </RadioGroup>
+                      )}
+                    </div>
+
+                    {/* Dynamic Vertical Divider Line */}
+                    <div
+                      className="w-px bg-gray-200 self-stretch shrink-0"
+                      aria-hidden="true"
+                    />
+
+                    {/* Right Column: Active Fee Checklist */}
+                    <div className="flex-grow min-w-0 space-y-3">
+                      {activeFeeItems.length > 0 ? (
+                        <ul className="space-y-3">
+                          {activeFeeItems.map((item, iIdx) => (
+                            <li
+                              key={iIdx}
+                              className="flex items-start justify-between gap-4 text-xs sm:text-sm font-axis-thin text-gray-700 wrap-break-word"
+                            >
+                              <div className="flex items-start gap-2 min-w-0 flex-1">
+                                  <LazyIcon
+                                    name="lucide:check-circle-2"
+                                    className="text-kapwa-green-600 h-4 w-4 shrink-0 mt-0.5"
+                                  />
+                                  <span className="leading-snug wrap-break-word text-pretty">
+                                    {item.name}
+                                  </span>
+                                </div>
+
+                                {/* Right: Balanced, Wrapped Price Badge */}
+                                <span className="font-axis-number-focus text-fantas-950 text-right text-balance wrap-break-word max-w-[35%] leading-snug bg-fantas-100 px-2 py-0.5 text-xs border border-fantas-100 self-start">
+                                  {item.price}
+                                </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-xs text-center text-gray-400 font-axis-thin py-2">
+                          No fees specified for this category.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* 💡 SEPARATE SUBPAGE CARD: Only shown when feeBreakdownMode === 'separate' */}
+              {doc.regulatory_fees &&
+                doc.regulatory_fees.length > 0 &&
+                doc.feeBreakdownMode === 'separate' && (
+                  <div className="bg-fantas-50/60 border border-fantas-200 p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="p-2 bg-white border border-fantas-200 text-fantas-800 shadow-2xs shrink-0">
+                        <LazyIcon
+                          name="fluent-emoji-high-contrast:ledger"
+                          className="h-5 w-5"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-axis-navbar-focus uppercase tracking-wider text-fantas-950 truncate">
+                          Regulatory Fees Breakdown
+                        </h4>
+                        <p className="text-xs text-fantas-900/70 font-axis-thin truncate">
+                          View list of fees per office
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link
+                      to="fees"
+                      className="px-3 py-1.5 bg-fantas-800 hover:bg-fantas-900 text-white  text-xs font-axis-navbar-focus uppercase tracking-wider transition-colors shrink-0 shadow-2xs"
+                    >
+                      View Fees
+                    </Link>
+                  </div>
+                )}
+
               {/* Minimalist, Clean Postscripts Indicator */}
               {doc.postscripts && (
                 <div className="border-l-2 border-fantas-500 pl-4 py-1 mt-8 flex flex-col items-start gap-3">
-                  <div className='flex flex-row gap-2 items-center'>
+                  <div className="flex flex-row gap-2 items-center">
                     <LazyIcon
-                    name="lucide:info"
+                      name="lucide:info"
                       className="h-5 w-5 text-fantas-700 shrink-0"
                     />
                     <div className="space-y-1.5 flex-1 min-w-0">
@@ -570,11 +694,12 @@ export default function Document({
                   </div>
                 </div>
               )}
+
               <div className="border-l-2 border-fantas-500 pl-4 py-1 mt-8 flex flex-col items-start gap-3">
-                <div className='flex flex-row gap-2 items-center'>
+                <div className="flex flex-row gap-2 items-center">
                   <LazyIcon
                     name="mingcute:contacts-fill"
-                    className='text-fantas-700 w-5 h-5'
+                    className="text-fantas-700 w-5 h-5"
                   />
                   <div className="space-y-1.5 flex-1 min-w-0">
                     <h3 className="text-lg font-axis-navbar-focus uppercase tracking-wider text-fantas-800 font-semibold leading-none">
@@ -582,9 +707,14 @@ export default function Document({
                     </h3>
                   </div>
                 </div>
-                <div className='text-xs sm:text-sm font-axis-book text-gray-700/80 leading-normal whitespace-pre-line text-wrap break-words'>
+                <div className="text-xs sm:text-sm font-axis-book text-gray-700/80 leading-normal whitespace-pre-line text-wrap break-words">
                   <span>
-                    For any suggestions or modifications in procedures or services of the local government, do not hesitate to contact through email: <span className='font-axis-bold text-fantas-800'>betterinfantaquezon.org@atomicmail.io</span>
+                    For any suggestions or modifications in procedures or
+                    services of the local government, do not hesitate to contact
+                    through email:{' '}
+                    <span className="font-axis-bold text-fantas-800">
+                      betterinfantaquezon.org@atomicmail.io
+                    </span>
                   </span>
                 </div>
               </div>
